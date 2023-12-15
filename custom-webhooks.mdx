@@ -1,0 +1,36 @@
+---
+title: "Custom Webhooks"
+---
+
+Custom webhooks enable direct integration with third-party tools by adjusting the webhook message format to their requirements.
+
+### Creating a new custom webhook connection
+
+1. In your Frontegg Portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Integrations**.
+2. Click on the **Connect** button next to **Webhooks**, fill the webhook details for display name choose the events you want to subscribe to.
+3. Toggle on **Webhook custom payload** and click **Create**.
+
+![](/images/e8f2819-image.png)
+
+### Customizing the payload data
+
+Edit the payload data to match your needs, use double curly brackets syntax to reference data from the event, For example:
+
+json
+
+`{
+  "email" : {{{user.email}}
+}
+`
+
+Using the double curly brackets syntax our editor will autocomplete for you the relevant fields for each event:
+
+![](/images/c54ccf5-image.png)
+
+If you need to configure authentication for the API you're using, you can do so in the Auth Type tab.
+
+![](/images/bfe5ed3-image.png)
+
+### Configure headers
+
+If you need to configure special headers for the API you're using, you can do so in the Headers tab.

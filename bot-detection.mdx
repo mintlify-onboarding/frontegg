@@ -1,0 +1,95 @@
+---
+title: "Bot detection (reCAPTCHA)"
+---
+
+The internet is full of bots. One way or another, they’re going to show up at your app’s door. That means they’ll try to sign up or log in. You’re protected with Frontegg though.
+
+Bot detection works instantly, out-of-the-box for all apps on Frontegg with our own proprietary bot detection algorithms. However, we also provide bot detection with reCaptcha where you can fine-tune how strict you want your bot detection to be.
+
+Once you choose which bot detection engine you want to use, you can choose whether you want to allow, challenge, block, or lock authentication attempts that look like bots. We’ll cover the options below.
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> * **There are no prerequisites to using Frontegg’s bot detection.**
+> * In order to use _Google reCaptcha_, you will need to create an account and get a site key and secret. We will cover that below.
+
+### Configuring Bot Detection
+
+We offer two kinds of bot detection: by Frontegg and by Google's reCAPTCHA.
+
+#### Frontegg Bot Detection
+
+There is nothing to set up for Frontegg Bot Detection. All you need to do is choose what should happen when a bot is detected:
+
+1. Allow - Allow bots to continue to your app
+2. Challenge - Challenge bots with MFA
+3. Block - Don’t allow bots to continue to the app
+4. Lock - Lock users that appear like a bot
+
+#### reCAPTCHA
+
+##### Setting up reCAPTCHA
+
+1. Obtain your _Site Key_ and Secret Key from Google **[reCAPTCHA v3](https://www.google.com/recaptcha/admin/create)**.
+![](/images/0306d70-recaptcha.png) 
+1. To obtain your site key and secret, do the following:  
+   1. Fill in the label  
+   2. Select **reCaptcha v3**  
+   3. Add your domain  
+   4. Select _Accept the reCAPTCHA Terms of Service_.  
+   5. Submit
+2. Google should then provide you with your keys
+3. Copy the Site and Secret keys you just received
+
+#### In the Frontegg Portal
+
+Now that you have a site key and secret, paste them here:
+
+![](/images/2f172b1-Screenshot_2023-09-10_at_14.26.57.png) 
+
+After that, you need to decide on a minimum passing score. Every interaction is scored from 0.0 to 1.0\. 
+
+0.0 is very likely a bot. 
+
+1.0 is very likely a human.
+
+The closer your minimum passing score is to 1.0, the stricter your security.
+
+To save your reCaptcha settings, click Save.
+
+reCaptcha is now detecting bots in your Frontegg App.
+
+But what should you do to bots that have a score under your threshold? 
+
+Choose one of the four actions:
+
+1. Allow - Only detect bots, log them, but allow them to continue to your app
+2. Challenge - Challenge bots with MFA
+3. Block - Don’t allow bots to continue to the app
+4. Lock - Lock users that appear like a bot
+
+### Let trusted emails bypass bot detection
+
+While testing your app, you may find that Frontegg Bot Detection or reCaptcha block test users. In order to bypass bot detection with those users, just add them to ignored emails.
+
+#### In the Frontegg Portal
+
+For testing purposes, you may want to ignore emails on both Frontegg Bot Detection and reCaptcha. If so, just enter those emails here:
+
+![](/images/37af5ce-Screenshot_2023-09-10_at_19.28.22.png) 
+
+### Notifying End Users of Bot Detections
+
+You have the option of sending an email to the end user every time a bot is detected with their email address. It works on all actions - Allow, Challenge, Block, and Lock.
+
+To enable it, check the following checkbox: 
+
+![](/images/6ad8178-Screenshot_2023-09-10_at_14.27.17.png) 
+
+### Analyzing bots in your app
+
+#### Security Events
+
+If you’re curious about how many times bots are detected in your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).

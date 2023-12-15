@@ -1,0 +1,32 @@
+---
+title: "Adaptive MFA"
+---
+
+Imagine you had to go through 2 steps of authentication every single time you logged in. That would be annoying, right?
+
+On the one hand, MFA drastically increases security. On the other, you want your users to have a frictionless experience.
+
+Adaptive MFA bridges that gap, only requiring MFA when a login attempt looks risky. How do we know which logins or signups look risky? Through the numerous security engines that constantly monitor authentication requests for questionable activity.
+
+### How it works
+
+1. A user logs in with their usual login method (password, passwordless, etc) and their credentials are correct
+2. We check the login attempt for a number of threats including bots, impossible travel, new device, breached password, and more
+3. If the login isn’t risky, the user can continue to the app, and if they are enrolled in MFA, they will pass through that first.
+4. When the login is risky, we check for the strictest action amongst
+
+In short, when a user is enrolled in MFA and chooses to remember a device, they no longer have to go through MFA on that device. But, if the login is risky, they will get friction in the form of MFA (unless you chose a stricter action like blocking the login or locking the user).
+
+You might be asking: What if my users aren’t enrolled in MFA? Can I still use Adaptive MFA?
+
+Yes. In situations where a login attempt is recognized as risky and the user hasn't enrolled in MFA, we use a one-time code sent to the user’s email. Once the user completes that challenge, they can be allowed into the app.
+
+However, if your user used a passwordless method for their first factor (magic link, or one-time code), and isn’t enrolled in MFA, we have no option but to block that user from logging (as then it would be the same method of MFA for both factors of authentication).
+
+![](/images/656ce1e-Screenshot_2023-09-07_at_16.15.37.png) 
+
+### Configuring Adaptive MFA
+
+You can use Frontegg Security Rules to customize how your app responds to different threats. For example, you could choose to allow logins from new devices and block logins from suspected bots.
+
+For more details on how to configure these rules, go to [Security Rules](/docs/security-rules).

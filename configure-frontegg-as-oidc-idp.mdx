@@ -1,0 +1,66 @@
+---
+title: "Configuring Frontegg as OIDC IDP for 3rd party services"
+description: "This capability is fully supported if you are using Frontegg Hosted Login"
+---
+
+Hosted login with OpenID Connect (OIDC) is a secure and flexible authentication and authorization protocol that allows organizations to delegate user authentication to a trusted identity provider (IdP). OIDC builds on top of OAuth 2.0, providing additional features for identity verification and access control.
+
+This following topic will walk you through the steps of configuring your Frontegg environment as an IDP for a 3rd party service.
+
+> ### 🚧
+> 
+> Prerequisites:
+> 
+> This capability is fully supported if you are using **Frontegg Hosted Login**. If you are using Frontegg Embedded Login, social and SSO login methods will not redirect the end user to the 3rd party application out of the box.
+
+Some of the use cases for this scenario can be:
+
+* Allow your users to login with the same identity on their docs
+* To have several applications sharing the same identity
+* To add additional internal applications sharing the same identity for internal use cases
+
+**Tools used for this tutorial**  
+For the sake of this tutorial, we will be using [OIDC playgroup](https://openidconnect.net/) as the 3rd party service.
+
+OIDC playground is a great tool to test and debug OIDC flows.  
+Frontegg implements OIDC (OpenID Connect) by default as part of its hosted login offering.
+
+**Getting started**  
+Under your hosted login configuration (Environment --> Authentication --> Login Method), make sure that the following are configured: 
+
+* Hosted login is enabled
+* The redirectUrl of the service provider (in this `https://openidconnect.net/callback`) is configured under the allowed redirect URLs
+
+![](/images/e85e5a9-oidc-guide-1.png "oidc-guide-1.png")
+
+On your service provider configure the authorization URL and the clientId of your Frontegg workspace.
+
+> ### 📘
+> 
+> How to find my workspace urls
+> 
+> Frontegg implements the OIDC discovery protocol and returns all the relevant endpoints for the OIDC protocol to work.  
+> The discovery URL will reside on `https://[your-workspace-url]/.well-known/openid-configuration`
+
+> ### 📘
+> 
+> Finding my client ID
+> 
+> Each environment in Frontegg has its own client ID. To get your environment client ID to navigate to the environment settings and
+
+![](/images/ce7057f-oidc-guide-2.png "oidc-guide-2.png")
+
+On the 3rd party client side, set the `authorize endpoint` and the `token endpoint` as well as the `clientId` and `secret` respectively (in case PKCE is supported by your 3rd party service, you can omit the secret)
+
+![](/images/118895c-oidc-guide-2.png "oidc-guide-2.png")
+
+The OpenID connect endpoint will match the following:
+
+| Description                  | URL                                                      |
+| ---------------------------- | -------------------------------------------------------- |
+| OpenID connect discovery     | https://{YOUR-ENV-URL}}/.well-known/openid-configuration |
+| Authorization Token Endpoint | https://{YOUR-ENV-URL}}/oauth/authorize                  |
+| Token Endpoint               | https://{YOUR-ENV-URL}}/oauth/token                      |
+| Token Keys Endpoint          | https://{YOUR-ENV-URL}}/.well-known/jwks.json            |
+
+After running the flow on your 3rd party client and getting the Frontegg `id_token` the JWT should be validated with the `jwks` and result in a valid user

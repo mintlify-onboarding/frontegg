@@ -1,0 +1,43 @@
+---
+title: "Validate JWT Token with Public Key"
+---
+
+If you choose not to work with any of the Frontegg middlewares, you can as easily validate your JWT token using the `Frontegg public key` available from the Frontegg Portal.
+
+## Step-By-Step Guide
+
+Follow the steps below to use the public key from the JWT token signature to verify a JWT token:
+
+### Step 1: Get Public Key
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ JWT**.
+
+Copy the public key for the JWT signature.  
+  
+![](/images/2def94f-Screen_Shot_2022-07-27_at_10.34.17.png "Screen Shot 2022-07-27 at 10.34.17.png")
+
+  
+> ### 📘
+> 
+> Here is a link to the [development JWT settings](https://portal.frontegg.com/development/authentication/jwt) and a link to the [production JWT settings](https://portal.frontegg.com/development/authentication/jwt).
+
+### Step 2: Validate Token
+
+You can now verify the token using the public key. Use the code sample below to validate the JWT and get the user's information from the token.  
+  
+Node.JSPython
+
+`const jwt = require('jsonwebtoken');
+
+const cert = 'PUBLIC_KEY_FROM_FRONTEGG_PORTAL';
+jwt.verify(token, cert, function(err, user) {
+  console.log(user) // user info from the token
+});
+`
+
+`import jwt
+
+jwt.decode(token, "PUBLIC_KEY_FROM_MANAGEMENT_PORTAL", algorithms=["RS256"])
+`
+
+After validating the user, you get a user object containing information about the user.

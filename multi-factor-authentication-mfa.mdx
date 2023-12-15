@@ -1,0 +1,226 @@
+---
+title: "Multi-factor Authentication"
+description: "Enhance your user's security by requiring them to verify their identity through multiple authentication methods"
+---
+
+> ### 🚧
+> 
+> Prerequisites:
+> 
+> The following versions are required to use this feature:
+> 
+> Frontegg/React v5.0.18
+> 
+> Frontegg/Angular v5.12.0
+> 
+> Frontegg/Vue v2.0.16
+> 
+> Frontegg/Next.js v6.7.10
+
+When a user logs into an app, they need to authenticate themselves. That's a given. But requiring just one factor of authentication can be risky. If someone else gets their hands on a user’s credentials, they have access to that account.
+
+Multi-factor authentication (MFA) requires users to use 2 factors of authentication to gain access to a resource, such as an application or online account. In other words, if someone steals your password, the second factor of authentication will stop that password thief from entering your account.
+
+MFA requires 2 of the following 3 kinds of factors:
+
+1. Something you know (like a password)
+2. Something you have (like a phone)
+3. Something you are (like a fingerprint)
+
+Frontegg provides Multi-factor Authentication (MFA) out-of-the-box yet fully customizable by both you, your customers, and the end-user.
+
+### MFA in Frontegg apps
+
+MFA in Frontegg can be split into two parts: MFA policy, and MFA methods: 
+
+**MFA policy** determines if end users need to use MFA or not. 
+
+**MFA methods** determine which methods users are allowed to use for their second factor of authentication.
+
+### MFA Prerequisites
+
+By default, MFA is available to all users but may not be visible unless forced or if using the Admin Portal.
+
+> ### ❗️
+> 
+> WebAuthn on hosted apps without custom domains
+> 
+> If your app...
+> 
+> * uses Frontegg in hosted mode
+> * doesn't user custom domains
+> * uses the Admin Portal...your users may have trouble authenticating with WebAuthn methods (built-in authenticators and security keys) since they are domain-specific. Since your login and admin portal exist on different domains, WebAuthn methods set up on the the Admin Portal won't work on login.
+> 
+> You can solve this by making sure your login uses a custom domain.
+
+### MFA Policy
+
+There are 3 policy levels in Frontegg: Don't force, Force, and Force except enterprise SSO.
+
+1. **Don't force** \- MFA is optional. If you choose this option and use our admin portal product, you enable your users to choose their own MFA requirements.
+2. **Force** \- All users will be forced to use MFA. When they create their account, they will be required to set up an MFA method. Users will not be able to override this decision.
+3. **Force except enterprise SSO** \- All users will be forced to use MFA except for users who log in with enterprise SSO (SAML and OIDC using external identity providers). Identity providers have their own methods of verifying user identities. Therefore, forcing MFA on them is somewhat redundant.
+
+As a vendor, you get first choice as to what your app's MFA policy is and that choice will apply to all users. If you choose "Force", accounts will not be able to override it in their admin portal and you will not be able to override it in the backoffice.
+
+However, MFA policy can also be determined on a per-account basis in two ways:
+
+#### MFA Policy in the Backoffice/Environments
+
+In addition to settings the defaults for MFA in App Settings, you can also control the MFA requirements for individual accounts within the Frontegg portal for any environment and in the backoffice. Learn how in the guide for [Managing Accounts](/docs/accounts).
+
+> ### 🚧
+> 
+> Multi-tenancy approach to MFA
+> 
+> If a user belongs to multiple accounts (multiple customers of yours) and only one of them forces MFA, it's as if all accounts force it and the user will always have to do MFA. In other words, Frontegg takes the strictest rule per user for all the accounts they belong to.
+
+#### MFA Policy in the Admin Portal
+
+If your app uses the Admin Portal and you enable the Security tab, users with the correct permissions in each account will be able to set a stricter rule than yours (if they can) for users in their app.
+
+> ### 📘
+> 
+> MFA in the Admin Portal
+> 
+> Implement the [Admin Portal](/docs/admin-portal-introduction) to give your users the ability to implement MFA on their own account and which MFA features they would like to set for themselves.
+
+## MFA Methods
+
+Frontegg offers 4 kinds of MFA methods: authenticator apps, SMS, security keys, and built-in authenticators.
+
+Here's a bit about how each one works:
+
+### Authenticator Apps
+
+Users can implement MFA with any of the standard authenticator apps on the market like Google Authenticator, Authy, LastPass Authenticator, MS Authenticator, Duo, etc. They will need to open their authenticator app on their phone, find the relevant 6-digit code, and enter it in your login.
+
+### SMS
+
+Users can choose to use SMS as their second factor of authentication. This method involves getting an SMS with a code, and entering the code to authenticate.
+
+### Security Keys (WebAuthn)
+
+Security keys, or cross-platform authenticators, are devices that can be used for authentication on-the-go. Common examples of security keys are Yubikeys or mobile devices.
+
+### Built-in authenticators (WebAuthn)
+
+As the name suggests, these authentication methods are built-in to the same device you're using to access an app and usually use biometrics. Touch ID and Windows Hello are examples of built-in authenticators.
+
+> ### 📘
+> 
+> Built-in authenticator can't be the only method
+> 
+> Since built-in authenticators can't travel with the user and it could result in a user being locked out of their account, Frontegg doesn't allow this method to be the only one set up by the end user. Users must set up one of the other 3 methods before being able to set up a built-in authenticator.
+> 
+> Likewise, you can't choose to offer _only_ built-in authenticators as an MFA method.
+
+How do these methods play out for the end user?
+
+### Using MFA as an End User
+
+#### MFA Forced, With Admin Portal
+
+* Every user will be forced to set up MFA when they log in for the first time
+* Afterwards, users can set up other MFA methods in the Admin Portal on their own if you have enabled it
+* Users won't be able to disable MFA on their accounts
+* On subsequent logins, users will be able to choose from all the MFA methods they've set up
+
+#### MFA Not Forced, With Admin Portal
+
+* Users will log in with just their usual first step of authentication
+* Users can set up MFA on their own accounts with any method you have allowed them to use
+* On subsequent logins, users will be able to choose from all the MFA methods they've set up
+
+#### MFA Forced, Without Admin Portal
+
+* Every user will be forced to set up MFA when they log in for the first time
+* Users won't be able to set up other MFA methods unless you use the Admin Portal or create your own UI for managing MFA
+* On subsequent logins, users will only be able to use the single MFA method they set up
+
+#### MFA Not Forced, Without Admin Portal
+
+* Users will log in with just their usual first step of authentication
+* Users won't be able to set up MFA for their accounts unless you use the Admin Portal or create your own UI for managing MFA
+* On subsequent logins, users will only be able to use the single MFA method they set up
+
+### MFA Recovery Codes
+
+When a user sets up MFA for the first time, they'll receive a recovery code. This code will allow them to temporarily unenroll from MFA for their next login. They can enter it on any MFA screen.
+
+If a user can't complete MFA _and_ has forgotten their recovery code, you can un-enroll a user from MFA by going to the relevant Environment or Backoffice, navigating to Users, clicking the three dots next to the relevant user, and unenrolling them.
+
+### Configuration
+
+#### Vendor - Setting MFA Policy
+
+1. Go to Builder > App Settings > MFA
+
+![https://files.readme.io/effc157-Frontegg\_Dashboard.png](https://files.readme.io/effc157-Frontegg%5FDashboard.png)
+
+1. Choose either Force, Don't force, or Force except enterprise SSO
+
+![https://files.readme.io/71b1a6e-Screenshot\_2023-01-19\_at\_14.50.03.png](https://files.readme.io/71b1a6e-Screenshot%5F2023-01-19%5Fat%5F14.50.03.png)
+
+#### Vendor - Choosing MFA Methods
+
+1. Go to Builder > App Settings > MFA
+
+![https://files.readme.io/5284d1b-Frontegg\_Dashboard.png](https://files.readme.io/5284d1b-Frontegg%5FDashboard.png)
+
+1. Enable the MFA methods you want users to be able to set up
+
+![https://files.readme.io/12a700f-Allowed\_MFA\_Methods.png](https://files.readme.io/12a700f-Allowed%5FMFA%5FMethods.png)
+
+#### Account - Setting MFA Policy
+
+1. In the Admin Portal, go to the Security tab
+2. Choose between Force, Don't force, or Force except enterprise SSO (when possible)
+
+![https://files.readme.io/a43e56a-MFA\_in\_Admin\_Portal.png](https://files.readme.io/a43e56a-MFA%5Fin%5FAdmin%5FPortal.png)
+
+#### End User - Setting Up MFA Methods
+
+1. When a user logs in for the first time and MFA is forced, they will see the MFA options they can set up (built-in authenticators can't be a user's first MFA method)
+
+![https://files.readme.io/6ad78e7-Docs-App.png](https://files.readme.io/6ad78e7-Docs-App.png)
+
+1. They will get recovery codes that they should keep in a safe place
+
+![https://files.readme.io/c3ee37c-Recovery\_Codes.png](https://files.readme.io/c3ee37c-Recovery%5FCodes.png)
+
+1. After setting up MFA for the first time, the user will be able to configure more methods in the Admin Portal (if other methods are available)
+
+![https://files.readme.io/0fc488a-Admin\_Portal.png](https://files.readme.io/0fc488a-Admin%5FPortal.png)
+
+1. On subsequent logins, users will be able to choose from all the methods they set up
+
+![https://files.readme.io/7116548-Docs-App.png](https://files.readme.io/7116548-Docs-App.png)
+
+### Managing MFA
+
+#### Vendor - Managing MFA Policy
+
+At any time, you can change the default MFA policy for your app by going to Builder > App Settings > MFA and changing the policy. Then, publish those changes through your environments.
+
+![https://files.readme.io/3835c27-Frontegg\_Dashboard.png](https://files.readme.io/3835c27-Frontegg%5FDashboard.png)
+
+#### Managing MFA Policy per Account
+
+You can customize the MFA policy for any account as long as it is stricter than the general MFA policy you set in the App Settings.
+
+You can do this by going to any account in the Frontegg Portal, navigating to top right menu, and clicking "Security Policy".
+
+![https://files.readme.io/5b02d43-Screenshot\_2023-01-19\_at\_15.42.16.png](https://files.readme.io/5b02d43-Screenshot%5F2023-01-19%5Fat%5F15.42.16.png)
+
+Then, choose the policy for that account:
+
+![https://files.readme.io/d1f10b8-Screenshot\_2023-01-19\_at\_15.42.31.png](https://files.readme.io/d1f10b8-Screenshot%5F2023-01-19%5Fat%5F15.42.31.png)
+
+#### Un-enrolling users from MFA
+
+There can be times when a user simply can't get past MFA and they've forgotten their recovery code. In that case, your account will ask you to un-enroll that user from MFA.
+
+You can do that from the Users tab in any environment of the Frontegg Portal:
+
+![https://files.readme.io/4751ade-Screenshot\_2023-01-19\_at\_15.36.41.png](https://files.readme.io/4751ade-Screenshot%5F2023-01-19%5Fat%5F15.36.41.png)

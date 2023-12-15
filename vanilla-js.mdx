@@ -1,0 +1,182 @@
+---
+title: "Hosted Login Integration (Vanilla.js)"
+---
+
+This guide will seamlessly walk you through integrating Frontegg's login box into your Vanilla.js application, with robust functionalities including Sign In, Sign Up, and Single Sign-On (SSO). Streamline your authentication process with just a few lines of code, leveraging the power of redirects, OpenID Connect, and OAuth2.
+
+⚡️ The code in the sample below is available in [our Frontegg Samples repository](https://github.com/frontegg-samples/vanillajs-login-box) in GitHub ⚡️ 
+
+  
+**⚡ Before you start: ⚡** 
+
+> ### 📘
+> 
+> Getting your Frontegg subdomain and clientId
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `baseUrl` in the integration, navigate to your workspace 'Settings' menu, 'Domains' and copy the `Frontegg domain` and `clientId`. 
+> 
+> You will need them for this guide.
+
+#### STEP 1: Adding Frontegg to your app
+
+Frontegg can be added to your app via NPM / script on your application head
+
+npmyarncdn
+
+`npm install @frontegg/js
+`
+
+`yarn add @frontegg/js
+`
+
+`<head>
+    ...
+    <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/@frontegg/js/umd/frontegg.production.min.js"></script>
+</head>
+`
+
+#### STEP 2: Configure
+
+Frontegg works with Context options and needs to be initialized with this context. In order to initialize Frontegg use the following code snippet
+
+##### Add the following script to initialize Frontegg on your application and to interact with the login page
+
+index.js
+
+`import {initialize} from "@frontegg/js"
+
+const style = document.createElement('style');
+style.setAttribute('type', 'text/css');
+style.innerHTML = '';
+document.getElementsByTagName('head')[0].appendChild(style);
+
+const app = initialize({
+  contextOptions: {
+    baseUrl: "https://YOUR_DOMAIN.frontegg.com", //set your Frontegg environment domain and client ID here
+    clientId: 'YOUR_FRONTEGG_CLIENT_ID'
+  },
+  hostedLoginBox: true
+})
+
+document.getElementById("loginWithRedirect").addEventListener('click', () => {
+  app.loginWithRedirect()
+})
+
+document.getElementById("logout").addEventListener('click', () => {
+  app.logout()
+})
+`
+
+Add the representative HTML button that will redirect the UI to the login page. Clicking on the button should take you to the login dialog.
+
+index.html
+
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        button {
+            border-radius: 4px;
+            background: dodgerblue;
+            color: white;
+            border: 0;
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-root" style="display: none">
+    <h1>This is Frontegg Integration in Vanilla Javascript </h1>
+    <div id="user-container">
+    </div>
+    <br/>
+    <a id="logout" fe-state="isAuthenticated"><button>Logout</button></a>
+    <button id="loginWithRedirect" fe-mode="hosted"  fe-state="!isAuthenticated">
+        Login With Redirect
+    </button>
+</div>
+<script src="/bundle.js"></script>
+</body>
+</html>
+`
+
+#### STEP 3: Grab the user context
+
+The user context is available from the Frontegg app. Upon initialization, you can subscribe to state notifications which will include whether the user is authenticated or not and what is the JWT of the user.
+
+In order to subscribe to user state notifications add the following code snippet:
+
+index.js
+
+`import {initialize} from "@frontegg/js"
+
+const style = document.createElement('style');
+style.setAttribute('type', 'text/css');
+style.innerHTML = '';
+document.getElementsByTagName('head')[0].appendChild(style);
+
+const app = initialize({
+  contextOptions: {
+    baseUrl: "https://YOUR_DOMAIN.frontegg.com", //set your Frontegg environment domain and client ID here
+    clientId: 'YOUR_FRONTEGG_CLIENT_ID'
+  },
+  hostedLoginBox: true
+})
+
+// Uncomment below code for automatic redirect to login/app
+
+// app.ready(() => {
+
+//   console.log("App is ready");
+//   let unsubscribe = app.store.subscribe(()=>{
+//     const {auth} = app.store.getState();
+
+//     if(!auth.isLoading) {
+//       if (!auth.isAuthenticated) {
+//         app.loginWithRedirect()
+//       }
+//     }
+//   })
+// })
+
+document.getElementById("loginWithRedirect").addEventListener('click', () => {
+  app.loginWithRedirect()
+})
+
+document.getElementById("logout").addEventListener('click', () => {
+  app.logout()
+})
+
+app.store.subscribe(() => {
+  const state = app.store.getState();
+  if (state.auth.user) {
+    document.getElementById('user-container').innerText = state.auth.user.email;
+  } else {
+    document.getElementById('user-container').innerText = 'Not Authenticated'
+  }
+
+  document.getElementById('app-root').style.display = state.auth.isLoading ? 'hidden' : 'block'
+
+  let styleHtml = ''
+  if (state.auth.isAuthenticated) {
+    styleHtml += '[fe-state="isAuthenticated"] { }';
+    styleHtml += '[fe-state="!isAuthenticated"] { display: none; }';
+  } else {
+    styleHtml += '[fe-state="isAuthenticated"] { display: none; }';
+    styleHtml += '[fe-state="!isAuthenticated"] { }';
+  }
+
+  if(app.options.hostedLoginBox){
+    styleHtml += '[fe-mode="hosted"] { }';
+  } else {
+    styleHtml += '[fe-mode="hosted"] { display: none; }';
+  }
+
+  style.innerHTML = styleHtml;
+})
+`
+
+Great, Frontegg is now integrated with your app!

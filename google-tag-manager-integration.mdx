@@ -1,0 +1,195 @@
+---
+title: "Google Tag Manager"
+description: "Track and measure user activity easily with Frontegg's Pixel Integration"
+---
+
+[Google Tag Manager](https://tagmanager.google.com/) is a powerful tool that allows you to track and measure various user interactions on your website. By creating _Tags_ in GTM you can integrate multiple 3rd party providers (in addition to those already integrated with GTM) of analytics, and marketing, into your websites or mobile apps. Thanks to GTM, you no longer need to add these tags directly to your projects; Instead, you only need to configure and control their performance from your Tag Manager's user interface.
+
+> ### 📘
+> 
+> Prerequisites
+> 
+> * To enable GTM in your Frontegg app, you need to open a [Google Tag Manager](https://tagmanager.google.com/) account and obtain a GTM key, formatted as "GTM-XXXXXX".
+> * To enable GTM, you must have a Custom Domain. [Learn more. ](/docs/custom-domains)
+> * **Hosted Login**  users don't need to update their app version. If you are an**Embedded Login**  user, you will need to update your version to the following:  
+> React: 6.0.2  
+> Vue: 3.0.2  
+> Angular: 6.2.0  
+> Next: 8.0.2
+
+### How it Works
+
+When you integrate GTM (Google Tag Manager) with your Frontegg-supported app, you gain the ability to monitor your users' actions effortlessly. You can also report the events with an `onFronteggEvent` function. You will need to set up your [Portal Environment](porta.frontegg.com) and your [GTM Portal](https://tagmanager.google.com/) to track and push the data to your marketing/analytics applications (whether 3rd party applications or Google-supported ones, e.g., Google Analytics). For a streamlined setup process, refer to the following checklist:
+
+* Open a GTM account
+* Configure GTM in your Environment
+* Create GTM tag configuration
+
+### Open a GTM account
+
+Go to [google tag manager](https://tagmanager.google.com/#/home) and open an account. 
+
+> ### 👍
+> 
+> GTM tracking
+> 
+> To ensure proper GTM tracking, add your container ID to the login pages you wish to track for events.
+
+### Configure GTM in Your Environment Settings
+
+Integrating GTM into your Frontegg app is almost as easy as toggling a button _ON_. You will need to set up your GTM integration in your [Environments](/docs/environments-introduction) with the Container ID you received from your [GTM account](https://tagmanager.google.com/). 
+
+> ### 🚧
+> 
+> Environment-specific GTM Configuration
+> 
+> GTM configuration is _environment-specific_; enabling it for your _Development_  environment does not automatically mirror it in to your _Production_ environment. You must configure both environments manually to ensure GTM support.
+
+To configure GTM with Frontegg, do the following: 
+
+Step 1: Go to your [Frontegg Portal](portal.frontegg.com) , proceed to Environment > Integrations, and locate the _Google Tag Manager_ integration: 
+
+![](/images/b84c476-Integrations_home_page.png) 
+
+Step 2: Press _Connect_ and proceed with _Create Integration_. 
+
+![](/images/0b5f42c-Webhooks.png) 
+
+Step 3: Insert your GTM _Container ID_ and press _Create_. 
+
+> ### 📘
+> 
+> Fetching Your GTM Key (Container ID)
+> 
+> To enable GTM in your Frontegg Environment, you need to have a _GTM Key_. To locate your GTM key from your Tag Manager, go to [Tag Manager](https://tagmanager.google.com/)\> Workspace > Container ID (located at top, and formatted as "GTM-XXXXXX")
+
+![](/images/5acaa93-Webhooks.png) 
+
+Step 4: Click _Save_. Your GTM integration is now officially enabled. 
+
+![](/images/d186cd3-Webhooks.png) 
+
+#### Troubleshooting: GTM Connectivity
+
+Once you've created a GTM connection, the verification process should be instantaneous. If you see an _Error_ message, it can be due to the following reasons: 
+
+* Your GTM connection has failed. Check your GTM credentials to verify it is identical to those found in your tag manager's _Container ID_.
+* You entered a _Container ID_ that already exists.
+* You mistyped the _Container ID_.
+![](/images/1c6a1aa-Webhooks.png) 
+
+#### Test your GTM integration
+
+To ensure proper setting of your GTM integration with Frontegg, go to your [login page](portal.frontegg.com), and open your Network. Filter for a `gtm` property to ensure the tag was properly set. 
+
+![](/images/97faaca-Screenshot_2023-09-28_at_16.19.23.png) 
+
+### Reporting Events via Tags
+
+Currently, Frontegg tracks two essential event types: a user's `signup_completed` and `user_verified`.To set effective event tracking in Google Tag Manager, you'll need to configure a custom HTML tag and add an`onFronteggEvent` function to its script. The function will need to include two essential parameters: an`eventID` \- signifying a user's action (`signup_completed` and `user_verified`) - and a `payload`— which corresponds to the event data you wish to receive after that action occurs. 
+
+![](/images/d5e7881-Screenshot_2023-09-28_at_16.26.24.png) ![](/images/e48febc-Screenshot_2023-09-20_at_13.54.22.png) 
+
+#### OnFronteggEvent Breakdown
+
+As you recall, your custom HTML script needs to include the following `onFronteggEvent` function. In addition to the function, you can add additional code to report to different third-party tools, (and not necessarily to GTM's dataLayer):
+
+`eventID`: This parameter includes the events Frontegg tracks. Refer to the chart below for a list of events.
+
+`payload`: The event data you wish to receive when an action (associated with the action that is triggered). Check for optional payloads in the chart below.
+
+`dataLayer`: Refers to the GTM object that allows you to send events to GTM. 
+
+`event`: Fronteggs's default name for all evenIDs is `authentication`. You can modify the name. we recommend to set eventID with the same value (i.e., _authentication_ like in the example, since it will reduce the number of tags you need to create in GTM.
+
+`action`: The _Event Name_ like `signup_completed`.
+
+JavaScriptText
+
+`<script>
+  function onFronteggEvent(eventID, payload) {    
+    var eventData = Object.assign({
+      event: 'authentication',
+      action: eventID
+    }, payload);
+    
+    dataLayer.push(eventData);
+	}
+</script>
+`
+
+``
+
+##### EventIDs and Payloads
+
+The following table lists the EventIDs Frontegg currently tracks and their corresponding payloads: 
+
+| EventID           | Payload                        |          |      |        |          |                                                                                       |
+| ----------------- | ------------------------------ | -------- | ---- | ------ | -------- | ------------------------------------------------------------------------------------- |
+| signup\_completed | email; name;url (hash \| host  | hostname | href | origin | password | pathname); authenticationType;socialProvider\`\`createdAt; id;tenantId; Search params |
+| user\_verified    | email; name; url (hash \| host | hostname | href | origin | password | pathname); authenticationType;socialProvider\`\`createdAt; id;tenantId; Search params |
+
+### Use Case: Google Analytics Configuration
+
+For Google Analytics, GTM's recommends configure it via their interface. (Note that different 3rd party tools don't need to be connected to GTM, and can only use the `onFronteggEvent` function).To integrate Google Analytics with Google Tag Manager, you need to include several parameters. Here's a high-level outline of the steps you need to implement to track your user's activity with Google Analytics. 
+
+* Go to your Admin section in Google Analytics (GA) and set up a new GA4 configuration event type. Obtain its GA _tracking ID_.
+* Go to Google Tag Manager (GTM), and set up a custom HTML container with an `onFronteggEvent` function as indicated in the [previous sections](#Create-a-GTM-Tag-Configuration).
+* Create DataLayer variables
+* Configure a custom event triggers
+* Set Google Analytics page\_view trigger
+* Create a new Google Analytics: GA4 Event tag.
+* Create a _History Change_ trigger for page\_views
+
+Now let's break the tags' various components and devise them separately: 
+
+#### Configure Custom Event Trigger
+
+1. Create a Custom Event trigger.
+2. The Event Name should be `authentication`
+3. Click save
+
+![](/images/6c8df61-Screenshot_2023-09-26_at_16.43.42.png)
+
+#### Create DataLayer variables
+
+To configure variables for your Google Analytics tag, go to _Variables_ from your left menu
+
+![](/images/5e1f75a-Screenshot_2023-09-27_at_10.25.46.png) 
+
+Choose _Data Layer Variable_ as your variable type. 
+
+![](/images/356a179-Screenshot_2023-09-27_at_10.26.02.png) 
+1. Name the Variable _action_  (this is the property name). Save the configuration.
+2. ![](/images/7024261-Screenshot_2023-09-27_at_10.40.38.png)
+
+#### Set Google Analytics page\_view Trigger
+
+To create a new GA event trigger, do the following: 
+
+1. Type - “google analytics event” (can be modified to custom HTML if you are setting it to other third party integrations).
+2. Choose the Measurement ID.
+3. Add an Event name e.g., _page\_view_ \- we recommend sticking to the common GA terminology.
+4. Trigger - Create a History Change trigger (see below)
+![](/images/45d9bb7-Screenshot_2023-09-27_at_10.22.04.png) 
+
+#### Create a Google Analytics: GA4 Event Tag
+
+Once your variables and event triggers are set, you can create your GA tag. 
+
+1. Choose a Google Analytics event type.
+2. Choose the relevant Measurement ID.
+3. Add the variable we created in the previous step within the Event Name field (the _Data Layer Action_ variable).
+4. Edit the Event Parameters and corresponding values.
+5. Link the tag to the _Authentication_ trigger we also created previously.
+6. Save and submit.
+
+![](/images/3bed1d1-Screenshot_2023-09-26_at_16.40.59.png)
+
+The Final tag should look somewhat like the following:
+
+![](/images/1d7fbe8-Screenshot_2023-09-27_at_10.23.15.png) 
+
+#### History Change Trigger
+
+To Mark any visited page as a page view, you will need to set a _History Change_ trigger. In Single-Page Applications (SPAs) your content is uploaded dynamically without full page reloads, so a history change trigger is used to track page views or other events within SPAs where inner pages are not reloaded.

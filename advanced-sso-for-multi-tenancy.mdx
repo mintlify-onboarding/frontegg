@@ -1,0 +1,103 @@
+---
+title: "Advanced SSO for Multi-tenancy"
+---
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> Note that if you are using Frontegg's _Embedded Login_, you will need to ensure your SDK version is updated: 
+> 
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#83f1e6e2e0f7c3b6adb3adb7b6)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#5638332e223c2516617866786762)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#56373831233a372416637865637866)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#9fe9eafadfadb1afb1abaf)
+
+With Frontegg's Advanced SSO for Multi-tenancy, you can seamlessly manage user access across multiple applications, under a **single domain**. This feature allows your customers to apply multiple SSO connections in the same organization (domain) while segregating data access for every team. For example, users from one team can apply an SSO connection for a specific tenant and access only that account, while users from a different team can apply an SSO connection for a different account and access only that account.
+
+By default, Frontegg requires their clients to validate their domain upon the creation of an SSO connection in the admin portal (self-service) to prevent domain abuse. In that case, a domain is validated and used per account and per environment. By enabling the SSO multi-tenancy feature, you allow your customers to use the same domain for several SSO configurations for their different tenants— thus allowing them to grant data access to specific users. 
+
+### Configuring SSO for Multi-tenancy
+
+To configure SSO for multi-tenancy, you first need to [Authenticate your environment](/reference/authenticate%5Fvendor) using the credentials from Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Settings ➜ General Settings
+
+cURL
+
+`curl --location --request PUT 'https://api.frontegg.com/team/resources/sso/v1/configurations/multiple-sso-per-domain' \
+--header 'Authorization: Bearer [token-from-vendor-authentication]' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+"active": true,
+"unspecifiedTenantStrategy": "BLOCK/FIRST_CREATED",
+"useActiveTenant": true
+}'
+
+`
+
+> ### 📘
+> 
+> Entering an Optional `unspecifiedTenantStrategy`
+> 
+> Entering an optional attribute for `unspecifiedTenantStrategy` allows you to enter non-existing users in a specific SSO flow: 
+> 
+> **BLOCK** \- this will block a non existing user whose domain is associated to multiple accounts from proceeding with the SSO login, unless `tenantId={{tenantId}}` will be passed in the search params of the login route. In this case, the user will be prompted to use the default authentication method (i.e., password /passwordless). 
+> 
+> **FIRST\_CREATED** \- this option will redirect a non-existing user whose email domain is used in several SSO connections and isn't passing `tenantId={{tenantId}}`in the login, to the tenant where the first SSO configuration was created that is linked to the user's domain. 
+> 
+> **useActiveTenant** \- This configuration bundled with one of the options `BLOCK / FIRST_CREATED`will redirect an existing user whose email domain is used in more than one SSO configurations to the user's current active account.
+> 
+> **NOTE!** that a non-existing user is logging in via an IDP initiated SSO flow, they will be redirected to the relevant account and `unspecifiedTenantStrategy` will have no impact on the user's flow.
+
+### Verifying your Configuration
+
+To verify the configuration, run the following GET request: 
+
+cURL
+
+`curl --location --request GET 'https://api.frontegg.com/team/resources/sso/v1/configurations/multiple-sso-per-domain' \
+--header 'Authorization: Bearer [token-from-vendor-authentication]' \
+--header 'Content-Type: application/json' \
+`
+
+### Redirecting Users with Multiple SSO Configurations
+
+When a user's domain is associated with multiple SSO configurations across multiple accounts, then the user will need to pass their `tenantId` in the login URL so Frontegg could redirect them to the SSO endpoint associated with that account. If the user exists but does no pass their `tenantId`— Frontegg will then default to the account redirect where the user's first SSO configuration was created.
+
+The following example URLs contain the `tenantId` identifier 
+
+cURL
+
+`// Hosted login
+https://[your-frontegg-workspace-url]/oauth/account/login?tenantId={{tenantId}}
+
+// Embedded Login
+https://[your-application-url]/account/login?tenantId={{tenantId}}
+`
+
+#### Changing Users Domain Validation Policies (Optional Fields)
+
+> ### 📘
+> 
+> You can pass the following fields to change the user's domain validation flow: 
+> 
+> `allowVerifiedUsersToAddDomains` \- enabling the option for verified users to add their domain to an SSO configuration without validating the domain through DNS.
+> 
+> `skipDomainVerification`\- disabling the requirement for self-service domain validation for all the accounts in that environment. The domain will be marked as automatically validated.
+> 
+> `bypassDomainCrossValidation` \- disabling the requirement for self-service domain validation for all of the accounts in that environment. Users with domains associated to an SSO configuration but not validated will still be able to login via SSO.
+
+cURL
+
+`curl --location --request PUT 'https://api.frontegg.com/team/resources/sso/v1/configurations/domains' \
+--header 'Authorization: Bearer [token-from-vendor-authentication]' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"allowVerifiedUsersToAddDomains": boolean,
+	"skipDomainVerification": boolean,
+	"bypassDomainCrossValidation": boolean,
+}'
+
+curl --location --request GET 'https://api.frontegg.com/team/resources/sso/v1/configurations/domains' \
+--header 'Authorization: Bearer [token-from-vendor-authentication]' \
+--header 'Content-Type: application/json' \
+`

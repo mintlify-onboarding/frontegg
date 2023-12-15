@@ -1,0 +1,319 @@
+---
+title: "Android Kotlin SDK"
+---
+
+Frontegg's Mobile SDKs are officially here for you to explore and utilize. Our powerful and simple-to-implements SDKs are designed to empower you to create extraordinary mobile experiences. Whether you're developing for iOS, Android, React Native, or Ionic, we've got you covered.
+
+### Frontegg and Android Kotlin
+
+Get ready to dive into the exciting world of Android app development with Kotlin and Frontegg! In this guide, we'll take you on a journey to harness the full potential of your Android applications by seamlessly integrating Frontegg's powerful features. From enhancing user authentication to unlocking advanced analytics and user management, you'll discover how to leverage the capabilities of Frontegg to create robust and secure mobile experiences.
+
+### Table of Contents
+
+* [Get Started](#get-started)  
+   * [Project Requirements](#project-requirements)  
+   * [Prepare Frontegg workspace](#prepare-frontegg-workspace)  
+   * [Setup Hosted Login](#setup-hosted-login)  
+   * [Add Frontegg package to the project](#add-frontegg-package-to-the-project)  
+   * [Set minimum sdk version](#set-minimum-sdk-version)  
+   * [Configure build config fields](#configure-build-config-fields)  
+   * [Config Android AssetLinks](#config-android-assetlinks)
+* [Usage](#usage)  
+   * [Initialize FronteggApp](#initialize-fronteggapp)  
+   * [Login with Frontegg](#login-with-frontegg)  
+   * [Logout user](#logout)  
+   * [Switch Tenant](#switch-tenant)
+
+### Get Started
+
+#### Project Requirements
+
+* Android SDK 26+  
+Set defaultConfig's minSDK to 26+ in build.gradle:  
+Groovy  
+`android {  
+    defaultConfig {  
+        minSdk 26  
+    }  
+}  
+`
+* Java 8+  
+Set target java 8 byte code for Android and Kotlin plugins respectively build.gradle:  
+Groovy  
+`android {  
+    compileOptions {  
+        sourceCompatibility JavaVersion.VERSION_1_8  
+        targetCompatibility JavaVersion.VERSION_1_8  
+    }  
+    kotlinOptions {  
+        jvmTarget = '1.8'  
+    }  
+}  
+`
+
+#### Prepare Frontegg workspace
+
+Navigate to [Frontegg Portal Settings](https://portal.frontegg.com/development/settings), If you don't have application  
+follow integration steps after signing up.  
+Copy FronteggDomain to future steps  
+from [Frontegg Portal Domain](https://portal.frontegg.com/development/settings/domains)
+
+#### Setup Hosted Login
+
+* Navigate to [Login Method Settings](https://portal.frontegg.com/development/authentication/hosted)
+* Toggle Hosted login method
+* Add `{{ANDROID_PACKAGE_NAME}}://{{FRONTEGG_BASE_URL}}/ios/oauth/callback`
+* Replace `ANDROID_PACKAGE_NAME` with your application identifier
+* Replace `FRONTEGG_BASE_URL` with your Frontegg base url
+
+#### Add Frontegg package to the project
+
+* Open you project
+* Find your app's build.gradle file
+* Add the following to your dependencies section:
+
+Groovy
+
+`    dependencies {
+      // Add the Frontegg Android Kotlin SDK
+      implementation 'com.frontegg.sdk:android:1.+'
+    }
+`
+
+#### Set minimum sdk version
+
+To set up your Android minimum sdk version, open root gradle file at`android/build.gradle`,  
+and add/edit the `minSdkVersion` under `buildscript.ext`:
+
+Groovy
+
+`buildscript {
+    ext {
+        minSdkVersion = 26
+        // ...
+    }
+}
+`
+
+#### Configure build config fields
+
+To set up your Android application on to communicate with Frontegg, you have to add `buildConfigField` property the  
+gradle `android/app/build.gradle`.  
+This property will store frontegg hostname (without https) and client id from previous step:
+
+Groovy
+
+`
+def fronteggDomain = "FRONTEGG_DOMAIN_HOST.com" // without protocol https://
+def fronteggClientId = "FRONTEGG_CLIENT_ID"
+
+android {
+    defaultConfig {
+
+        manifestPlaceholders = [
+                "package_name" : applicationId,
+                "frontegg_domain" : fronteggDomain,
+                "frontegg_client_id": fronteggClientId
+        ]
+
+        buildConfigField "String", 'FRONTEGG_DOMAIN', "\"$fronteggDomain\""
+        buildConfigField "String", 'FRONTEGG_CLIENT_ID', "\"$fronteggClientId\""
+    }
+    
+    
+}
+`
+
+Add bundleConfig=true if not exists inside the android section inside the app gradle `android/app/build.gradle`
+
+Groovy
+
+`android {
+  buildFeatures {
+    buildConfig = true
+  }
+}
+`
+
+#### Permissions
+
+Add `INTERNET` permission to the app's manifest file.
+
+XML
+
+`
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+`
+
+#### Config Android AssetLinks
+
+Configuring your Android `AssetLinks` is required for Magic Link authentication / Reset Password / Activate Account /  
+login with IdPs.
+
+To add your `AssetLinks` to your Frontegg application, you will need to update in each of your integrated Frontegg  
+Environments the `AssetLinks` that you would like to use with that Environment. Send a POST request  
+to `https://api.frontegg.com/vendors/resources/associated-domains/v1/android` with the following payload:
+
+`{
+    "packageName": "YOUR_APPLICATION_PACKAGE_NAME",
+    "sha256CertFingerprints": ["YOUR_KEYSTORE_CERT_FINGERPRINTS"]
+}
+`
+
+Each Android app has multiple certificate fingerprint, to get your `DEBUG` sha256CertFingerprint you have to run the  
+following command:
+
+For Debug mode, run the following command and copy the `SHA-256` value
+
+NOTE: make sure to choose the Variant and Config equals to `debug` 
+
+Bash
+
+`./gradlew signingReport
+
+###################
+#  Example Output:
+###################
+
+#  Variant: debug
+#  Config: debug
+#  Store: /Users/davidfrontegg/.android/debug.keystore
+#  Alias: AndroidDebugKey
+#  MD5: 25:F5:99:23:FC:12:CA:10:8C:43:F4:02:7D:AD:DC:B6
+#  SHA1: FC:3C:88:D6:BF:4E:62:2E:F0:24:1D:DB:D7:15:36:D6:3E:14:84:50
+#  SHA-256: D9:6B:4A:FD:62:45:81:65:98:4D:5C:8C:A0:68:7B:7B:A5:31:BD:2B:9B:48:D9:CF:20:AE:56:FD:90:C1:C5:EE
+#  Valid until: Tuesday, 18 June 2052
+
+`
+
+For Release mode, Extract the SHA256 using keytool from your `Release` keystore file:
+
+Bash
+
+`keytool -list -v -keystore /PATH/file.jks -alias YourAlias -storepass *** -keypass ***
+`
+
+In order to use our API’s, follow [this guide](/reference/getting-started-with-your-api) to  
+generate a vendor token.
+
+### Usage
+
+#### Initialize FronteggApp
+
+Create a custom `App` class that extends `android.app.Application` to initialize `FronteggApp`:
+
+Kotlin
+
+`package com.frontegg.demo
+
+import android.app.Application
+import com.frontegg.android.FronteggApp
+
+class App : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        
+        FronteggApp.init(
+            BuildConfig.FRONTEGG_DOMAIN,
+            BuildConfig.FRONTEGG_CLIENT_ID,
+            this, // Application Context
+        )
+    }
+}
+`
+
+Register the custom `App` in the app's manifest file
+
+**AndroidManifest.xml:**
+
+XML
+
+`
+<application
+        android:name=".App">
+    <!--  ... -->
+</application>
+
+`
+
+android:name=".App"
+
+### Login with Frontegg
+
+In order to login with Frontegg, you have to call `FronteggAuth.instance.login` method with `activtity` context.  
+Login method will open Frontegg hosted login page, and will return user data after successful login.
+
+Kotlin
+
+`
+import com.frontegg.android.FronteggAuth
+
+class FirstFragment : Fragment() {
+  // ...
+  
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {  
+    
+    binding.loginButton.setOnClickListener {
+        FronteggAuth.instance.login(requireActivity())
+    }
+  }
+  // ...
+}
+
+`
+
+### Logout user
+
+In order to logout user, you have to call `FronteggAuth.instance.logout` method.  
+Logout method will clear all user data from the device.
+
+Kotlin
+
+`
+import com.frontegg.android.FronteggAuth
+
+class FirstFragment : Fragment() {
+  // ...
+  
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {  
+    
+    binding.logoutButton.setOnClickListener {
+        FronteggAuth.instance.logout()
+    }
+  }
+  // ...
+}
+
+`
+
+### Switch Tenant
+
+In order to switch tenant, you have to call `FronteggAuth.instance.switchTenant` method with `activtity` context.
+
+Kotlin
+
+`` 
+import com.frontegg.android.FronteggAuth
+
+class FirstFragment : Fragment() {
+  // ...
+  
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {  
+    
+    val tenantIds = FronteggAuth.instance.user.value?.tenantIds ?: listOf()
+    
+    /**
+      *  pick one from `tenantIds` list:
+      */
+    val tenantToSwitchTo = tenantIds[0] 
+    
+    binding.switchTenant.setOnClickListener {
+        FronteggAuth.instance.switchTenant(tenantToSwitchTo)
+    }
+  }
+  // ...
+}
+
+ ``

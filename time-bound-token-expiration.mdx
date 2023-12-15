@@ -1,0 +1,48 @@
+---
+title: "Machine-to-Machine Tokens"
+description: "Learn more about the types of machine-to-machine tokens Frontegg supports"
+---
+
+Frontegg Machine-to-machine tokens are used for authentication and authorization to grant users access to specific resources in your app to which the user will be granted access.  
+M2M (also referred to as _Access_ tokens) are commonly used in [OAuth Authentication](/docs/oauth-authentication) flows, where a user grants permission to a third-party application to access their resources without sharing their credentials. These tokens are relatively more flexible and less sensitive than session tokens so they can be valid for longer time periods. Access tokens act as bearer tokens, providing the necessary credentials to access protected resources. 
+
+> ### 🚧
+> 
+> Passing Token Bearers
+> 
+> **IMPORTANT**\- When using an **Access tokens** token type you need to pass the token bearer in the _X-API-KEY_ header. When using a **Client Credentials** token type, you need to pass the token bearer in the _Authorization_ header.
+
+### Enabling Token Generation for Users
+
+Frontegg supports two types of Machine-to-Machine (M2M) Tokens: Access and Client Credentials token types.
+
+_Client credentials_ are used for [Passwordless](/reference/passwordless) authentication methods where the user receives a magic code/link. These tokens are time-sensitive. 
+
+_Access tokens_ are more flexible in the sense that they don't have to be time-limited (although you _can_ set time-limitation for them; see next section). 
+
+To enable users to generate M2M tokens, go to your \[Frontegg Portal > Authentication > M2M authentication\] and choose the type of tokens users will be able to generate, like so: 
+
+![](/images/026111e-Screenshot_2023-11-22_at_14.46.30.png) 
+
+### Setting Expiration for M2M Tokens
+
+> ### 📘
+> 
+> Prerequisites
+> 
+> This feature is supported in the following versions: 
+> 
+> React - 6.0.9  
+> Angular - 6.9.0  
+> Vue - 3.0.9  
+> Next - 8.0.7
+
+To set time limitation for M2M tokens, go to your \[Admin Portal > Workspace > API Tokens _or_ Personal Tokens\] and select a _Client Credentials_ or an _Access_ Token type (note that users have only one of the options available - the type of token you set for them in the previous section). When generating one of these token types, you will be able to choose an expiration for the token: `Never`, `After 1 day`,`After 7 days`, `After 30 days`, `After 90 days`, `After 365 days`. After generating the token and specifying the expiration timeframe, you will see the _Expires in_ column specifying the time left before the token expires. Setting an expiration for M2M tokens is _Optional_. Note that to have the API Token section visible in the portal, you must toggle on the API Token box for your users in the Admin Portal. 
+
+![Setting Expiration ](/images/e192d5c-token_expiration.png)
+
+Setting Expiration 
+
+![API Token Dashboard](/images/aac7c87-Screenshot_2023-11-15_at_13.14.06.png)
+
+API Token Dashboard

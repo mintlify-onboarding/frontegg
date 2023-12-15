@@ -1,0 +1,180 @@
+---
+title: "Email Templates"
+---
+
+Emails sent from your app are triggered by events occurring in your app and are the forefront communication method you have with your customers. Frontegg comes with email templates enabled from the start. 
+
+When an important event occurs, your application automatically emails the user the corresponding email template. 
+
+Frontegg comes with pre-set email templates for each time a user:
+
+* Activates their account
+* Resets their password
+* Invited to join a tenant
+* Uses a breached password
+* Requests a magic link
+* Requests a one-time code
+* Connects to a new device
+* Used an invitation to join a tenant
+
+Additionally, you can customize the content and design of each individual email template so that you can deliver your own message and match your brand. 
+
+Read below to learn how to send customized emails about important account-related information in real-time.
+
+> ### 📘
+> 
+> Mirroring Configurations Between Environments
+> 
+> When moving a project from one environment to another, Frontegg moves the email configurations for you. For instance, if moving from development to production, Frontegg moves the development email configurations to production.
+
+## Customizing Email Templates
+
+Follow the steps below to customize your email templates.
+
+### Step 1: Select Email Templates
+
+In your Frontegg Portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Emails**.  
+On the email page is a list of email templates. Almost all templates are enabled by default. 
+
+You can see the status of each in the table. 
+
+To change whether a template is enabled, click on the template and toggle it on or off.
+
+![2880](/images/d7c4932-Screen_Shot_2022-04-12_at_14.29.30.png "Screen Shot 2022-04-12 at 14.29.30.png")   
+
+> ### 🚧
+> 
+> Email Templates in Different Environments
+> 
+> Be sure to manage the email templates in each environment separately.
+
+  
+Leave on as many or as few templates as you want. For each enabled template, your application will email the template to a user when the corresponding event occurs. 
+
+Here is a table with a list of template names, descriptions, and triggering events:  
+  
+| Template Name      | Description                                                                                                                                                                                                                      | Event                       | Available Variables                                                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
+| Pwned Password     | When a user signs up with a password or changes it, Frontegg checks if the password is pwned.A pwned password is one that has previously been exposed in a data breach. Pwned passwords make your user accounts more vulnerable. | Login and signup            | nameemailphoneNumberprofilePictureUrltimesPwned                                                 |
+| ActivateUser       | Email a user when they activate their account.                                                                                                                                                                                   | Account activation          | nameemailphoneNumberprofilePictureUrlredirectURL                                                |
+| ResetPassword      | Email a user when they reset their password.                                                                                                                                                                                     | Password reset              | nameemailphoneNumberprofilePictureUrlredirectURL                                                |
+| MagicLink          | One passwordless authentication method is using magic link. When a user logs in or signs up, they request a magic link that they then receive in their email and can click to authenticate.                                      | Login and signup            | nameemailphoneNumberprofilePictureUrlredirectURLexpires                                         |
+| OTC                | Another passwordless authentication method is using a one-time code. When a user logs in or signs up, they request a code that they then receive in their email and use to authenticate.                                         | Login and signup            | nameemailphoneNumberprofilePictureUrlcode                                                       |
+| ConnectNewDevice   | This feature adds security to user account by notifying the user when someone logs in from a device for the first time.                                                                                                          | Login and signup            | nameemailphoneNumberprofilePictureUrlmetadata.ipAddressmetadata.userAgentmetadata.timestamp     |
+| InviteToTenant     | Email a user when they are invited to join a tenant.                                                                                                                                                                             | Join tenant invitation sent | nameemailphoneNumberprofilePictureUrlissuerNameissuerEmailissuerMetadataissuerProfilePictureUrl |
+| UserUsedInvitation | Email the tenant manager when a user accepts an invitation to join the tenant.                                                                                                                                                   | Tenant invitation accepted  | nameemailphoneNumberprofilePictureUrl                                                           |
+| Email verification | Email a user that signed up via Microsoft Social login method, to verify the email address                                                                                                                                       | Login and signup            | redirectURL                                                                                     |
+
+  
+> ### 📘
+> 
+> Opting for Default?
+> 
+> There is no harm in leaving email templates in their default configuration. However, not all the templates will necessarily apply to your application depending upon how you configure it and some might require some configuration to work properly.
+
+  
+After enabling an email template, you can use the default content and styles or customize it. Read below to learn how to customize the email templates. 
+
+  
+> ### 📘
+> 
+> Webhooks
+> 
+> Frontegg offers webhook notifications, too. Read about [subscribing to webhooks](/docs/webhooks-1).
+
+  
+### Step 2: Customize Email Template
+
+Our easy-to-use email template forms give you maximum customization capabilities for each template with minimal effort. 
+
+Using our email template forms, you can set the content and appearance for each template individually. 
+
+For instance, you can set the sender address, subject, redirect URL, message content, message format, logo, and more. 
+
+You can even edit the HTML to give it the layout and design you want.  
+  
+![](/images/d9707a7-Screen_Shot_2022-04-13_at_18.04.46.png "Screen Shot 2022-04-13 at 18.04.46.png")
+
+  
+#### Form Inputs
+
+Each template has its own set of form inputs. 
+
+You will find some of the inputs are the same across all templates. Like from, from name, subject, and message. For each template, you can customize the value for each input. 
+
+Some templates have additional inputs. For instance, several template forms include inputs for redirect URLs and some have an input for a message. 
+
+You need to update each template separately.
+
+Here is a table of additional inputs in some of the templates.  
+  
+| Input                | Description                                                                                                                                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Redirect URL         | The root part of each redirect URL is:http://localhost:3000/. For instance, http://localhost:3000/account/reset-password.Replace "localhost:3000" with the URL of your app. Leave the second part of the default , for instance account/reset-password, exactly as is. The URL will be used in the email template for {redirectURL}. |
+| Success Redirect URL | After completing the operation flow the user will be redirected to this URL.                                                                                                                                                                                                                                                         |
+| Message              | HTML content of the template. Read more below.                                                                                                                                                                                                                                                                                       |
+
+  
+> ### 📘
+> 
+> Change Email Redirect Link
+> 
+> Read the detailed guide on how to [change the email redirect link](/docs/change-email-redirect-link).
+
+  
+#### Message Content
+
+Set your email message content, layout, and design. 
+
+##### Content
+
+You can completely adjust the content of your email template's HTML with a few exceptions (see info box below) . 
+
+> ### 📘
+> 
+> Handlebars
+> 
+> Frontegg email templates are using standard handlebars and support `{{if}}` and `{{else}}` statements inside the templates. For more details on conditional emails, we recommend following the official handlebars documentation.
+
+  
+> ### 🚧
+> 
+> Content Customization Exceptions
+> 
+> The `{name}` **must appear** within each template and the `{redirectURL}` must appear in each email that has an input for redirect URL.
+
+  
+##### Email Variables
+
+Make your email templates dynamic and personalized using variables. Below is a list of variables you can inject into your emails.  
+  
+| Variable                | Description                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| name                    | Email recipient's name. Required in each HTML template that has an input for redirect URL.        |
+| email                   | Email recipient's email.                                                                          |
+| phoneNumber             | Email recipient's phone number.                                                                   |
+| profilePictureUrl       | Email recipient's profile picture url.                                                            |
+| redirectURL             | Redirect url. See above.                                                                          |
+| tenantName              | Name of the tenant sending the email.                                                             |
+| tenant.xxx              | Any attribute on the tenant object that has a value.                                              |
+| metadata                | Email recipient's user metadata.                                                                  |
+| metadata.xxx            | Custom attributes you're saving on the user's metadata.                                           |
+| timesPwned              | For the pwned password template only, include the number of times the password has been breached. |
+| issuerName              | The name of the user who triggered the email.                                                     |
+| issuerEmail             | The email of the user who triggered the email.                                                    |
+| issuerMetadata          | The metadata of the user who triggered the email.                                                 |
+| issuerProfilePictureUrl | The profile picture url of the user who triggered the email.                                      |
+
+  
+To use a variable, in the body of your HTML content, wrap the variable name in double curly braces like `{{name}}` or `{{tenantName}}` to the HTML template.
+
+##### Layout and Design
+
+Use the HTML Editor to set the layout and design for each template. Anything you can do in HTML, you can do here.
+
+  
+> ### 📘
+> 
+> Customized vs. Default
+> 
+> All email templates come ready to go, so no need to customize any of them. You also probably do not need to customize all of them. For instance, if you enable passwordless authentication, the MagicLink and OTC email templates make sense for you to customize, but you will not use the ResetPassword template, so no use in customizing it.

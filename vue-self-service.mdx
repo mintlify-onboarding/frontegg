@@ -1,0 +1,53 @@
+---
+title: "Admin Portal Integration (Vue.js)"
+---
+
+> ### 📘
+> 
+> Prerequisite: Complete Frontegg Authentication integration
+> 
+> If you haven't integrated Frontegg Authentication into your application, please integrate it before moving to Admin Portal integration. Read about how to [add Frontegg to your application](/docs/adding-frontegg-to-your-app).
+
+## Admin Portal Integration
+
+Embed the admin portal into your application by following this guide.  
+  
+For Frontegg admin portal integration, we will import the `openAdminPortal` method from the `@frontegg/vue` package and use it when clicking on the relevant button.
+
+  
+App.vue
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <p>
+      Logged in as
+      {{ this.authState.user ? this.authState.user.email : "Not logged in" }}
+    </p>
+    <button v-on:click="showAdminPortal">Open admin portal</button>
+  </div>
+</template>
+
+<script>
+import { AdminPortal } from "@frontegg/vue";
+
+export default {
+  name: "App",
+  components: {
+    HelloWorld
+  },
+  data() {
+    return {
+      ...this.mapAuthState(),
+    };
+  },
+  methods: {
+    showAdminPortal() {
+      AdminPortal.show();
+    },
+  },
+};
+</script>
+`
+
+**You are good to go!**  You should now see the admin portal in your application and able to use our full self-served experience with your product.

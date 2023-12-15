@@ -1,0 +1,91 @@
+---
+title: "GitHub login"
+---
+
+To enable your users to login with GitHub, you must enable GitHub login in the builder and then create an application with GitHub to serve as the OAuth provider.
+
+Read below to learn how.
+
+## Enable In Builder
+
+Go to **Home** and click on the Login Box builder.
+
+In the left panel, toggle the switch to _on_ for GitHub.  
+  
+![2880](/images/8047a8b-Screen_Shot_2022-04-17_at_11.29.18.png "Screen Shot 2022-04-17 at 11.29.18.png")   
+
+> ### 🚧
+> 
+> When making changes to the settings in the builder, be sure to [commit your changes and then publish](/docs/editing-builder-settings) for them to take effect and to configure them in your environments.
+
+## Create GitHub App
+
+Follow the steps to below to configure GitHub login.  
+  
+> ### 👍
+> 
+> Moving Environments
+> 
+> When moving a project from one environment to another, Frontegg moves the social login environment configurations for you. For instance, if moving from development to production, Frontegg moves the development social login configurations to production.
+
+### Step 1: Register an Application
+
+On your GitHub account, navigate to your `Organization Account Settings`.  
+  
+![2150](/images/d822448-GH1.png "GH1.png")   
+
+Click `Register an application` and fill the application name and details. Under the callback URL, enter your frontend application URL followed by the string `/account/social/success` as shown below.  
+  
+![1624](/images/09f7c93-img-github-login.png "img-github-login.png")   
+
+> ### 📘
+> 
+> Organization vs Personal Account
+> 
+> You do not need to have a GitHub Organization to allow GitHub social login. If using your personal account, in GitHub visit Settings ➜ Developer Settings ➜ OAuth Apps ➜ New OAuth App and follow similar steps.
+
+  
+### Step 2: Generate Credentials
+
+Now that your application is created, you should be redirected to the application configuration screen.  
+  
+![2250](/images/1707e93-GH3.png "GH3.png")   
+
+Under `Client secrets`, click on `Generate a new client secret` and save the generated secret.  
+  
+![1750](/images/62b92ca-GH4.png "GH4.png")   
+
+### Step 3: Enter Credentials In Frontegg
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ Social Logins**. 
+
+Click on the GitHub manage button.  
+  
+![](/images/cb3af61-Screen_Shot_2022-04-17_at_11.31.40.png "Screen Shot 2022-04-17 at 11.31.40.png")
+
+  
+Enter your GitHub Client ID, Client Secret, and Redirect URL. Then save and publish.  
+
+![](/images/fc48c9d-Screen_Shot_2022-04-17_at_11.33.04.png "Screen Shot 2022-04-17 at 11.33.04.png")
+
+  
+### Step 4: Test GitHub Button
+
+In your login screen, you should see a **GitHub** button that redirects to the GitHub OAuth Consent screen for login. Test it to make sure it works.  
+  
+![](/images/a0fc4bc-Screen_Shot_2021-11-18_at_17.19.24.png "Screen Shot 2021-11-18 at 17.19.24.png")
+
+  
+> ### 📘
+> 
+> Set Who Can Login With GitHub
+> 
+> By default, only invited users can login with GitHub. If you want to allow **new users** to signup with GitHub, go to the Login Box builder and enable Allow Signups in the left panel.
+
+### Customizing Authentication Scopes for GitHub
+
+![Customizing Scopes for Google Social Login](/images/f8ce8d1-Screenshot_2023-11-12_at_10.40.49.png)
+
+Customizing Scopes for Github Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate via their Github account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes. You can check Github's supported scopes [here](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps).

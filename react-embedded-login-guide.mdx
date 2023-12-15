@@ -1,0 +1,133 @@
+---
+title: "Embedded Login Integration (React)"
+---
+
+### Overview
+
+In this quickstart, we will embed Frontegg login box to your React application.
+
+  
+The code in the sample below is available in [our Frontegg Samples repository](https://github.com/frontegg-samples/react-embedded-login-box) 
+
+  
+**⚡ Before you start: ⚡** 
+
+> ### 📘
+> 
+> Getting your Frontegg subdomain
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `baseUrl` in the integration, navigate to your workspace 'Settings' menu, 'Domains' and copy the `Frontegg domain` and `clientId`. 
+> 
+> You will need them for this guide.
+
+  
+#### STEP 1: Create a New React application
+
+  
+> ### 📘
+> 
+> If you have an existing app, skip this step.
+
+  
+To create a new app, use the following script.  
+
+Shell
+
+`$ npm create vite@latest app-with-frontegg --template react
+cd app-with-frontegg
+`
+
+  
+#### STEP 2: Install Frontegg libraries
+
+Run the following command to Install frontegg React.JS library.  
+  
+npmyarn
+
+`npm install @frontegg/react react-router-dom
+`
+
+`yarn add @frontegg/react [[email protected]](/cdn-cgi/l/email-protection)
+`
+
+  
+#### STEP 3: Configuration
+
+Wrap your root component with `FronteggProvider`.  
+  
+index.js
+
+`import React from 'react';
+import ReactDOM from 'react-dom'; // For react 17
+// For react 18: import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+import { FronteggProvider } from '@frontegg/react';
+
+const contextOptions = {
+  baseUrl: 'https://[YOUR_SUBDOMAIN].frontegg.com',
+};
+
+const authOptions = {
+ // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+};
+
+// For react 18: 
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+ReactDOM.render(
+    <FronteggProvider contextOptions={contextOptions} hostedLoginBox={false} authOptions={authOptions}>
+        <App />
+    </FronteggProvider>,
+    document.getElementById('root')
+);
+`
+
+  
+#### STEP 4: Getting the user context
+
+Frontegg exposes the user context and the authentication state via the `useAuth` hook which allows you to redirect non-authenticated users to the login page and to get the user's information.  
+  
+app.js
+
+`import React from 'react';
+import { useAuth } from '@frontegg/react'
+
+function App() {
+  const { user, isAuthenticated } = useAuth();
+
+  return (
+    <div className='App'>
+      {isAuthenticated && (
+        <div>
+          <img src={user.profilePictureUrl} alt={user.name} />
+          <span>{user.name}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+`
+
+  
+Great, Frontegg is now integrated with your app!
+
+**Login and logout routes have been added to your app:**
+
+* Signup screen is at `http://localhost:3000/account/sign-up`
+* Login screen is at `http://localhost:3000/account/login`
+
+If you are already logged in, go to `http://localhost:3000/account/logout` and log out.
+
+**Give it a try now!** 
+
+Open `http://localhost:3000/account/sign-up` and sign up with your first user.
+
+> ### 🚧
+> 
+> Avoid Clickjacking
+> 
+> To prevent _Clickjacking_ vulnerabilities, make sure you add an `X-Frame-Options` Header with `SAMEORIGIN` value to your hosting service.

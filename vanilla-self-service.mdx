@@ -1,0 +1,70 @@
+---
+title: "Admin Portal Integration (Vanilla.js)"
+---
+
+> ### 📘
+> 
+> Prerequisite: Complete Frontegg Authentication integration
+> 
+> If you haven't integrated Frontegg Authentication into your application, please integrate it before moving to Admin Portal integration. Read about how to [add Frontegg to your application](/docs/adding-frontegg-to-your-app).
+
+## Admin Portal Integration
+
+Embed the admin portal into your application by following this guide.  
+  
+For Frontegg admin portal integration, we will use `showAdminPortal` API when clicking on the relevant button.
+
+  
+index.js
+
+`import {initialize} from "@frontegg/js"
+
+const style = document.createElement('style');
+style.setAttribute('type', 'text/css');
+style.innerHTML = '';
+document.getElementsByTagName('head')[0].appendChild(style);
+
+const app = initialize({
+  contextOptions: {
+    baseUrl: "https://YOUR_DOMAIN.frontegg.com", //set your Frontegg environment domain and client ID here
+    clientId: 'YOUR_FRONTEGG_CLIENT_ID'
+  },
+  hostedLoginBox: true //if you are working in embedded mode remove this one
+})
+
+document.querySelector('[fe-action="open-admin-portal"]').addEventListener('click', () => {
+  app.showAdminPortal()
+})
+`
+
+Add the representative HTML button that will show the admin portal view. Clicking on the button should show the admin portal right away.
+
+index.html
+
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        button {
+            border-radius: 4px;
+            background: dodgerblue;
+            color: white;
+            border: 0;
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-root" style="display: none">
+    <h1>This is Frontegg Integration in Vanilla Javascript </h1>
+    <button fe-action="open-admin-portal" fe-state="isAuthenticated">Open AdminPortal</button>
+</div>
+<script src="/bundle.js"></script>
+</body>
+</html>
+`
+
+**You are good to go!**  You should now see the admin portal in your application and be able to use our full self-served experience with your product.

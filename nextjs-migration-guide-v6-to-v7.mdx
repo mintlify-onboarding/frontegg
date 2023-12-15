@@ -1,0 +1,330 @@
+---
+title: "Next.js Migration Guide V6 to V7"
+---
+
+In this migration guide, we will go over the process of migrating from `@frontegg/[[email protected]](/cdn-cgi/l/email-protection)` to `@frontegg/[[email protected]](/cdn-cgi/l/email-protection)`. The new version introduces some breaking changes, please make sure to follow the below instructions carefully. 
+
+This guide is intended for applications that use SSR and `withFronteggApp`. If you used `FronteggProviderNoSSR` in your project, there is no need to update your project.
+
+  
+**⚡ Before you start: ⚡** 
+
+  
+> ### 📘
+> 
+> Prerequisites:
+> 
+> Node >= 16  
+> Next >= 12  
+> Typescript >= 3.9.7
+> 
+> The files in this guide are in typescript - if you are working in js, simply change the file types and remove the typing.
+
+#### STEP 1: Frontegg API middleware migration
+
+* Rename imports to `@frontegg/nextjs/middleware`.
+* Export Next.js config to mark as `externalResolver` and disable the response limit.
+
+./pages/api/frontegg/\\\[...frontegg-middleware\].ts v7./pages/api/frontegg/\\\[...frontegg-middleware\].ts v6
+
+`import { FronteggApiMiddleware } from '@frontegg/nextjs/middleware';
+
+export default FronteggApiMiddleware;
+export const config = {
+  api: {
+    externalResolver: true,
+    // https://nextjs.org/docs/messages/api-routes-response-size-limit
+    responseLimit: false,
+  },
+};
+`
+
+`export { fronteggMiddleware as default } from '@frontegg/nextjs';
+`
+
+  
+#### STEP 2: Edge middleware migration
+
+If you are using Next.js `edge` middleware, (Ex: middleware.ts):
+
+* Rename the imports to `@frontegg/nextjs/edge`.
+* Rename getSession to `getSessionOnEdge`.
+* Use the `redirectToLogin` method instead of building the login URL.
+
+middleware.ts v7middleware.ts v6
+
+`import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getSessionOnEdge, shouldByPassMiddleware, redirectToLogin } from '@frontegg/nextjs/edge';
+
+export const middleware = async (request: NextRequest) => {
+  const pathname = request.nextUrl.pathname;
+
+  if (shouldByPassMiddleware(pathname)) {
+    return NextResponse.next();
+  }
+
+  const session = await getSessionOnEdge(request);
+  if (!session) {
+    return redirectToLogin(pathname);
+  }
+  return NextResponse.next();
+};
+
+export const config = {
+  matcher: '/(.*)',
+};
+`
+
+`` import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getSession, shouldByPassMiddleware } from '@frontegg/nextjs/edge';
+
+export const middleware = async (request: NextRequest) => {
+  const pathname = request.nextUrl.pathname;
+
+  if (shouldByPassMiddleware(pathname /*, options: optional bypass configuration */)) {
+    return NextResponse.next();
+  }
+
+  const session = await getSession(request);
+  if (!session) {
+    //  redirect unauthenticated user to /account/login page
+    const loginUrl = `/account/login?redirectUrl=${encodeURIComponent(pathname)}`;
+    return NextResponse.redirect(new URL(loginUrl, process.env['FRONTEGG_APP_URL']));
+  }
+return NextResponse.next();
+};
+
+export const config = {
+  matcher: '/(.*)',
+};
+ ``
+
+  
+#### Pages Architecture Migration
+
+./pages/\\\_app.tsx v7./pages/\\\_app.tsx v6
+
+`import { withFronteggApp } from '@frontegg/nextjs';
+
+function CustomApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+
+export default withFronteggApp(CustomApp, 
+  {
+    hostedLoginBox: true, 
+    authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+    }
+});
+`
+
+`import { withFronteggApp } from '@frontegg/nextjs/pages';
+
+function CustomApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+
+export default withFronteggApp(CustomApp, 
+  {
+    hostedLoginBox: true, 
+    authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+    }
+});
+`
+
+  
+./pages/\\\[...frontegg-router\].tsx v7./pages/\\\[...frontegg-router\].tsx v6
+
+`import { FronteggRouter, FronteggRouterProps } from '@frontegg/nextjs/pages';
+
+export const getServerSideProps = FronteggRouterProps;
+export default FronteggRouter;
+`
+
+`export {
+  FronteggRouter as default,
+  FronteggRouterProps as getServerSideProps,
+} from '@frontegg/nextjs';
+`
+
+  
+Example page
+
+index.tsx v7index.tsx v6
+
+`` import { useCallback } from "react";
+import { GetServerSideProps } from "next";
+import { getSession } from "@frontegg/nextjs/pages";
+import { useAuth } from "@frontegg/nextjs";
+import { useRouter } from "next/router"
+
+export default function MyPage({ products }) {
+  const { user } = useAuth();
+
+  const router = useRouter();
+
+  const logout = useCallback(() => {
+    router.replace('/account/logout');
+  }, [router]);
+ 
+  return (
+    <div>
+      <h1>My Page</h1>
+      {products}
+      <div>
+        <img src={user?.profilePictureUrl} alt={user?.name} />
+      </div>
+      <div>
+        <span>Logged in as: {user?.name}</span>
+      </div>
+      <div>
+        <button onClick={logout}>Log out</button>
+      </div>
+    </div>
+  );
+}
+
+// In the `getServerSideProps` method you can get data from an external service to pull relevant data for a logged in user.
+// we used the prop `products`. See the commented code for an example.
+
+export const getServerSideProps: GetServerSideProps = withSSRSession(
+  async (context, session) => {
+    //     const { data } = await fetch('{external}/product', {
+    //      headers: {
+    //        Authorization: 'bearer ' + session.accessToken,
+    //      },
+    //    });
+    return { props: {} };
+  }
+);
+ ``
+
+`` import { GetServerSideProps } from 'next';
+import { withSSRSession, useAuth } from '@frontegg/nextjs';
+
+export default function MyPage({ products }) {
+  const {user} = useAuth();
+  
+  //baseUrl should be your FRONTEGG_APP_URL from .env.local
+  const baseUrl =  'FRONTEGG_APP_URL'
+  
+  const logout = () => {
+    window.location.href = `${baseUrl}/account/logout`;
+  };
+
+  return (
+    <div>
+      <h1>My Page</h1>
+       {products}
+      <div>
+        <img src={user?.profilePictureUrl} alt={user?.name}/>
+      </div>
+      <div>
+        <span>Logged in as: {user?.name}</span>
+      </div>
+            <div>
+        <button onClick={logout}>Log out</button>
+      </div>
+    </div>
+  );
+}
+
+// In the `getServerSideProps` method you can get data from an external service to pull relevant data for a logged in user.
+// we used the prop `products`. See the commented code for an example.
+
+export const getServerSideProps: GetServerSideProps = withSSRSession(
+  async (context, session) => {
+//     const { data } = await fetch('{external}/product', {
+//      headers: {
+//        Authorization: 'bearer ' + session.accessToken,
+//      },
+//    });
+    return { props: { } };
+  }
+);
+ ``
+
+#### App Directory Architecture Aigration
+
+* Rename imports from `@frontegg/nextjs/server` to `@frontegg/nextjs/app`.
+* Move `FronteggAppProvider` to inside RootLayout :
+  
+./app/layout.tsx v7./app/layout.tsx v6
+
+`import { FronteggAppProvider } from '@frontegg/nextjs/app';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const authOptions = {
+			// keepSessionAlive: true // Uncomment this in order to maintain the session alive
+    }
+    return (
+      <html>
+        <head></head>
+        <body>
+            {/* @ts-expect-error Server Component for more details visit: https://github.com/vercel/next.js/issues/42292 */}
+            <FronteggAppProvider authOptions={authOptions} hostedLoginBox={false}>
+                {children}
+            </FronteggAppProvider>
+        </body>
+      </html>
+    );
+}
+`
+
+`import { FronteggAppProvider } from "@frontegg/nextjs/server";
+
+export default function RootLayout({children}: {children: React.ReactNode;}) {
+
+  const authOptions = {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+}
+  
+  return (
+    <FronteggAppProvider authOptions={authOptions} hostedLoginBox={true}>
+      <html>
+        <head></head>
+        <body>{children}</body>
+      </html>
+    </FronteggAppProvider>
+  );
+}
+`
+
+  
+./app/\\\[...frontegg-router\]/page.tsx v7./app/\\\[...frontegg-router\]/page.tsx v6
+
+`import { FronteggAppRouter } from '@frontegg/nextjs/app';
+
+export default FronteggAppRouter;
+`
+
+`export { FronteggAppRouter as default } from '@frontegg/nextjs/client';
+`
+
+  
+Rename `getSession` and `getUserTokens` to `getAppUserSession` and `getAppUserToken`
+
+./app/ServerComponent.tsx v7
+
+`import { getAppUserSession, getAppUserTokens } from '@frontegg/nextjs/app';
+
+export const ServerSession = async () => {
+  
+  const userSession = await getAppUserSession();
+  const tokens = await getAppUserTokens();
+  
+  return (
+    <div>
+      <div>user session server side: {JSON.stringify(userSession)}</div>;
+      <div>user tokens server side: {JSON.stringify(tokens)}</div>
+    </div>
+  );
+};
+`
+
+  
+You're all set!

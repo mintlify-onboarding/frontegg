@@ -1,0 +1,247 @@
+---
+title: "Hosted Login Integration (Angular)"
+description: "The following guide will walk you through adding Frontegg's login box to your Angular application."
+---
+
+This guide will seamlessly walk you through integrating Frontegg's login box into your Angular application, with robust functionalities including Sign In, Sign Up, and Single Sign-On (SSO). Streamline your authentication process with just a few lines of code, leveraging the power of redirects, OpenID Connect, and OAuth2\. 
+
+> ### 🚧
+> 
+> Server-Side Rendering (SSR) Support
+> 
+> Server-Side Rendering (SSR) is currently not supported for this integration.
+
+⚡️ The code in the sample below is available in [our Frontegg Samples repository](https://github.com/frontegg-samples/angular-hosted-login-box) in GitHub ⚡️ 
+
+### Before Getting Started
+
+We highly encourage you to create your custom domains before going live. [Custom Domains](/docs/custom-domains) are important to avoid third party cookie-issues. Switching to a custom domain after you've gone live is very cumbersome- especially if you have active SSO connections - so we encourage you to configure them in your Production environment from the get-go. Go [here](/docs/custom-domains) to learn more.
+
+> ### 🚧
+> 
+> Creating your Frontegg subdomain
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `baseUrl` in the integration, navigate to your workspace 'Settings' menu, 'Domains' and copy the `Frontegg domain` and `clientId`. 
+> 
+> You will need them for this guide.
+
+## [](#section-)
+
+#### STEP 1: Create an Angular app
+
+**If you already have an existing app, skip this step.** 
+
+Install the Angular command line interface.
+
+Shell
+
+`npm install -g @angular/cli
+`
+
+To create a new app, use the following script.
+
+Shell
+
+`ng new my-app
+cd my-app 
+ng serve --open
+`
+
+#### STEP 2: Install Frontegg Angular library
+
+Run the following command to install the Frontegg Angular library.
+
+npmyarn
+
+`npm install @frontegg/angular
+`
+
+`yarn add @frontegg/angular
+`
+
+#### STEP 3: Configure your app
+
+> ### 📘
+> 
+> Modules vs. Standalone
+> 
+> Note that configuring your app depends on whether you have a _standalone_ or Frontegg-module based app or not. If you have a _standalone_ app, please refer to the `app.config.ts` script. Otherwise, use `app.module.ts`.
+
+1. Add `FronteggAppModule` to AppModule.imports\[\]
+2. Add `FronteggComponent` to AppModule.entryComponents\[\]
+
+app.module.tsapp.config.ts
+
+`import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { CommonModule } from "@angular/common";
+import { FronteggAppModule, FronteggComponent } from "@frontegg/angular";
+const fronteggConfig = {
+  contextOptions: {
+    baseUrl: "https://[YOUR-SUB-DOMAIN].frontegg.com",
+    clientId: "[YOUR-CLIENT-ID]",
+  },
+  authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: true,
+};
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+
+    /** Import Frontegg Module **/
+    FronteggAppModule.forRoot(fronteggConfig),
+  ],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+`
+
+`import { ApplicationConfig, importProvidersFrom } from "@angular/core";
+import { FronteggAppOptions } from "@frontegg/types";
+import { provideRouter } from "@angular/router";
+import { routes } from "./app.routes";
+import { FronteggAppModule } from "@frontegg/angular";
+
+const fronteggConfig: FronteggAppOptions = {
+  contextOptions: {
+    baseUrl: "https://[YOUR-SUB-DOMAIN].frontegg.com",
+    clientId: "[YOUR-CLIENT-ID]",
+  },
+  authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: true,
+};
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    importProvidersFrom(FronteggAppModule.forRoot(fronteggConfig)),
+  ],
+};
+
+`
+
+In `app.component.ts`, add the loading state and `loginWithRedirect` hook in order to navigate to the hosted login.
+
+app.component.ts
+
+`` import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from "rxjs";
+import { FronteggAppService, FronteggAuthService, ContextHolder } from "@frontegg/angular";
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  standalone: true //comment out if you're not using a standalone app
+})
+export class AppComponent implements OnInit, OnDestroy {
+  isLoading = true;
+  loadingSubscription: Subscription;
+  user?: any;
+
+  constructor(private fronteggAuthService: FronteggAuthService, private fronteggAppService: FronteggAppService) {
+    this.loadingSubscription = fronteggAppService.isLoading$.subscribe((isLoading) => this.isLoading = isLoading)
+  }
+
+  ngOnInit(): void {
+    this.fronteggAuthService?.user$.subscribe((user) => {
+      this.user = user
+    })
+  }
+
+  loginWithRedirect(): void {
+    this.fronteggAuthService.loginWithRedirect();
+  }
+  
+  logOut(): void {
+    const baseUrl = ContextHolder.getContext().baseUrl;
+    window.location.href = `${baseUrl}/oauth/logout?post_logout_redirect_uri=${window.location}`;
+  }
+
+  ngOnDestroy(): void {
+    this.loadingSubscription.unsubscribe()
+  }
+}
+ ``
+
+For an automatic redirect to your app or login page, use the following code:
+
+app.component.ts
+
+`` // Available from v4.20.1 for automatic redirect to your app / login box. 
+
+export class AppComponent implements OnInit
+{
+  isLoading = true;
+  user?: any;
+
+  constructor(private fronteggAuthService: FronteggAuthService, private fronteggAppService: FronteggAppService) {
+  }
+
+  ngOnInit(): void {
+    this.fronteggAuthService.authState$.subscribe(authState => {
+      this.isLoading = authState.isLoading
+      this.user = authState.user
+      if (!authState.isLoading && !authState.isAuthenticated) {
+        this.fronteggAuthService.loginWithRedirect();
+      }
+    });
+  }
+
+  logOut(): void {
+    const baseUrl = ContextHolder.getContext().baseUrl;
+    window.location.href = `${baseUrl}/oauth/logout?post_logout_redirect_uri=${window.location}`;
+  }
+}
+ ``
+
+  
+On the \[hosted login configuration\](https://portal.frontegg.com), add \`http://localhost:4200/oauth/callback\` as the allowed \`redirectUrl\`  
+
+![](/images/9c0f0f3-Screen_Shot_2022-12-22_at_13.56.34.png "Screen Shot 2022-12-22 at 13.56.34.png")
+
+  
+> ### 🚧
+> 
+> Configure Each Environment
+> 
+> Configure hosted login for each environment separately.
+
+  
+#### STEP 4: Redirect to login
+
+In `app.component.html`, for non-authenticated users, clicking the `loginWithRedirect()` will navigate the user to the hosted login. Once the user is authenticated, the user info will be available on the `user` object available from the component.  
+  
+app.component.html
+
+`@if(!isLoading){
+<div>
+  @if(user){
+  <div>
+    <img src={{user?.profilePictureUrl}} alt={{user?.name}} />
+    <div>User name: {{user?.name}}</div>
+    <button (click)="logOut()">Log out</button>
+  </div>
+  } @else {
+  <div>
+    <!-- Uncomment when not using auto-redirect-->
+    <!-- <button (click)="loginWithRedirect()">Login with redirect</button> -->
+  </div>
+  }
+</div>
+}
+`
+
+  
+Great, Frontegg is now integrated with your app!
+
+Run your app and click on the `Login with redirect` button in order to navigate to the login dialog

@@ -1,0 +1,90 @@
+---
+title: "Customer OpenID connect - IDP setup"
+---
+
+OpenID Connect (OIDC) is an open identity authentication protocol that works on top of the OAuth 2.0 framework. OIDC allows individuals to use SSO to access relying party sites.
+
+This guide explains how users can configure their OpenID Connect (OIDC) settings with their identity provider. 
+
+  
+> ### 📘
+> 
+> In order to be able to log in via OIDC SSO, [it needs to be enabled on the application login](/docs/adding-sso-overview) and [configured](/docs/configuring-openid-connect).
+
+### Customer Configuration
+
+If OpenID Connect is [enabled and configured](/docs/configuring-openid-connect) an end user can configure an OIDC connection and allow other users to sign in to their account using OpenID Connect.
+
+Below is an example with Okta.
+
+##### STEP 1: Create a New OpenID Application
+
+Create a new OpenID Connect application with Okta that you can use as the Identity Provider for users.
+
+![](/images/a7683fe-Screenshot_2023-04-19_at_17.11.06.png)
+
+##### STEP 2: Find Admin Portal
+
+Go to the **Admin Portal ➜ SSO**
+
+![](/images/f822a4b-Screenshot_2023-03-26_at_13.26.00.png "Screenshot 2023-03-26 at 13.26.00.png")
+
+##### STEP 3: Configure IDP
+
+Choose **Open ID Connect** as IDP method and copy the Redirect URI.  
+  
+![](/images/8021c3d-Screenshot_2023-03-26_at_15.02.38.png "Screenshot 2023-03-26 at 15.02.38.png")
+
+Use `Redirect URI` from the Admin portal as `Sign-in redirect URIs` on Okta:
+
+![](/images/5ea1135-image_79.png)
+
+Get the `Client ID` and `secret` from your Okta application and insert them in the Admin portal OpenId configuration.
+
+![](/images/574fcd0-image_7888.png)
+
+OpenID Connect parameters overview:
+
+| Configuration | Description                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Issuer URL    | This is a URL that is given by the IDP. This URL provides instructions on how to communicate with the IDP. If you are unsure you have the right URL, insert in in the issues URL field and it will be validated automatically. |
+| Client ID     | The clientId is given by the IDP. This allows the IDP to identify who is requesting to authenticate.                                                                                                                           |
+| Secret Key    | The secret key allows authentication with the IDP to validate the user who tries to log in. It must correspond to the secret key inserted for the clientId.                                                                    |
+| Redirect URI  | This is a pre-configured value that lets the IDP know where it should return the user after the user is authenticated within the IDP. The redirect URI value must be configured in the IDP itself.                             |
+
+##### STEP 4: Claim Domain
+
+After configuring the identity provider, you will need to claim one or more domains for the account. This step is required in order to avoid abuse of a domain.  
+  
+![](/images/d4a0aa2-Screenshot_2023-03-26_at_13.29.40.png "Screenshot 2023-03-26 at 13.29.40.png")
+
+  
+The domain needs to be claimed by copying the TXT record and applying it to your DNS provider. If you cannot obtain access to your organization's DNS, please contact your application Administrator.
+
+  
+You can configure multiple domains for an account. This can be useful if you're using multiple environments for development or multiple production applications on separate domains and need the SSO connection to cover several domains.  
+  
+![](/images/4883242-Screenshot_2023-03-26_at_13.31.10.png "Screenshot 2023-03-26 at 13.31.10.png")
+
+##### STEP 5: Manage Authorization
+
+Select which roles should be assigned to SSO users by default and map IDP groups to specific roles. Roles you assign to users through SSO will apply regardless of whatever additional roles you assign to those users.
+
+##### Default SSO Roles
+
+Assign default roles to all SSO users by adding one or more Frontegg roles from your list of predefined roles. 
+
+  
+![](/images/29cc722-small-Screenshot_2023-04-30_at_16.00.47.png)
+
+##### STEP 6: Mapping Groups to Roles (Optional)
+
+Mapping groups to roles with OpenID connect is currently only possible for the application owner via Frontegg APIs or using Frontegg Backoffice.
+
+##### Step 7: Save the SSO connection
+
+Save the connection and make sure that it is enabled
+
+![](/images/8b0bf72-Group_1oidcconfig.png)
+
+That's it! Now all users with the domain that was configured for the connection, will be redirected to their IDP when they will try to sign in.

@@ -1,0 +1,67 @@
+---
+title: "Vendor OpenID Configuration"
+---
+
+> ### 🚧
+> 
+> Configuring Custom Domains Before OpenID Configuration
+> 
+> We highly recommend using Custom Domains to avoid third party cookie-issues and this recommendation is appies to both _Embedded_ and _Hosted_ login customers. Since it is very cumbersome to switch to a custom domain after you've gone live - and especially if you have active SSO connections - we encourage you to configure custom domains in your Production environment from the get-go. Learn more about [Custom Domains](/docs/custom-domains).
+
+#### Configuring OpenID in Your Frontegg Portal
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ SSO**.
+
+![](/images/b47c661-Group_1oidc.png)
+
+> ### 🚧
+> 
+> SSO/OpenID Enablement
+> 
+> If you do not see SSO ➜ OpenID in the sidebar, make sure it is enabled and [published to the environment](/docs/adding-sso).
+
+After clicking the OpenID _Manage_ button, insert your redirect URL and save the changes. If you are using the **Hosted login** method, the Redirect URL should be **https://\[your-frontegg-domain\].frontegg.com/oauth/account/oidc/callback.**
+
+If you are using the **Embedded Login** method, the Redirect URL should be \[your-application-url\]/account/saml/callback, for example: **http://localhost:3000/account/oidccallback**.
+
+![](/images/2563b1c-Group_1oidc_config11.png)
+
+> ### 🚧
+> 
+> When using a custom domain
+> 
+> We strongly encourage you to configure a [custom domain](/docs/adding-custom-domain) in your Frontegg app before configuring your OpenID connection, as it may require some downtime to change it retroactively _after_ configuring your connection. Custom Domains are beneficial for a number of reasons, such as avoiding cookie issues and enhancing your brand. Learn more about [Custom Domains](/docs/custom-domains).
+> 
+> If you opt **not** to configure a custom domain, use your `frontegg subdomain` followed by `/auth/oidc/callback` for your ACS URL.
+
+### Allow your customers to apply the connection or apply it for them
+
+After configuring OIDC in the Frontegg Portal, you can allow your end users either to apply the SSO connection via the Self-service or apply the connection details from their IDP on their behalf, via the Backoffice ➜ Accounts ➜ Account ➜ Actions SSO ➜ Configurations.
+
+##### Enable SSO Tab in the Admin portal
+
+For enabling the SSO tab in the Self-Service for your end users:
+
+> ### 🚧
+> 
+> Admin portal integration
+> 
+> Make sure that you have integrated the Admin portal into your application as described in (doc:react-self-service).
+
+![](/images/29f320d-image_76.png)
+
+After the SSO tab is enabled, your customers can follow the instructions for adding the details of the connection from the IDP - [here](/docs/saml-idp-instructions). 
+
+For OpenID there is no option to map roles to groups from the Self-Service UI (Admin portal). It can be applied only via [APIs](/reference/ssorolescontrollerv1%5Fsetssodefaultroles) or the Backoffice.
+
+##### Apply the connection from the Environment Backoffice
+
+For applying the SSO connection on behalf of your customers, you can use the back office or do it by using our APIs.
+
+![](/images/b65ec78-test_back.png)
+
+### Additional resources
+
+##### FAQs related to OpenID Connect SSO
+
+[Why does logging in with Azure AD OIDC throws an error?](https://support.frontegg.com/hc/en-us/articles/7945582321693-Why-does-my-Azure-AD-OIDC-throws-Can-t-sign-you-in-)

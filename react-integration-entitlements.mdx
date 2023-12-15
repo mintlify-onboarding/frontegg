@@ -1,0 +1,153 @@
+---
+title: "Entitlements Integration (React)"
+---
+
+> ### 🚧
+> 
+> Prerequisite
+> 
+> Minimum required version : 6.0.8
+
+### Configuring Entitlements with React SDK
+
+Use the following code to configure entitlements with React SDK:
+
+TypeScript
+
+`import { FronteggProvider } from "@frontegg/react";
+
+ReactDOM.render(
+  <FronteggProvider
+    contextOptions={contextOptions}
+    entitlementsOptions={{ enabled: true }}
+  >
+    {" "}
+    <Page />
+  </FronteggProvider>,
+  document.getElementById("root"),
+);
+
+`
+
+### API Calls
+
+The following API calls can be performed after configuring Entitlements with React.
+
+* `useFeatureEntitlements` \- checks whether a user is entitled to feature access.
+* `usePermissionEntitlements` \- checks whether a user is entitled to permission.
+* `useEntitlements` \- checks whether a user is entitled to a feature or permission.
+
+#### Custom Attributes
+
+Frontegg allows you to create _custom attributes_ for users (learn more about creating [custom attributes](/docs/feature-flags#custom-attributes). Attributes can be used for [Feature Flagging](/docs/feature-flags) purposes and in Entitlement API calls within a **customAttributes** object. The **customAttributes** object is optional and comprised of key-value pairs with possible values of `string | number | boolean | Date`, like so:
+
+TypeScript
+
+`useFeatureEntitlements('feature-x', { attr1: 'val1', attr2: 'val2' })
+`
+
+TypeScript
+
+`import { Entitlement, CustomAttributes } from '@frontegg/types';
+
+useFeatureEntitlements(key: string, customAttributes?:CustomAttributes) => Entitlement
+usePermissionEntitlements(key: string, customAttributes?:CustomAttributes) => Entitlement
+useEntitlements(options: EntitledToOptions, customAttributes?:CustomAttributes) => Entitlement
+`
+
+### Creating Hooks
+
+> ### 🚧
+> 
+> Hooks Usage
+> 
+> * Hooks should be called for authenticated users only.
+> * An exception will be thrown if entitlements is not enabled before using hooks.
+
+TypeScript
+
+`import {
+  useFeatureEntitlements,
+  usePermissionEntitlements,
+  useEntitlements,
+  useIsAuthenticated,
+} from "@frontegg/react";
+
+const Page = () => {
+  const isAuthenticated = useIsAuthenticated();
+
+  return <>{isAuthenticated && <Entitlements />}</>;
+};
+
+const Entitlements = () => {
+  const { isEntitled: isFEntitled, justification: fJust } =
+    useFeatureEntitlements("feature-key");
+
+  const { isEntitled: isPEntitled, justification: pJust } =
+    usePermissionEntitlements("permission-key");
+
+  const { isEntitled: isPEntitled2, justification: pJust2 } = useEntitlements({
+    permissionKey: "permission-key",
+  });
+
+  const { isEntitled: isFEntitled2, justification: fJust2 } = useEntitlements({
+    featureKey: "feature-key",
+  });
+
+  return (
+    <>
+      {isFEntitled && <div>A cool section</div>}
+      {isPEntitled && <div>An awesome section</div>}
+      {isPEntitled2 && <div>A mind-blowing section</div>}
+      {isFEntitled2 && <div>Another section</div>}
+    </>
+  );
+};
+
+`
+
+In case the user is _not_ entitled to the feature or permission, the `NotEntitledJustification` when `isEntitled` is `false` will be one of the following enums:
+
+TypeScript
+
+`export enum NotEntitledJustification {
+  MISSING_PERMISSION = 'MISSING_PERMISSION',
+  MISSING_FEATURE = 'MISSING_FEATURE',
+  BUNDLE_EXPIRED = 'BUNDLE_EXPIRED',
+}
+`
+
+#### Load on demand
+
+The user can load entitlements on demand with the `loadEntitlements` saga:
+
+TypeScript
+
+`const { loadEntitlements } = useAuthActions();
+
+<button
+    onClick={() => {
+        loadEntitlements();
+    }}
+>
+    Load entitlements
+</button>;
+
+`
+
+You can pass a callback to let you know that the request was completed:
+
+TypeScript
+
+`` const { loadEntitlements } = useAuthActions();
+
+const onLoadEntitlements = () => {
+    loadEntitlements({
+        callback: (isSucceeded) =>
+            console.log(`request ${isSucceeded ? "succeeded" : "failed"}`),
+    });
+};
+
+<button onClick={onLoadEntitlements}>Load entitlements</button>;
+
+ ``

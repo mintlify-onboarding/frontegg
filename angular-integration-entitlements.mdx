@@ -1,0 +1,258 @@
+---
+title: "Entitlements Integration (Angular)"
+---
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> Minimum required version is : 6.8.0
+
+To enable entitlements by configuration, add the following code within your `app.module.ts` file: 
+
+TypeScript
+
+`import {
+    NgModule
+} from '@angular/core';
+import {
+    FronteggAppModule
+} from '@frontegg/angular';
+@NgModule({
+    imports: [
+        //... ,
+        FronteggAppModule.forRoot({
+            contextOptions: {
+                baseUrl: //... ,
+                    clientId: //...
+            },
+            entitlementsOptions: {
+                enabled: true
+            }
+        }, ),
+    ],
+    //...
+})
+`
+
+An exception will be thrown if you don’t enable entitlements and try to use the functions.
+
+#### APIs
+
+To use Entitlement-functions you have to use `FronteggEntitlementsService`.
+
+The service exposes four functions:
+
+* `featureEntitlements$` \- to get a subscription to check if the user is entitled to a feature
+* `permissionEntitlements$` \- to get a subscription to check if the user is entitled to permission
+* `entitlements$` \- to get a subscription to check if the user is entitled to a feature or permission
+* `loadEntitlements` \- load entitlements on demand
+
+The functions should be called only for authenticated users. 
+
+#### Example
+
+TypeScript
+
+`import {
+    Component,
+    NgZone,
+    OnInit,
+    OnDestroy
+} from '@angular/core';
+import {
+    Subscription
+} from 'rxjs';
+import {
+    FronteggAppService,
+    FronteggEntitlementsService
+} from '@frontegg/angular';
+import {
+    Entitlement
+} from '@frontegg/types';
+import {
+    Entitlement,
+    CustomAttributes
+} from '@frontegg/types';
+@Component({
+    selector: 'entitlements',
+    templateUrl: './entitlements.component.html'
+})
+export class EntitlementsComponent implements OnInit, OnDestroy {
+    feature1EntitlementsSubscription: Subscription;
+    permission1EntitlementsSubscription: Subscription;
+    feature2EntitlementsSubscription: Subscription;
+    permission2EntitlementsSubscription: Subscription;
+    feature1EntResult: Entitlement | undefined;
+    permission1EntResult: Entitlement | undefined;
+    feature2EntResult: Entitlement | undefined;
+    permission2EntResult: Entitlement | undefined;
+    loadingSubscription: Subscription;
+    isLoading = true;
+    authenticated = false;
+    constructor(private fronteggAppService: FronteggAppService, private fronteggEntitlementsService: FronteggEntitlementsService, private ngZone: NgZone) {
+        this.loadingSubscription = fronteggAppService.isLoading$.subscribe((isLoading) => {
+            this.isLoading = isLoading;
+        });
+        this.fronteggAppService.isAuthenticated$.subscribe((isAuthenticated: boolean) => {
+            this.authenticated = isAuthenticated;
+        });
+        this.feature1EntitlementsSubscription = this.fronteggEntitlementsService.featureEntitlements$('feature1', {
+            next: (result: Entitlement) => {
+                this.ngZone.run(() => {
+                    this.feature1EntResult = result;
+                });
+            }
+        });
+        this.permission1EntitlementsSubscription = this.fronteggEntitlementsService.permissionEntitlements$('permission1', {
+            next: (result: Entitlement) => {
+                this.ngZone.run(() => {
+                    this.permission1EntResult = result;
+                });
+            }
+        });
+        this.feature2EntitlementsSubscription = this.fronteggEntitlementsService.entitlements$({
+            featureKey: 'feature2'
+        }, {
+            next: (result: Entitlement) => {
+                this.ngZone.run(() => {
+                    this.feature2EntResult = result;
+                });
+            }
+        });
+        this.permission2EntitlementsSubscription = this.fronteggEntitlementsService.entitlements$({
+            permissionKey: 'permission2'
+        }, {
+            next: (result: Entitlement) => {
+                this.ngZone.run(() => {
+                    this.permission2EntResult = result;
+                });
+            }
+        });
+    }
+    ngOnDestroy(): void {
+        //...
+        this.feature1EntitlementsSubscription.unsubscribe();
+        this.feature2EntitlementsSubscription.unsubscribe();
+        this.permission2EntitlementsSubscription.unsubscribe();
+    }
+}
+`
+
+While the HTML file is as follows:
+
+HTML
+
+`<div *ngIf="!isLoading">
+    <section *ngIf="authenticated">
+        <div *ngIf="feature1EntResult?.isEntitled">A cool section</div>
+        <div *ngIf="permission1EntResult?.isEntitled">An awesome section</div>
+        <div *ngIf="feature2EntResult?.isEntitled">A mind-blowing section</div>
+        <div *ngIf="permission2EntResult?.isEntitled">Another section</div>
+    </section>
+</div>
+
+`
+
+Justification (`NotEntitledJustification`) can be one of the following enums (when `isEntitled` is `false`):
+
+TypeScript
+
+`export enum NotEntitledJustification {
+  MISSING_PERMISSION = 'MISSING_PERMISSION',
+  MISSING_FEATURE = 'MISSING_FEATURE',
+  BUNDLE_EXPIRED = 'BUNDLE_EXPIRED',
+}
+`
+
+#### Custom Attributes
+
+Frontegg allows you to create _custom attributes_ for users (learn more about creating [custom attributes](/docs/feature-flags#custom-attributes). Attributes can be used for [Feature Flagging](/docs/feature-flags) purposes and in Entitlement API calls within a **customAttributes** object. The **customAttributes** object is optional and comprised of key-value pairs with possible values of `string | number | boolean | Date`, like so:
+
+TypeScript
+
+`this.fronteggEntitlementsService.featureEntitlements$('feature-x', {
+    next: (result: Entitlement) => {
+        this.ngZone.run(() => {
+            this.feature1EntResult = result;
+        });
+    }
+}, {
+    attr1: 'val1',
+    attr2: 'val2'
+});
+`
+
+TypeScript
+
+`featureEntitlements$(feature: string, observer: PartialObserver<Entitlement>, customAttributes?:CustomAttributes) => Subscription
+permissionEntitlements$(permission: string, observer: PartialObserver<Entitlement>, customAttributes?:CustomAttributes) => Subscription
+entitlements$(options: EntitledToOptions, observer: PartialObserver<Entitlement>, customAttributes?:CustomAttributes) => Subscription
+`
+
+#### Load on demand
+
+You can also load entitlements on demand by using `loadEntitlements` function:
+
+TypeScript
+
+`import {
+    Component,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
+import {
+    FronteggAppService,
+    FronteggEntitlementsService
+} from '@frontegg/angular';
+import {
+    Subscription
+} from 'rxjs';
+@Component({
+    selector: 'entitlements',
+    templateUrl: './entitlements.component.html'
+})
+export class EntitlementsComponent implements OnInit, OnDestroy {
+    loadingSubscription: Subscription;
+    isLoading = true;
+    authenticated = false;
+    constructor(private fronteggAppService: FronteggAppService, private fronteggEntitlementsService: FronteggEntitlementsService) {
+        this.loadingSubscription = fronteggAppService.isLoading$.subscribe((isLoading) => {
+            this.isLoading = isLoading;
+        });
+        this.fronteggAppService.isAuthenticated$.subscribe((isAuthenticated: boolean) => {
+            this.authenticated = isAuthenticated;
+        });
+        // ...
+    }
+    onLoadEntitlementsClicked() {
+        this.fronteggEntitlementsService.loadEntitlements();
+    }
+}
+`
+
+While the HTML file is as follows:
+
+HTML
+
+`<div *ngIf="!isLoading">
+    <section *ngIf="authenticated">
+        <div class="entitlements-button-container">
+            <button (click)="onLoadEntitlementsClicked()">
+                Load entitlements
+            </button>
+        </div>
+    </section>
+</div>
+
+`
+
+You can pass a callback to let you know that the request was completed:
+
+TypeScript
+
+`onLoadEntitlementsWithCallbackClicked() {
+    this.fronteggEntitlementsService.loadEntitlements(
+        (isSucceeded: boolean) => console.log('load entitlements', isSucceeded ? 'succeeded' : 'failed'));
+}
+`

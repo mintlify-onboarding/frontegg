@@ -1,0 +1,36 @@
+---
+title: "AWS API Gateway Backend Protection"
+---
+
+Use AWS API Gateway to control access to your backend. When your routes receive API calls, API Gateway checks the caller's identity and only gives access if the caller is authorized to access the route.
+
+## Step-By-Step Guide
+
+Follow the steps below to protect on your AWS resources using the AWS API gateway authorizer:
+
+### Step 1: Create Authorizer
+
+Go to the relevant API Gateway section on your AWS console and click on the `Authorization` tab.  
+  
+![](/images/c8e8e78-API_GW_1.png "API GW 1.png")
+
+  
+Click on `Create and attach authorizer`  
+  
+![](/images/8fc8982-API_GW_2.png "API GW 2.png")
+
+  
+Fill in the following parameters:  
+  
+| Parameter       | Value                                                                                                                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name            | Logical name for your to recognize this authorizer                                                                                                                                              |
+| Identity source | In most cases will be the Bearer authentication header. Leave as $request.header.Authorization for this                                                                                         |
+| Issuer URL      | In Frontegg, go to **Workspace Settings ➜ General**Copy your workspace name and paste it in place of \[your-workspace-name\] in the following URL: https://\[your-workspace-name\].frontegg.com |
+| Audience        | In Frontegg, go to **Workspace Settings ➜ General**Copy your Client ID and use it for Audience                                                                                                  |
+
+  
+After completing these, click on `create and attach`.
+
+Your AWS API gateway will now protect your routes based on the identity issued by your `Frontegg workspace`  
+  

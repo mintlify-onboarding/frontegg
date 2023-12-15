@@ -1,0 +1,136 @@
+---
+title: "Enabling Session Management"
+description: "Enable Features in the Profile, Users, and Security sections of the Builder"
+---
+
+Once Session Management has been configured, the next step is to enable those features in the Profile, Users, and Security sections of the Builder so that users with permission have the ability to configure and manage user sessions from the Admin Portal.
+
+The features in the Admin Portal that the permission unlocks include the following:
+
+* Configure Session Management Settings
+* View User Sessions
+* End User Sessions
+
+Enable session management in the Admin portal so that customer accounts can manage user sessions.
+
+### Prerequisites
+
+* Ensure that Session Management has been configured before proceeding with the configuration of the Profile, Users, and Security sections of the Builder see (doc:configure-session-management)
+* Ensure that the appropriate permissions have been assigned to certain user groups (doc:assign-permissions-to-user-groups)
+
+> ### 📘
+> 
+> Using Sessions in Frontegg SDKs
+> 
+> In order to gain session management features on our frontend SDKs, make sure to use the correct versions:
+> 
+> * @frontegg/react >= v4.0.27
+> * @frontegg/angular >= v4.19.0
+> * @frontegg/vue >= v1.0.19
+> * @frontegg/next >= v5.8.0
+
+### Profile
+
+Enable customer accounts to view and manage sessions in Profile.
+
+![960](/images/df6f215-Privacy_and_Security.gif "Privacy and Security.gif")
+
+Enable Privacy & Security
+
+Navigate to [Builder ➜ Profile](https://portal.frontegg.com/builder/profile/) and toggle the **Privacy & Security** settings to **on**.
+
+In the Admin Portal, users with permission should now see sessions listed.
+
+![](/images/3aa68e7-Screen_Shot_2022-07-26_at_10.20.06.png) 
+
+> ### 📘
+> 
+> Log Out of Session
+> 
+> Users can log out of sessions by clicking the log out button for a particular session.
+
+### Collaboration
+
+Enable customer accounts to view and manage sessions in Collaboration.
+
+Navigate to [Builder ➜ Collaboration](https://portal.frontegg.com/builder/collaboration) and toggle users **_on_**.
+
+![](/images/604e9d9-Screen_Shot_2022-07-26_at_11.08.12.png) 
+
+In the Admin Portal, users with permission should now see a list of users.
+
+Click on a user's menu to sign out the user from all sessions.
+
+![](/images/6618242-Screen_Shot_2022-07-26_at_10.22.07.png) 
+
+### Engagement
+
+Enable customer accounts to configure session management settings in Engagement.
+
+Navigate to [Builder ➜ Engagement](https://portal.frontegg.com/builder/engagement) and toggle security **_on_**.
+
+![](/images/cb26c85-Screen_Shot_2022-07-26_at_11.40.48.png) 
+
+In the Admin Portal, users with permission should now see configuration options for session management.
+
+> ### 📘
+> 
+> Session Duration
+> 
+> The default session duration is 24 hours.
+
+![](/images/d8648a3-Screen_Shot_2022-07-26_at_10.14.03.png) 
+
+> ### 📘
+> 
+> Useful links - Development & Production
+> 
+> Follow the link to enter the [Permission Management](https://portal.frontegg.com/development/authorization/permissions) of your **Development** environment
+> 
+> Follow the link to enter the [Permission Management](https://portal.frontegg.com/production/authorization/permissions) of your **Production** environment
+
+### User sessions
+
+In the admin portal, you can show your customer's users a list of their own sessions. It shows them details on each sessions like session start time, IP Address, location and device. If your users see that one of their sessions are compromised or they left a device somewhere, they can log out individual (or all) sessions from here.
+
+To turn it on, navigate to [Builder ➜ Profile](https://portal.frontegg.com/builder/app-experience/profile#/admin-box/) and toggle privacy settings **_on_**.
+
+In the Admin Portal, all users should now see their live sessions.
+
+Users can log out of individual sessions or all of them at once.
+
+![](/images/351982e-Screenshot_2022-11-17_at_16.17.24.png "Screenshot 2022-11-17 at 16.17.24.png")
+
+### Other User Sessions
+
+Given the right permissions, admins have control over other user's sessions. For example, if a user in a tenant loses access to their devices, an admin can log that user out of all their sessions.
+
+This feature is included in the Users tab of the admin portal.
+
+Navigate to [Builder ➜ Collaboration](https://portal.frontegg.com/builder/app-experience/collaboration#/admin-box/users) and toggle _Users_ **_on_**.
+
+In the Admin Portal, users with permission should now see a list of users.
+
+![](/images/42a1523-Screenshot_2022-11-17_at_17.30.20.png "Screenshot 2022-11-17 at 17.30.20.png")
+
+Each row in the table has an action menu on the right corner.  
+By clicking on a row's menu you can log out that specific user from all his or her sessions in your app.
+
+![](/images/b096e3a-Screenshot_2022-11-17_at_17.32.01.png "Screenshot 2022-11-17 at 17.32.01.png")
+
+### Session Settings
+
+Enable customer accounts to configure session management settings in Engagement.
+
+Navigate to [Builder ➜ Engagement](https://portal.frontegg.com/builder/app-experience/engagement#/admin-box/security) and toggle security **_on_**.
+
+In the Admin Portal, users with permission should now see configuration options for session management under the "Session Management" tab.  
+This section provides various settings that give customer accounts greater control over the way users can interact with the application.
+
+Some of the settings have a default behavior: 
+
+`Idle Session Timeout` \- If not enabled, the default session duration is 24 hours  
+`Force Re-login` \- Users stay "Logged in" indefinitely  
+`Maximum Concurrent Sessions` \- A user can log in into your application as many times as they want
+
+![](/images/2f16c1a-Screenshot_2022-11-17_at_17.40.32.png "Screenshot 2022-11-17 at 17.40.32.png")

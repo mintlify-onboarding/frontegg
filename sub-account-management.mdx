@@ -1,0 +1,138 @@
+---
+title: "Hierarchies (Sub-account Management)"
+---
+
+This revolutionary feature lets you, the vendor, give your accounts the ability to create and manage sub-accounts in a hierarchy, giving them greater control and flexibility over their account structure.
+
+It’s perfect for scenarios where you have a complicated account structure or let your customers manage or resell your product.
+
+### Getting Started with Account Hierarchy
+
+In this section, we will cover the prerequisites for allowing your customers to manage sub-accounts, which include preparing your app, assigning permissions, choosing the relevant accounts, and setting up a parent-child relationship between accounts.
+
+> ### 📘
+> 
+> Prerequisites
+> 
+> The following versions are required to use this capability: 
+> 
+> React - 5.0.44  
+> Angular - 5.35.0  
+> Vue - 2.0.40  
+> Next - 7.0.14
+
+### Enabling sub-account management
+
+To use Frontegg's _Sub-accounts_, you must have a Frontegg account, plus an account you want to open the sub-account management feature for.
+
+#### Step 1: Giving accounts the sub-account management capability
+
+There are two possible ways to give accounts a sub-account management capability: by API or via the Frontegg Dashboard.
+
+##### Sub-account management via API
+
+To make an account an MSP or reseller, make a `PUT` request to the following API and include the tenantId of the account you want to give this ability to:
+
+`https://api.frontegg.com/tenants/resources/tenants/v1/:tenantId`
+
+In the body of the request, include the following parameter:
+
+JSON
+
+`{
+    "isReseller": true
+}
+`
+
+##### Frontegg Dashboard
+
+1. Navigate to Backoffice —> Accounts
+2. Go to the account you want to enable the feature for
+3. Go to the _Actions_ menu, and press the _Enable sub-account management_ option
+
+![](/images/70f8d4e-Screenshot_2023-06-30_at_0.45.40.png)
+
+#### Step 2: Assigning permissions
+
+To access the _All Accounts_ tab in the Admin Portal, users must be assigned specific roles with corresponding [Permissions](/docs/permissions-1):
+
+1. **Read Access to Sub-Accounts:**  
+To view the "All Accounts" tab, users must have the role that grants them the "Read sub-accounts" permission: `fe.account-hierarchy.read.subAccount`. This permission allows them to view sub-account information.
+2. **Create or Update Sub-Accounts:**  
+If users need to create or update sub-accounts, they should be assigned a role with the "Create or update sub account" permission: `fe.account-hierarchy.write.subAccount`. This permission enables users to add new sub-accounts or modify existing ones.
+3. **Delete Sub-Accounts:**  
+To delete sub-accounts, users must have a role with the "Delete sub-accounts" permission: `fe.account-hierarchy.delete.subAccount`. With this permission, users can remove unwanted sub-accounts from the system.
+4. **Grant Access to Sub-Accounts:**  
+If users need to provide access to sub-accounts within the account hierarchy, they should be assigned a role with the "Give access to sub-accounts" permission: `fe.account-hierarchy.write.subAccountAccess`. This permission allows users to assign access rights to other users for specific sub-accounts.
+
+By ensuring users have the appropriate roles and permissions, you can control their access levels and actions within the Admin Portal effectively.
+
+### Managing Sub-accounts in the Admin Portal
+
+After granting an account the capability to manage sub-accounts, users will now have access to a dedicated section within their Admin Portal: the _Managed_ section.
+
+Within this Managed section, a new tab titled 'All Accounts' has been added. Here, users can conveniently oversee and manage all the associated accounts under their purview.
+
+![The 'Managed' and 'All Accounts' Dashboard](/images/23f5836-Screenshot_2023-06-29_at_12.20.27.png)
+
+The 'Managed' and 'All Accounts' Dashboard
+
+#### All accounts
+
+When viewing All Accounts, users can see their account hierarchy in 2 views: Table and Graph.
+
+##### Table view
+
+In the table view, your main account will be displayed at the top, followed by a comprehensive list of all its sub-accounts. This clear layout provides essential details such as the account names, the number of users associated with each sub-account, and the creation dates. This structured presentation ensures you can easily track and manage your accounts and their corresponding information at a glance.
+
+![Table sub-accounts view](/images/c617b07-Screenshot_2023-06-29_at_12.24.35.png)
+
+Table sub-accounts view
+
+##### Graph view
+
+Switching to the graph view gives you a better representation of how your account tree looks.
+
+![Graph sub-accounts view](/images/f2283b8-Screenshot_2023-06-29_at_12.24.47.png)
+
+Graph sub-accounts view
+
+#### Creating sub-accounts
+
+To create a sub-account, users can effortlessly initiate the process by clicking the "Create New Account" button. From there, they simply need to specify a suitable account name and select the appropriate parent account. This straightforward procedure streamlines the creation of sub-accounts, ensuring a hassle-free experience for users.
+
+![](/images/80b0e9d-Screenshot_2023-06-29_at_12.21.40.png)
+
+### Managing Individual Sub-Accounts
+
+In this section, we will explore the process of viewing sub-account details, editing sub-account information, and removing a sub-account.
+
+#### Viewing a sub-account
+
+To access specific sub-account details, click on the account name in either the table or graph view.
+
+There, you'll see a summary, including the account name, its hierarchy, user count, and sub-account total.
+
+![](/images/a0802c6-Screenshot_2023-06-30_at_0.52.14.png)
+
+#### Removing a sub-account
+
+To delete a sub-account, navigate to the sub-accounts section in your master account and choose the sub-account you want to remove. Then, proceed to delete the sub-account, which will promptly remove it from the hierarchy.
+
+Please note that sub-accounts can only be deleted if they have no associated children.
+
+### Inviting Users to Sub-Accounts
+
+Users can be invited to sub-accounts through two methods: explicit invitations or by granting access through a parent account.
+
+#### Explicitly inviting users to accounts
+
+You can invite users directly to accounts by clicking on _Invite Users_. When you do, they will subsequently receive an invitation email.
+
+![](/images/2fc605f-Screenshot_2023-06-30_at_0.49.14.png)
+
+#### Giving Access to Sub-accounts
+
+If you wish to provide user access to a specific branch of the hierarchy without individually inviting them to each account, you can grant them access from a single account, extending it to all existing and future sub-accounts. While they won't receive individual invitations for each account, they will have the ability to log in to each one. The roles assigned to them in the parent account, where access was granted, will be applicable across all sub-accounts within that branch.
+
+This access can be established during the invitation process or added later, and it can be revoked at any time, offering flexibility and control over user permissions within the hierarchy.

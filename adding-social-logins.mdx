@@ -1,0 +1,78 @@
+---
+title: "Social Login Authentication"
+---
+
+Allowing users to authenticate using an existing social account is commonplace for good reasons. 
+
+It is very user-friendly, eliminates the need for users to remember another password, and can provide greater security than simple password login. 
+
+Social logins are great for you and your users. They eliminate the need to create and manage a new set of credentials because they use existing credentials from popular OAuth providers. This makes logging in and signing up as easy as clicking a button.
+
+For your users, this results in enhanced security and an easy authentication experience, which in turn results for you in higher conversion rates and more daily active users. 
+
+Here are guides to help you implement social logins to your login-box.
+
+[ ![](/images/7c73e50-Screen_Shot_2021-11-19_at_12.27.15.png) Google Login Add Google Login to your application est. 5 min ](https://docs.frontegg.com/docs/google-login) [ ![](/images/dcb169f-Screen_Shot_2021-11-19_at_12.22.36.png) GitHub Login Add GitHub Login to your application est. 5 min ](https://docs.frontegg.com/docs/github-login) [ ![](/images/2478f53-Screen_Shot_2021-11-19_at_12.21.42.png) Microsoft Login Add Microsoft Login to your application est. 5 min ](https://docs.frontegg.com/docs/microsoft-login) [ ![](/images/49cda4b-Screen_Shot_2021-11-19_at_12.21.21.png) Facebook Login Add Facebook Login to your application est. 5 min ](https://docs.frontegg.com/docs/facebook-login) [ ![](/images/00f5a02-LinkedIn-logo.png) Linkedin Login Add Linkedin Login to your application est. 5 min ](https://docs.frontegg.com/docs/linkedin-login) [ ![](/images/caf4f05-icon_slack_hash_colored.png) Slack Login Add Slack Login to your application est. 5 min ](https://docs.frontegg.com/docs/slack-login) [ ![](/images/03a3eab-apple-ios.png) Apple Login Add Apple Login to your application est. 5 min ](https://docs.frontegg.com/docs/apple-login) 
+
+Frontegg makes it simple to add social logins to your application. Read below to learn how to enable social logins so that users can **_seamlessly log in and sign up_** to your application.
+
+### Step 1 - Enable Social Logins
+
+1. Go to **Home** and click on the "Go to Builder" button.
+2. Toggle the switch to _on_ for each social login you want to enable.
+
+![](/images/01eb3fd-Screen_Shot_2023-01-15_at_14.13.49.png "Screen Shot 2023-01-15 at 14.13.49.png")
+
+1. Click "Review to publish" and publish changes to your dev environment.
+2. The chosen social logins are now added to your login box
+![2308](/images/873eb50-Screen_Shot_2023-01-15_at_15.11.05.png "Screen Shot 2023-01-15 at 15.11.05.png") 
+
+### Step 2 - Configure Social Logins
+
+To get you up and running quickly **_in development only_**, Frontegg provides you with preconfigured shared OAuth credentials and redirect URLs (except for Linkedin login). This means the social logins work immediately when toggled on without requiring additional configuration.
+
+1. Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ Social Logins**.
+
+![](/images/468f0b7-Screen_Shot_2023-01-15_at_15.10.08.png "Screen Shot 2023-01-15 at 15.10.08.png")
+
+1. For each of the social logins you enable, click the manage button.
+2. Choose the "Custom" option
+3. Go over each social login guide and add the relevant requirements. The redirect URL is a URL address for your application.
+4. Save your changes
+
+> ### 📘
+> 
+> About Redirect URLs
+> 
+> When a user clicks one of the social login buttons in the login box, your application redirects the user to the OAuth provider's authentication page where your user will login or signup. After authenticating your user, the OAuth provider redirects the user from the authentication page to your redirect URL.
+
+> ### ❗️
+> 
+> In Development Only
+> 
+> While helpful for development, the preconfigured shared OAuth credentials are not secure. Therefore, **please configure your social logins before going to production**. See the links to our guides below.
+
+Here is an example page for Google custom configuration.
+
+![2880](/images/a39382c-Screen_Shot_2022-04-14_at_12.23.27.png "Screen Shot 2022-04-14 at 12.23.27.png") 
+
+Although configuring a social login is straightforward, our guides streamline the process by telling you what information you need and where to find it. 
+
+### Next steps
+
+1. Test the new social login on your application
+2. Publish the changes between environments and test again
+
+> ### 👍
+> 
+> Moving Environments
+> 
+> When moving a project from one environment to another, Frontegg moves the social login environment configurations for you. For instance, if moving from development to production, Frontegg moves the development social login configurations to production.
+
+Frontegg currently offers social login capabilities for Google, GitHub, Microsoft, Facebook, Linkedin, Slack, and Apple. We are continuing to add more providers, so please stay tuned to see what else we add!
+
+### Guides
+
+This is a list of guides to help you configure social logins. 
+
+[ ![](/images/7c73e50-Screen_Shot_2021-11-19_at_12.27.15.png) Google Login Add Google Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/google-login) [ ![](/images/dcb169f-Screen_Shot_2021-11-19_at_12.22.36.png) GitHub Login Add GitHub Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/github-login) [ ![](/images/2478f53-Screen_Shot_2021-11-19_at_12.21.42.png) Microsoft Login Add Microsoft Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/microsoft-login) [ ![](/images/49cda4b-Screen_Shot_2021-11-19_at_12.21.21.png) Facebook Login Add Facebook Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/facebook-login) [ ![](/images/00f5a02-LinkedIn-logo.png) Linkedin Login Add Linkedin Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/linkedin-login) [ ![](/images/caf4f05-icon_slack_hash_colored.png) Slack Login Add Slack Login to your application est. 5 min ](https://docs.frontegg.com/v2.0.2/docs/slack-login) [ ![](/images/03a3eab-apple-ios.png) Apple Login Add Apple Login to your application est. 5 min ](https://docs.frontegg.com/docs/apple-login) 

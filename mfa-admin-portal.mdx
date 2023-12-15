@@ -1,0 +1,61 @@
+---
+title: "MFA in the Admin Portal"
+---
+
+MFA is one of the strongest security measures your end users can take. Ideally, they should be able to manage it all on their own, including whether or not they want it as well as which methods to use. Furthermore, account admins should be able to force or not force their users to use MFA.
+
+The Frontegg Admin Portal offers all of this.
+
+### On an account level
+
+As a vendor, you can choose one of the three options for your entire app:
+
+1. Don’t force MFA
+2. Force MFA except for enterprise SSO
+3. Force MFA
+
+> ### 📘
+> 
+> Global Forced MFA
+> 
+> Global forced MFA means that you require all users to use multi-factor authentication for their account regardless of the tenant or tenants they are part of. Read more about [global forced MFA](/docs/multi-factor-authentication-mfa).
+
+Your accounts will see the same three options, but can only choose a stricter option. For example, if you (as a vendor) chose “Don’t force”, your accounts can choose any of the options. But if you chose “Force MFA except enterprise SSO”, your accounts can only choose that option or “Force MFA”.
+
+![](/images/a4a6203-Screenshot_2023-09-10_at_14.13.18.png) 
+
+### On an individual user level
+
+If end users have MFA forced on them, they will have to set up MFA during sign up or login. And they will have one chance to choose a method.
+
+But with the Admin Portal, they have much more control.
+
+If MFA is not forced on their account, they will be able to enroll themselves in MFA. And whether they are forced with MFA or not, they will be able to configure different methods.
+
+Which MFA methods will users see in their Admin Portal? 
+
+The ones that you enabled in your app.
+
+For example, if you enabled MFA with SMS and MFA with built-in authenticators, end users will be able to choose one or both of those MFA methods.
+
+For an end user to configure MFA, they need go to their Frontegg Admin Portal and find **Privacy & Security**.
+
+![](/images/cbf6c42-Screenshot_2023-09-10_at_14.13.43.png) 
+
+Then, they should choose an MFA method and follow the instructions there to enable it.
+
+### Removing MFA
+
+End users can remove MFA from their account by deleting all their MFA methods. However, if the app or their account forces MFA, they won’t be able to delete their last method.
+
+You, as the vendor, can also unenroll a user from MFA.
+
+> ### 📘
+> 
+> Use Case for Removing MFA
+> 
+> You may need to do this if, for instance, a user loses or replaces their phone and is unable to find their recovery code or somehow otherwise loses their ability to authenticate using MFA.
+
+To unenroll a user from MFA, Go to Manage ➜ Users.
+
+Find the user for which you want to unenroll from MFA. Right click on that user, and choose Unenroll MFA.

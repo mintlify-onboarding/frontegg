@@ -1,0 +1,20 @@
+---
+title: "Security Rules"
+---
+
+Frontegg apps come with 7 built-in defenses. Each one of them can be configured to do something different when they get triggered. For example, you can choose to allow stale users to continue to your app but block them if they try to use a breached password.
+
+Here are the options for each one:
+
+| Defense                           | Description                                                                           | Allow                          | Challenge                 | Block | Lock |
+| --------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------ | ------------------------- | ----- | ---- |
+| Let the user continue to your app | Challenge the user with MFA. If they pass, let them continue                          | Block the user from logging in | Lock the user immediately |       |      |
+| Bot detection                     | Identifies malicious bots, preventing potential security threats                      | ✅                              | ✅                         | ✅     | ✅    |
+| New device                        | Analyzes device characteristics to detect potential security threats                  | ✅                              | ✅                         |       |      |
+| Brute force protection            | Detect repeated failed login attempts to prevent unauthorized access                  | ✅                              | ✅                         |       |      |
+| Breached password                 | Blocks the use of passwords known to have been compromised in data breaches           | ✅                              | ✅                         | ✅     |      |
+| Impossible travel                 | Detect login attempts from different locations within an unreasonably short timeframe | ✅                              | ✅                         | ✅     |      |
+| Suspicious IPs                    | Identify suspicious IPs activity and either detect and allow or prevent the threat    | ✅                              | ✅                         | ✅     | ✅    |
+| Stale users                       | Automatically deactivates inactive user accounts to reduce security risks             | ✅                              | ✅                         | ✅     |      |
+
+When you want to change your policy on a defense Frontegg offers, users with an _Admin_ [Role](/docs/roles-1) can do so from the Security Rules page in any environment.

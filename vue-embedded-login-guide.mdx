@@ -1,0 +1,261 @@
+---
+title: "Embedded Login Integration (Vue.js)"
+---
+
+### Overview
+
+In this quickstart, we will embed Frontegg login box to your Vue application.
+
+  
+The code in the sample below is available in [our Frontegg Samples repository](https://github.com/frontegg-samples/vue-embedded-login-box) 
+
+  
+**⚡ Before you start: ⚡** 
+
+> ### 📘
+> 
+> Getting your Frontegg subdomain
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `baseUrl` in the integration, navigate to your workspace 'Settings' menu, 'Domains' and copy the `Frontegg domain` and `clientId`. 
+> 
+> You will need them for this guide.
+
+#### STEP 1: Create a New Vue application
+
+**If you have an existing app, skip this step.**
+
+To create a new app, use the following script.
+
+Shell
+
+`vue create my-project
+cd my-project
+`
+
+  
+#### STEP 2: Install Frontegg Libraries
+
+Run the following command to Install frontegg Vue.JS library.  
+  
+npmyarn
+
+`// for Vue.JS v3.x
+npm install @frontegg/vue vue-router
+
+// for Vue.JS v2.x
+npm install @frontegg/vue vue-router@3
+`
+
+`// for Vue.JS v3.x
+yarn add @frontegg/vue vue-router
+
+// for Vue.JS v2.x
+yarn add @frontegg/vue vue-router@3
+`
+
+  
+#### STEP 3: Configuration
+
+Add Frontegg to the main application.
+
+  
+main.ts Vue.JS v3.xmain.ts Vue.JS v2.x
+
+`import { createApp } from "vue";
+import App from "./App.vue";
+import { Frontegg } from "@frontegg/vue";
+import { createRouter, createWebHistory } from "vue-router";
+
+const router = createRouter({
+  history: createWebHistory("/"),
+  routes: [
+    { name: "HomePage", path: "/", component: App },
+  ],
+});
+
+const app = createApp(App).use(router);
+
+app.use(Frontegg, {
+  contextOptions: {
+    baseUrl: "https://[YOUR_SUBDOMAIN].frontegg.com",
+  },
+   authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: false,
+  router,
+});
+
+app.mount("#app");
+`
+
+`import Vue from 'vue'
+import App from './App.vue'
+import VueRouter from 'vue-router'
+import { Frontegg } from '@frontegg/vue';
+
+Vue.use(VueRouter)
+const router = new VueRouter({
+  mode: 'history',
+});
+
+Vue.use(Frontegg, {
+  contextOptions: {
+    baseUrl: 'https://[YOUR_SUBDOMAIN].frontegg.com',
+  },
+   authOptions: {
+  // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: false,
+  router,
+});
+
+new Vue({
+  router,
+  render: h => h(App),
+}).$mount('#app')
+`
+
+  
+Wrap your application on the `fronteggLoaded` attribute to make sure you have the right context.  
+  
+App.vue
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <img alt="Vue logo" src="./assets/logo.png" />
+  </div>
+</template>
+`
+
+  
+#### STEP 4: Getting the user context
+
+Frontegg exposes the user context and the authentication state via a global set of mixins and state mappers. You can access the authentication state via the `mappedAuthState` as in the following sample:  
+  
+> ### 📘
+> 
+> Composition API is supported for @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#0573706045372b352b3436)
+
+App.vue (Composition API)App.vue (Options API)
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <div v-if="authState.user">
+      <span>Logged in as: {{ authState.user.name }}</span>
+    </div>
+    <div>
+      <button v-if="authState.user" v-on:click="logout">Logout</button>
+      <button v-if="authState.user" v-on:click="showAccessToken">
+        What is my access token?
+      </button>
+      <button v-if="!authState.user" v-on:click="goToLogin">Login</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import {
+  useFrontegg,
+  useFronteggAuthGuard
+} from "@frontegg/vue";
+import { useRouter } from "vue-router";
+
+export default {
+  setup() {
+    useFronteggAuthGuard(); // auto redirects the user to login / application
+    
+    const router = useRouter();
+
+    const { fronteggLoaded, authState } = useFrontegg();
+
+    const goToLogin = () => {
+      router.push("/account/login");
+    };
+    const logout = () => {
+      router.push("/account/logout");
+    };
+    const showAccessToken = () => {
+      alert(authState.user.accessToken);
+    };
+
+    return {
+      fronteggLoaded,
+      authState,
+      goToLogin,
+      logout,
+      showAccessToken,
+    };
+  },
+};
+</script>
+`
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <div v-if="this.authState.user">
+      <span>Logged in as: {{this.authState.user.name}}</span>
+    </div>
+    <div>
+      <button v-if="this.authState.user" v-on:click="logout">Logout</button>
+      <button v-if="this.authState.user" v-on:click="showAccessToken">What is my access token?</button>
+      <button v-if="!this.authState.user" v-on:click="goToLogin">Login</button>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "App",
+  methods: {
+    goToLogin() {
+      this.$router.push('/account/login');
+    },
+    showAccessToken() {
+      alert(this.authState.user.accessToken);
+    },
+    logout() {
+      this.$router.push('/account/logout');
+    }
+  },
+  data() {
+    return {
+      ...this.mapAuthState(),
+    }
+  }
+};
+</script>
+`
+
+  
+#### STEP 5: Run the app, signup & login
+
+We are all set. Let's run the application and see Frontegg in action.  
+  
+npmyarn
+
+`npm run serve
+`
+
+`yarn run serve
+`
+
+  
+Great, Frontegg is now integrated with your app!
+
+**Login and logout routes have been added to your app:**
+
+* Signup screen is at `http://localhost:8080/account/sign-up`
+* Login screen is at `http://localhost:8080/account/login`
+
+If you are already logged in, go to `http://localhost:8080/account/logout` and log out.
+
+**Give it a try now!** 
+
+Open `http://localhost:8080/account/sign-up` and sign up with your first user.
+
+> ### 🚧
+> 
+> Avoid Clickjacking
+> 
+> To prevent _Clickjacking_ vulnerabilities, make sure you add an `X-Frame-Options` Header with `SAMEORIGIN` value to your hosting service.

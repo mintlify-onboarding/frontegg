@@ -1,0 +1,288 @@
+---
+title: "Entitlements Integration (Vue.js)"
+---
+
+> ### 🚧
+> 
+> Prerequisite
+> 
+> Minimum required version : 3.0.8
+
+### Configuring Entitlements with Vue.js SDK
+
+Use the following code to configure entitlements with Vue.js SDK: 
+
+JavaScript
+
+`app.use(Frontegg, { contextOptions: { baseUrl: //... , clientId: // ... },
+entitlementsOptions: { enabled: true, }, //... });
+
+`
+
+An exception will be thrown if you don’t enable entitlements and try to use the functions.
+
+### Vue.js 2
+
+**Entitlements APIs**
+
+The SDK exposes three functions:
+
+* `getFeatureEntitlements` \- to check if the user is entitled to a feature
+* `getPermissionEntitlements` \- to check if the user is entitled to permission
+* `getEntitlements` \- to check if the user is entitled to a feature or permission
+
+The functions should be called only for authenticated users.
+
+#### Example
+
+JavaScript
+
+`<template>
+  <section v-if="authState.user">
+    <div v-if="feature1.isEntitled">A cool section</div>
+    <div v-if="permission1.isEntitled">An awesome section</div>
+    <div v-if="feature2.isEntitled">A mind-blowing section</div>
+    <div v-if="permission2.isEntitled">Another section</div>
+
+    <div class="entitlements-button-container">
+      <button v-on:click="onLoadEntitlementsClicked">Load entitlements</button>
+    </div>
+
+    <div class="entitlements-button-container">
+      <button v-on:click="onLoadEntitlementsWithCallbackClicked">Load entitlements with callback</button>
+    </div>
+  </section>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
+  //...
+  data() {
+    return {
+      ...this.mapAuthState(),
+    };
+  },
+  methods: {
+    // ...
+  },
+  computed: {
+    feature1() {
+      const result = this.getFeatureEntitlements(this.authState.user.entitlements, 'feature1');
+      return result;
+    },
+    permission1() {
+      const result = this.getPermissionEntitlements(this.authState.user.entitlements, 'permission1');
+      return result;
+    },
+    feature2() {
+      const result = this.getEntitlements(this.authState.user.entitlements, { featureKey: 'feature2' });
+      return result;
+    },
+    permission2() {
+      const result = this.getEntitlements(this.authState.user.entitlements, { permissionKey: 'permission1' });
+      return result;
+    },
+  },
+});
+</script>
+`
+
+#### Load on demand
+
+You can also load entitlements on demand by using `loadEntitlements` function:
+
+JavaScript
+
+`<template>
+  <section v-if="authState.user">
+    <div class="entitlements-button-container">
+      <button v-on:click="onLoadEntitlementsClicked">Load entitlements</button>
+    </div>
+  </section>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
+  //...
+  data() {
+    return {
+      ...this.mapAuthState(),
+      //...
+    };
+  },
+  methods: {
+    onLoadEntitlementsClicked() {
+      this.loadEntitlements();
+    },
+  },
+  computed: {
+    //...
+  },
+});
+</script>
+`
+
+You can pass a callback to let you know that the request was completed:
+
+JavaScript
+
+`onLoadEntitlementsWithCallbackClicked() {
+  this.loadEntitlements((isSucceeded) =>
+    console.log('load entitlements', isSucceeded ? 'succeeded' : 'failed')
+  );
+}
+`
+
+#### Custom Attributes (Vue.js 2)
+
+Frontegg allows you to create _custom attributes_ for users (learn more about creating [custom attributes](/docs/feature-flags#custom-attributes). Attributes can be used for [Feature Flagging](/docs/feature-flags) purposes and in Entitlement API calls within a **customAttributes** object. The **customAttributes** object is optional and comprised of key-value pairs with possible values of `string | number | boolean | Date`, like so:
+
+JavaScript
+
+`getFeatureEntitlements(_user, 'feature-x', { attr1: 'val1', attr2: 'val2' })
+`
+
+JavaScript
+
+`import { Entitlement, CustomAttributes } from '@frontegg/types';
+
+getFeatureEntitlements(_user: User, key: string, customAttributes?:CustomAttributes) => Entitlement
+getPermissionEntitlements(_user: User, key: string, customAttributes?:CustomAttributes) => Entitlement
+getEntitlements(_user: User, entitledToOptions: EntitledToOptions, customAttributes?:CustomAttributes) => Entitlement
+`
+
+### Vue.js 3
+
+**Entitlement APIs**
+
+The SDK exposes three functions:
+
+* `useFeatureEntitlements` \- to check if the user is entitled to a feature
+* `usePermissionEntitlements` \- to check if the user is entitled to permission
+* `useEntitlements` \- to check if the user is entitled to a feature or permission
+
+The functions should be called only for authenticated users.
+
+#### Example
+
+JavaScript
+
+`<template>
+    <section v-if="authState.user">
+        <div v-if="feature1.isEntitled">A cool section</div>
+        <div v-if="permission1.isEntitled">An awesome section</div>
+        <div v-if="feature2.isEntitled">A mind-blowing section</div>
+        <div v-if="permission2.isEntitled">Another section</div>
+    </section>
+</template>
+
+<script>
+
+    import {
+      useFrontegg,
+      useFeatureEntitlements,
+      usePermissionEntitlements,
+      useEntitlements,
+    } from '@frontegg/vue';
+
+    export default {
+      setup() {
+    		// ...
+        const { authState } = useFrontegg();
+
+        const feature1 = useFeatureEntitlements('feature1');
+        const permission1 = usePermissionEntitlements('permission1');
+        const feature2 = useEntitlements({ featureKey: 'feature2' });
+        const permission2 = useEntitlements({ permissionKey: 'permission2' });
+
+        return {
+          authState,
+          feature1,
+          permission1,
+          feature2,
+          permission2
+        };
+      },
+    };
+</script>
+
+`
+
+#### Load on demand
+
+You can also load entitlements on demand by using `loadEntitlements` function:
+
+JavaScript
+
+`<template>
+    <section v-if="authState.user">
+        // ...
+        <div class="entitlements-button-container">
+            <button v-on:click="onLoadEntitlementsClicked">
+                Load entitlements
+            </button>
+        </div>
+
+        <div class="entitlements-button-container">
+            <button v-on:click="onLoadEntitlementsWithCallbackClicked">
+                Load entitlements with callback
+            </button>
+        </div>
+    </section>
+</template>
+
+<script>
+
+    import {
+      useFrontegg,
+    } from '@frontegg/vue';
+
+    export default {
+      setup() {
+        const { authState, loadEntitlements } = useFrontegg();
+
+        function onLoadEntitlementsClicked() {
+          loadEntitlements();
+        }
+
+        return {
+          // ...
+          onLoadEntitlementsClicked,
+        };
+      },
+    };
+</script>
+
+`
+
+You can pass a callback to let you know that the request was completed:
+
+JavaScript
+
+`function onLoadEntitlementsWithCallbackClicked() { loadEntitlements(
+(isSucceeded) => console.log('load entitlements', isSucceeded ? 'succeeded' :
+'failed') ); }
+
+`
+
+#### Custom Attributes (Vue.js 3)
+
+Frontegg allows you to create _custom attributes_ for users (learn more about creating [custom attributes](/docs/feature-flags#custom-attributes). Attributes can be used for [Feature Flagging](/docs/feature-flags) purposes and in Entitlement API calls within a **customAttributes** object. The **customAttributes** object is optional and comprised of key-value pairs with possible values of `string | number | boolean | Date`, like so:
+
+JavaScript
+
+`useFeatureEntitlements('feature-x', { attr1: 'val1', attr2: 'val2' })
+`
+
+JavaScript
+
+`import { CustomAttributes } from '@frontegg/types';
+
+useFeatureEntitlements(key: string, customAttributes?:CustomAttributes): Entitlement
+usePermissionEntitlements(key: string, customAttributes?:CustomAttributes): Entitlement
+useEntitlements(entitledToOptions: EntitledToOptions, customAttributes?:CustomAttributes): Entitlement
+`

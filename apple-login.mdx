@@ -1,0 +1,189 @@
+---
+title: "Apple login"
+---
+
+Adding social login to your login page allows users to sign in to your website or application using their existing social media accounts, such as Facebook, Google, or Apple. This can make the login process faster and more convenient for users, as they don't have to create a new account or remember a separate username and password.
+
+To enable Apple social login to your login page, you will need to 
+
+* Enable Apple as a social login in the builder
+* Create Apple Credentials in the environments
+
+### Enable Apple login in the Builder
+
+* Toggle on the Apple social login placed in the left panel (please note - you can have up to four social logins on your login page)
+* Click “Review to Publish” button, review your changes and “Publish to Dev”
+
+![](/images/26cc794-Screen_Shot_2023-01-12_at_12.08.33.png "Screen Shot 2023-01-12 at 12.08.33.png")
+
+### Create Apple Credentials
+
+First, Login to your Apple developer account at [https://developer.apple.com/account](https://developer.apple.com/account)  
+This page will be referred to as the **Home Page** throughout this tutorial.
+
+![](/images/ac36c57-Screenshot_2023-01-11_at_13.46.43.png "Screenshot 2023-01-11 at 13.46.43.png")
+
+Now, follow the steps below to configure Login with apple.
+
+### Step 1: Create an Application
+
+To create your Apple application, go to the **Home Page** of your developer account, and under **Certificates, Identifier & Profiles** click on **Identifiers**
+
+![](/images/a3e7a02-Screenshot_2023-01-11_at_13.46.43.png "Screenshot 2023-01-11 at 13.46.43.png")
+
+Then follow these steps:
+
+* Make sure you are viewing App IDs (can be seen at the top right corner of the table)
+* Click the blue Plus Button to add a new App ID
+
+![](/images/8b53cfc-Screenshot_2023-01-11_at_13.52.27.png "Screenshot 2023-01-11 at 13.52.27.png")
+
+* Select **App IDs** and click **Continue**
+
+![](/images/3cf2496-Screenshot_2023-01-11_at_13.55.41.png "Screenshot 2023-01-11 at 13.55.41.png")
+
+* Select **App** as the type for the Identifier and click **Continue**
+
+![](/images/e4d937c-Screenshot_2023-01-12_at_19.15.33.png "Screenshot 2023-01-12 at 19.15.33.png")
+
+* Pick a **Description** and a **Bundle ID** for the App  
+   * Bundle ID should be a reverse-domain name style string, for instance: [com.example.myapp](http://com.example.myapp)  
+   * Bundle ID must be set explicitly, and so, please make sure that **Explicit** option is selected  
+   * Description can be any string
+
+![](/images/9723002-Screenshot_2023-01-11_at_14.26.50_2.png "Screenshot 2023-01-11 at 14.26.50 (2).png")
+
+* Scroll down on the list called **Capabilities**, and select **Sign In with Apple**
+
+![](/images/ccc2963-Screenshot_2023-01-11_at_14.20.06.png "Screenshot 2023-01-11 at 14.20.06.png")
+
+Make sure the app is enabled as the **Primary App ID** (as seen in the screenshot above)
+
+You can also group this App ID with other App IDs by clicking on the **Edit** button on the same row of **Sign In with Apple**
+
+* Click **Continue**
+* Click **Register**
+
+You should now be able to see the newly created App ID in the list of App IDs
+
+![](/images/a08a7da-Screenshot_2023-01-15_at_11.34.21.png "Screenshot 2023-01-15 at 11.34.21.png")
+
+### Step 2: Register Your Service ID
+
+To create your Apple Service ID, go to the **Home Page** of your developer account, and under **Certificates, Identifier & Profiles** click on **Identifiers**
+
+Then follow these steps:
+
+* Make sure you are viewing Service IDs (can be seen at the top right corner of the table)
+* Click the blue Plus Button to add a new Service ID
+
+![](/images/28af9e7-Screenshot_2023-01-11_at_14.34.17.png "Screenshot 2023-01-11 at 14.34.17.png")
+
+* Select **Services IDs** and click **Continue**
+
+![](/images/bbcdee3-Screenshot_2023-01-11_at_14.34.53.png "Screenshot 2023-01-11 at 14.34.53.png")
+
+* Pick a **Description** and **Identifier** for you Service ID.  
+This Identifier will be used later as your **Client ID**in Frontegg, **so make sure you save it**
+
+![](/images/54c1b1b-Screenshot_2023-01-11_at_14.39.11.png "Screenshot 2023-01-11 at 14.39.11.png")
+
+* Click Continue → Register
+* Go back to the list of the Services IDs and click on the row with your newly created Service ID
+
+![](/images/f7a5008-Screenshot_2023-01-15_at_10.55.44.png "Screenshot 2023-01-15 at 10.55.44.png")
+
+* Select **Sign In with Apple**, and click **Configure**  
+A dialog called Web Authentication Configuration will open
+
+The next two steps are done under the same place which is the **Web Authentication Configuration** dialog, and can be seen in the screenshot below
+
+This is also where you will need your **Domain in Frontegg** that you retrieved at the beginning of this step
+
+* Select **The App ID** you created earlier as the **Primary App ID**
+* Configure the allowed Website URLs for the allowed redirect URLs  
+   * Under **Domains and Subdomains** enter: {YOUR\_DOMAIN\_IN\_FRONTEGG}  
+   * Under **Return URLs** enter https://${YOUR\_DOMAIN\_IN\_FRONTEGG}/identity/resources/auth/v2/user/sso/apple/postlogin
+
+![](/images/4debda0-Screenshot_2023-01-15_at_11.01.29.png "Screenshot 2023-01-15 at 11.01.29.png")
+
+* Click **Next** **→** **Done** in the dialog  
+The dialog will close and you will be back in the Service ID Edit page (Step 8)
+* Click **Continue → Save**
+
+Great, You have now configured a service that will be used later in the process.  
+Don’t forget to write down your Service ID for later.
+
+### Step 3: Register a Private Key
+
+In this step you will create a Private Key that will be used for communication with Apple.
+
+**Make sure to save the key and the Key ID that you will be given**
+
+To create your Apple Service ID, go to the **Home Page** of your developer account, and under **Certificates, Identifier & Profiles** click on **Keys**
+
+![](/images/b866c32-Screenshot_2023-01-11_at_14.58.24.png "Screenshot 2023-01-11 at 14.58.24.png")
+
+* Click on the blue Plus Button to add a new Key
+
+![](/images/8573d28-Screenshot_2023-01-11_at_14.58.24.png "Screenshot 2023-01-11 at 14.58.24.png")
+
+* Enter a Key name
+* Select **Sign In with Apple** and click **Configure**
+
+![](/images/dd7b73e-Screenshot_2023-01-11_at_14.59.37.png "Screenshot 2023-01-11 at 14.59.37.png")
+
+* Select the App ID you created earlier as the Primary App ID, and click **Save**.  
+**You can only create two keys per App ID.**
+
+![](/images/27469ff-Screenshot_2023-01-11_at_15.00.50.png "Screenshot 2023-01-11 at 15.00.50.png")
+
+* Click **Continue**
+* Click **Register**
+
+At this point the **Private Key** will be given to you, and you will be able to download it Only **Once!**  
+**So male sure you save it in a secure location.**
+
+You will also be given a **Key ID** Make sure to write this down as well, together with the **Service ID** you created in Step 2
+
+![](/images/7573b4e-Screenshot_2023-01-11_at_15.04.33.png "Screenshot 2023-01-11 at 15.04.33.png")
+
+### Step 4: Retrieve your Team ID
+
+To retrieve your Apple Team ID, go to the **Home Page** of your developer account, and click on **Membership details**.
+
+Details regarding your account will show up, along with the **Team ID.** Write it down along with the **Service ID** and **Key ID** you created in steps 2 & 3 respectively
+
+### Step 5: Configure Apple Provider in Frontegg
+
+We are almost done!  
+Now all that is left is to copy the credentials to Frontegg’s portal.
+
+* Go to the social logins page in Frontegg’s portal under **Authentication → Social-Logins**, and click on **Manage** on the **Apple**card.
+
+![](/images/a27308e-Screen_Shot_2023-01-12_at_12.12.23.png "Screen Shot 2023-01-12 at 12.12.23.png")
+
+* Choose **Custom** and start copying the credentials you wrote down  
+   * Under **Client ID** paste the **Service ID** you created in Step 2  
+   * Under **Private Key** paste the contents of the private key you downloaded from Apple in step 3  
+   * Under **Team ID** paste the team id from step 4  
+   * Under **Key ID** paste the key id from step 3  
+   * Under **Redirect URL**paste the redirect url to which you want the user to be redirected to after a successful login  
+   **Don’t forget to save your changes!**
+
+![](/images/754087c-Screenshot_2023-01-11_at_15.17.21.png "Screenshot 2023-01-11 at 15.17.21.png")
+
+Congrats! you just enabled Apple as a social login, and your users can now use their Apple ID to login into your app
+
+##### Test your integration
+
+* Go to your application
+* Login/Sign-up using Apple
+
+### Customizing Authentication Scopes for Apple
+
+![Customizing Scopes for Google Social Login](/images/e5a2fc1-Screenshot_2023-11-12_at_10.42.12.png)
+
+Customizing Scopes for Apple Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate with their Apple account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes.

@@ -1,0 +1,249 @@
+---
+title: "Migration"
+---
+
+Frontegg offers seamless support for importing passwords hashed with Bcrypt, Scrypt, and Firebase methods, simplifying the process of transitioning users from your previous authentication vendor. If your previous vendor utilized any of these hashing techniques, migrating users with their passwords becomes a straightforward task. In cases where your previous vendor used a different hashing method, Frontegg ensures a smooth transition, prompting users to reset their passwords, a recommended security practice. 
+
+For those looking to minimize friction and enhance user experience, Frontegg offers an alternative in the form of [Passwordless Authentication](/reference/passwordless). This method eliminates the need for traditional passwords, offering a convenient and secure approach to user access. The migration process is facilitated through Frontegg's APIs, requiring the acquisition of a vendor JWT (JSON Web Token). Detailed steps on how to authenticate your environment and obtain a vendor JWT, can be found here. [Refresh JWT token](/reference/authenticatioauthenticationcontrollerv1%5Frefreshtoken). 
+
+### Migrating Users from Auth0
+
+![](/images/6643535-Screenshot_2023-08-24_at_12.44.54.png) 
+
+To migrate users from Auth0, please follow the steps below: 
+
+1. Recreate the Tenants / Accounts you have on Auth0 using one of the methods mentioned on the last section of this article `Migrate Accounts in Bulks`.
+2. On Auth0, go to Applications > API section > System API:
+
+![](/images/ed20c9c-image.png)
+
+1. Make sure that your management API has your application under Machine to Machine Applications:
+2. Your application on Auth0 will need to posses the following permissions: `read:users`, `read:user_idp_tokens`, `read:roles`.
+3. You can check the existing permissions via /api/v2/client-grants endpoint on Auth0\.
+4. If any of these permissions are missing, make sure to update the grant via /api/v2/client-grants/{id} and use the id you've got from the previous GET request with the below payload:
+
+JavaScript
+
+`{"scope":[  
+      "read:users",  
+      "read:user_idp_tokens",  
+      "read:roles"  
+    ]}
+`
+
+1. Frontegg searches for the field that refers to the user's tenant on `app_metadata` or 'user\_metadata\`.
+2. Obtain your vendor JWT on Frontegg, per the instructions here.
+3. For the below raw user object:
+
+JavaScript
+
+`
+
+{  
+    "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+    "email_verified": true,  
+    "family_name": "Doe",  
+    "given_name": "John",  
+    "identities": [  
+        {  
+            "connection": "Username-Password-Authentication",  
+            "user_id": "xxxxx",  
+            "provider": "auth0",  
+            "isSocial": false  
+        }  
+    ],  
+    "name": "Frontegg Test",  
+    "user_id": "auth0|xxxxxxx",  
+    "username": "Test",  
+    "user_metadata": {},  
+    "app_metadata": {  
+        "tenant_id": "Frontegg_Test"  
+    }  
+}
+`
+
+1. Send a POST request to the [Migrate from Auth0](/reference/userscontrollerv1%5Fmigrateuserfromauth0) route with the following sample payload:
+
+JavaScript
+
+`{  
+     "isTenantIdOnUserMetadata": false,  
+     "domain": "https\://[your-auth0-subdomain]",  
+     "clientId": "your-auth0-client-ID",  
+     "secret": "your-auth0-secret",  
+     "tenantIdFieldName": "tenant_id"  
+}
+
+`
+
+1. Below is the user object that will be created on Frontegg:
+
+JavaScript
+
+`{  
+"id": "xxxxx",  
+"sub": "xxxxx",  
+"email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+"verified": null,  
+"name": "Frontegg Test",  
+"phoneNumber": null,  
+"profilePictureUrl": "xxx",  
+"provider": "local",  
+"mfaEnrolled": false,  
+"metadata": "{\"tenantIdFieldName\":\"Frontegg_Test\",\"auth0_id\":\"auth0|xxxxxxx\"}",  
+"tenantIds": ["Frontegg_Test"],  
+"tenantId": "Frontegg_Test",  
+"roles": \[],  
+"permissions": \[],  
+"createdAt": "2023-01-05T09:37:03.000Z",  
+"lastLogin": null,  
+"isLocked": false,  
+"tenants": \[{  
+"tenantId": "Frontegg_Test",  
+"roles": \[]  
+}],  
+"managedBy": "frontegg",  
+"activatedForTenant": true  
+}
+`
+
+That's it! Frontegg will create a user and assign the user to the tenant with the same id that appears in tenant\_id.
+
+Migrate Users With Passwords:
+
+1. Recreate the Tenants / Accounts you had before under the environment where you'd like to migrate the users, using one of the methods mentioned in the last section of this article `Migrate Accounts in Bulks`.
+2. Obtain your vendor JWT on Frontegg, per the instructions here.
+3. Send a POST request to Migrate a vendor user route with one of the below options -
+
+For migrating users with Bcrypt passwords, send the below:
+
+JavaScript
+
+`{  
+"name": "BCrypt Test User"  
+"metadata": "{\"Test\":\"Test\"}",  
+"verifyUser": true,  
+"email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+"tenantId": "Frontegg_Test",  
+"passwordHash": "hashed-password",  
+"passwordHashType": "bcrypt"  
+}
+`
+
+For migrating users with Scrypt passwords, send the below:
+
+JavaScript
+
+`{  
+"name": "SCrypt Test User",  
+"metadata": "{\"Test\":\"Test\"}",  
+"email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+"verifyUser": true,  
+"tenantId": "Frontegg_Test",  
+"passwordHash":"[salt-value];[hex-hashed-password]",  
+"passwordHashType": "scrypt",  
+"passwordHashConfig":"{\"saltSeparator\":\";\",\"N\":16384,\"r\":8,\"p\":1,\"keyLen\":64}"  
+}
+`
+
+//metadata will be used as the user metadata on Frontegg, you can send an empty stringified object.  
+For migrating users with Firebase passwords, send the below:
+
+JavaScript
+
+`{  
+"name": "SCrypt Test User",  
+"metadata": "{\"Test\":\"Test\"}",  
+"email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+"verifyUser": true,  
+"tenantId": "Frontegg_Test",  
+"passwordHash":"hashed-password",  
+"passwordHashType": "firebase-scrypt",  
+"passwordHashConfig":"{\"saltSeparator\":\";\",\"signerKey\":"",\"memCost\":14,\"rounds\":8}"  
+}
+`
+
+For migrating users with pbkdf2, send the below:
+
+JavaScript
+
+`{  
+"name": "SCrypt Test User",  
+"metadata": "{\"Test\":\"Test\"}",  
+"email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
+"verifyUser": true,  
+"tenantId": "Frontegg_Test",  
+"passwordHash":"hashed-password",  
+"passwordHashType": "firebase-scrypt",  
+"passwordHashConfig":"{\"saltSeparator\":\";\",\"iterations\":1000,\"keyLen\":32,\"digest\":\"sha256\"}"  
+}
+`
+
+> metadata will be used as the user metadata on Frontegg, you can send an empty stringified object.
+
+Migrate Users in Bulks
+
+1. Recreate the Tenants / Accounts you had before under the environment where you'd like to migrate the users, using one of the methods mentioned in the last section of this article `Migrate Accounts in Bulks`.
+2. For migrating multiple users at once in batches of 1000 / batch, send a POST request with your vendor token for authorization, to the following endpoint:
+
+[https://api.frontegg.com/identity/resources/migrations/v1/local/bulk](https://api.frontegg.com/identity/resources/migrations/v1/local/bulk)  
+The payload of the users' data can contain any of the attributes mentioned in single-user migration examples from Migrate Users With Passwords section:
+
+JavaScript
+
+`{  
+"users": [{  
+   "email": "[[email protected]](/cdn-cgi/l/email-protection)",  
+   "tenantId": "123456"  
+}, {  
+   "email": "[[email protected]](/cdn-cgi/l/email-protection)",  
+   "tenantId": "123456"  
+}, {  
+   "email": "[[email protected]](/cdn-cgi/l/email-protection)",  
+   "tenantId": "123456"  
+}]  
+}
+`
+
+1. In the response, you will get a `migration_id`. Use this `id` to monitor the status of the migration, via sending a GET request to the following endpoint:
+
+[https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/{{migration\_id}}](https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/%7B%7Bmigration%5Fid%7D%7D)
+
+Migrate Accounts in Bulks
+
+Recreate the Tenants / Accounts you had in your previous provider under the environment where you'd like to migrate the users. There are three options to create tenants:
+
+* Recreate tenants using the Backoffice UI with the same Tenant ID that you have with another vendor as `ID` when creating an account.
+
+Screen\_Shot\_2022-12-19\_at\_21.26.38.png
+
+* Recreate Tenants via API and set your previous tenant IDs as the `tenantId` property.
+* Migrate tenants in batches of 1000 / batch:
+
+Send a POST request with your vendor token for authorization, to the following endpoint:
+
+[https://api.frontegg.com/tenants/resources/migrations/v1/tenants](https://api.frontegg.com/tenants/resources/migrations/v1/tenants)
+
+The payload should be as below:
+
+You will receive `migrationId` in the response and you can use it to monitor the status of your migration via a GET request to the following endpoint:
+
+[https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/{{migrationId}}](https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/%7B%7BmigrationId%7D%7D)
+
+JavaScript
+
+`{  
+  "tenants": [{  
+   "tenantId": "your-tenant-id",  
+   "name": "Test_Tenant_1"  
+},  
+{  
+   "tenantId": "your-tenant-id",  
+   "name": "Test_Tenant_2"  
+},  
+{  
+  "tenantId": "your-tenant-id",  
+  "name": "Test_Tenant_3"  
+}]  
+}
+`

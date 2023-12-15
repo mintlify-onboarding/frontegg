@@ -1,0 +1,77 @@
+---
+title: "Kong Gateway JWT Backend Protection"
+---
+
+The [Kong API Gateway](https://konghq.com/) is another great method to accept traffic to your cluster.  
+By using the [Kong JWT plugin ](https://docs.konghq.com/hub/kong-inc/jwt/) you can validate the requests to your API for authentication
+
+> ### 📘
+> 
+> Using Kong plugins
+> 
+> This guide will not go into the required steps of installing plugins on top of the Kong API GW.  
+> The assumption is that you have managed to install the plugin and use the configuration below
+
+**Create a service**
+
+cURL
+
+`curl -i -f -X POST http://localhost:8001/services \
+    --data "name=my-cool-service" \
+    --data "url=http://httpbin.org"
+`
+
+**Then create a route on kong**
+
+cURL
+
+`curl -i -f -X POST http://localhost:8001/routes \
+    --data "service.id={my-cool-service's id}" \
+    --data "paths[]=/test"
+`
+
+**Add the JWT plugin to this route**
+
+cURL
+
+`curl -X POST http://localhost:8001/route/{route id}/plugins \
+    --data "name=jwt"
+`
+
+**Creating the kong consumer**  
+In order to create the kong consumer, we will use REST API
+
+cURL
+
+`curl -d "custom_id=SOME_CONSUMER_ID" http://kong:8001/consumers/
+`
+
+**Copy the JWT public key from the Frontegg portal**
+
+![](/images/2d78bc5-jwt-settings.png "jwt-settings.png")
+
+**Create a new RS256 JWT credential**
+
+cURL
+
+`` curl -i -X POST http://localhost:8001/consumers/{consumer}/jwt \
+    -F "algorithm=RS256" \
+    -F "rsa_public_key=[THE-PUBLIC-KEY-FROM-THE-PORTAL]" \
+    -F "key=https://{workspace-url}.frontegg.com/" # the `iss` field
+ ``
+
+> ### 📘
+> 
+> Issuer validations
+> 
+> The configuration above will validate that the issuer of the JWT is the Frontegg workspace domain. The `iss` claim is validated by default by the Kong JWT plugin
+
+**Testing**  
+You can test your configuration by calling the test endpoint with JWT signed by Frontegg
+
+cURL
+
+`curl -i http://localhost:8000/test \
+    -H "Host:example.com" \
+    -H "Authorization:Bearer <TOKEN-FROM-FRONTEGG>"
+`

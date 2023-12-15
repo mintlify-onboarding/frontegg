@@ -1,0 +1,62 @@
+---
+title: "Security Events"
+description: "Safeguarding your app against threats"
+---
+
+We are excited to introduce you to a powerful new section of Frontegg designed to empower you in safeguarding your app against threats. In an increasingly digital world, ensuring the security of your app is paramount. Our Security Events dashboard offers you a comprehensive toolkit to monitor, investigate, and mitigate a range of security events that might threaten the stability and trustworthiness of your application.
+
+### Adjusting Your Time Range
+
+You can use the date range picker to see security events from a certain time period, 
+
+![](/images/741358c-Screenshot_2023-09-08_at_17.04.00.png) 
+
+or click and drag on any chart to zoom into that timeframe.
+
+![](/images/a5c3a93-Screenshot_2023-09-08_at_17.03.46.png) 
+
+### All Events
+
+Our Security Events dashboard also includes an "All Events" section that aggregates all security events into two categories: those that have been mitigated and those that have not. Mitigated events are those that have been blocked, challenged with multi-factor authentication, or locked, while non-mitigated events are those that have been allowed to continue to the app. This allows you to quickly and easily view the overall security status of your application and take action to address any potential vulnerabilities.
+
+![](/images/d251f51-Screenshot_2023-09-11_at_0.04.44.png) 
+
+### Bots
+
+Bot detection is an important part of ensuring the security of your application. Bots can cause a range of issues, from spamming your app with irrelevant data to attempting to gain unauthorized access.
+
+This view shows how many login/signup attempts looked like bots and what happened to them.
+
+### New Device
+
+New devices can pose a significant threat to the security of your application. When a new device is used to access your app, it can be difficult to determine whether the user is authorized to do so. 
+
+This view shows how many times users accessed your app with unrecognized devices and what happened to them.
+
+### Brute Force Protection
+
+Brute force attacks are a common type of cyber attack in which an attacker repeatedly tries different combinations of usernames and passwords until they find the correct login credentials. This type of attack can be particularly devastating because it can give the attacker access to sensitive information or systems. 
+
+Events in this dashboard are sent when the number of attempts you or the tenant entered is hit. For example, if you choose to only block (and not lock) a user after five incorrect attempts, events in this dashboard show the number of users in a time frame who did five consecutive incorrect attempts within a short time span (not every time they entered an incorrect password).
+
+### Breached Password
+
+Breached passwords can pose a significant threat to the security of your application. When a password is breached, it can be used by unauthorized individuals to gain access to sensitive information or systems. 
+
+This view shows you when users try to use or create (as in during password changes or sign-up) passwords that are breached and what happens to the users.
+
+### Impossible Travel
+
+Impossible travel is a security event that occurs when a user logs in from two different locations that are physically impossible to reach in the amount of time between logins. This could indicate that the user's account has been compromised or that someone is attempting to gain unauthorized access to the account.
+
+The view shows the second of the consecutive logins that triggered impossible travel.
+
+### Suspicious IPs
+
+Suspicious IPs can be a sign of potential security threats to your application. These IPs could belong to attackers attempting to gain unauthorized access, or legitimate users who have had their credentials compromised. 
+
+The view shows logins or signups from suspicious IPs.
+
+### Stale Users
+
+Stale users are users who have not logged into your application for an extended period of time. While these users may not pose an immediate security threat, they can be a potential vulnerability if their accounts are compromised.

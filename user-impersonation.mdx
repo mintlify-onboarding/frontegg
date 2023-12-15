@@ -1,0 +1,60 @@
+---
+title: "User Impersonation"
+---
+
+User impersonation refers to the ability of a system to temporarily grant access to another users account, typically an administrator or support staff. This feature can be extremely useful for troubleshooting, testing, or resolving user issues without the need for the original user's login credentials. And with Frontegg, you can impersonate your users easily and securely.
+
+In this guide, you will learn about how to set up and configure user impersonation in your app. User impersonation is a powerful but potentially dangerous tool as it allows all actions inside another user’s account (including switching accounts if possible). Only give impersonation permissions to those you trust.
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> The following versions are required to use the feature: 
+> 
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#6b190e0a081f2b5e455b45595f)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#badbd4ddcfd6dbc8fa8f948b8d948a)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#681e1d0d285a4658465a59)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#84eae1fcf0eef7c4b2aab3aab5bc)  
+> @frontegg/[\[email protected\]](/cdn-cgi/l/email-protection#53392013657d64677d63)
+
+### Enabling user impersonation
+
+When setting up user impersonation, you have two choices to make:
+
+1. **Whether you want user impersonation enabled or not.**  
+If enabled, this doesn’t mean that anyone can use it. Only those with the right roles/permissions can use it.
+2. **Whether you want to send audit logs about impersonated actions to accounts.**  
+Audit logs about impersonated actions are always sent to the Frontegg Portal (Audit Trail), but if enabled, this setting will prevent them from being sent to account audit logs. (However, keep in mind that user login sessions always show impersonation)
+
+To configure these settings, go to Builder —> App Settings —> User Impersonation
+
+![](/images/818bebc-Screenshot_2023-02-20_at_16.43.39.png "Screenshot 2023-02-20 at 16.43.39.png")
+
+### Using user impersonation
+
+To impersonate another user, all you need to do is locate the user you want to impersonate in any environment, choose which of their accounts you want to log in to, and then click “Impersonate User”.
+
+![](/images/1dfcff8-Screenshot_2023-02-20_at_16.44.02.png "Screenshot 2023-02-20 at 16.44.02.png")
+
+You’ll then be asked to enter a reason you are impersonating that user. This reason will appear on vendor audit logs and account audit logs (if they are enabled).
+
+![](/images/3b378a9-Screenshot_2023-02-20_at_16.44.16.png "Screenshot 2023-02-20 at 16.44.16.png")
+
+If impersonation is enabled on your app and your role permits impersonation, a session will open in a new tab, logged in as your target user with their role. The session will last for a maximum of 60 minutes and can’t be extended.
+
+> ### 🚧
+> 
+> User Impersonation uses Login URL
+> 
+> When opening an impersonation session, Frontegg creates the session from the URL specified as the [Login URL variable ](https://portal.frontegg.com/production/backoffice/accounts)for that environment.
+
+### Impersonation on a user level
+
+If a user is the subject of an existing impersonation session, they should see an impersonation session in their login sessions. Like any of their sessions, they can revoke that session, ending the impersonation session.
+
+![](/images/642867a-Screenshot_2023-02-20_at_16.56.18.png "Screenshot 2023-02-20 at 16.56.18.png")
+
+### Who can impersonate users
+
+To impersonate users, you must either have an Owner role or an Impersonator role (in addition to Admin or Backoffice Editor).

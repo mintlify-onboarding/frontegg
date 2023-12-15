@@ -1,0 +1,29 @@
+---
+title: "New Device"
+---
+
+The use of unrecognized devices by users can pose a potential security risk. These devices, when not properly authenticated or managed, may introduce vulnerabilities into systems, potentially compromising data and network security. It's important for organizations and individuals to be cautious and implement appropriate security measures to minimize such risks.
+
+Most of the time, these logins happen from safe devices, albeit new ones. Maybe a user got a new phone. But in any case, they should be handled with some caution, just to be on the safe side.
+
+### How it works
+
+We detect when a login attempt is happening from a new device. We ignore a user's signup because that is by definition always on a new device.
+
+### Configuring a New Device In the Frontegg Portal
+
+You can choose whether to _Allow_ or _Challenge_ users when trying to log in with an unfamiliar device.
+
+When the user is _Allowed_, they will see no friction and be allowed to continue to the app. 
+
+If the user is _Challenged_ they will be prompted to complete an MFA challenge.
+
+![](/images/b267bd3-Screenshot_2023-09-10_at_14.27.10.png) 
+
+### Notify End Users of a New Device
+
+You can choose to notify users when there is a new device on a user's account by checking the checkbox in the Portal.
+
+### Security Events
+
+If you’re curious how many times breached passwords events happen in your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).

@@ -1,0 +1,115 @@
+---
+title: "Slack login"
+---
+
+### Overview
+
+Adding Slack social login to your login page allows users to sign in to your website or application using their existing Slack account. This can make the login process faster and more convenient for users, as they don't have to create a new account or remember a separate username and password.
+
+**To enable Slack social login to your login page, you will need to** 
+
+1. Enable Slack as a social login in the builder
+2. Create Slack App
+
+### Prerequisite
+
+#### Enable Slack login in the Builder
+
+* On the Homepage click “Go to Builder”
+* Toggle on the **Slack social login** placed in the left panel (please note - you can have up to four social logins on your login page)
+* Click **“Review to Publish”** button and **“Publish to Dev”**
+
+![](/images/3aaa9e7-Screen_Shot_2023-01-12_at_12.20.03_1.png "Screen Shot 2023-01-12 at 12.20.03 (1).png")
+
+### Create Slack App
+
+Follow the steps to below to configure Slack login.
+
+#### Step 1: Open Project
+
+To create your Slack application, go to [Slack api](https://api.slack.com/), log in and select **Create an app**.
+
+![](/images/6739c38-Screenshot_2023-01-10_at_16.14.06.png "Screenshot 2023-01-10 at 16.14.06.png")
+
+#### Step 2: Register Your Application
+
+Click on **Create New App**at the top of the page.
+
+![](/images/2faaded-Screenshot_2023-01-15_at_12.11.06.png "Screenshot 2023-01-15 at 12.11.06.png")
+
+A dialog will appear, now choose **From Scratch**
+
+![](/images/d8aa73e-Screenshot_2023-01-15_at_12.11.37.png "Screenshot 2023-01-15 at 12.11.37.png")
+
+Pick a name and a **Workspace**for your app, and click on **Create App**.
+
+![](/images/a42a577-Screenshot_2023-01-11_at_10.40.50.png "Screenshot 2023-01-11 at 10.40.50.png")
+
+**Now, in order to get the credentials required for the social login you need to configure your app properly. In order to do that follow these steps:**
+
+* On the Side navigation bar on the left click on “**OAuth & Permissions**”
+* Go to the **Redirect URLs** section and add the redirect url to which the user will be redirected to upon a successful login.  
+   * Click on **Save URLs** to save the url you just entered
+
+![](/images/12364cc-Screenshot_2023-01-11_at_10.49.19.png "Screenshot 2023-01-11 at 10.49.19.png")
+
+* **Next, Add Scopes for getting user information from slack**  
+Go to the **Scopes**→ User Token Scopes\*_, and add the following scopes:_  
+ Email  
+ _Profile_  
+ Openid
+
+![](/images/d7a3649-Screenshot_2023-01-11_at_10.54.05.png "Screenshot 2023-01-11 at 10.54.05.png")
+
+* Now, we have to install the app to the **Slack** **Workspace**.  
+Go to the top of the current page (**OAuth & Permissions**) and click on **Install to Workspace**  
+You will be prompted to allow your app access permission to your **Slack workspace**.  
+click **Allow**.
+
+![](/images/336026f-Screenshot_2023-01-11_at_10.55.55.png "Screenshot 2023-01-11 at 10.55.55.png")
+
+* On the sidenav on the left click on **Settings → Manage Distribution**  
+Under **Public Distribution** at the bottom of the page, approve the removal of any hard coded information under the **Remove Hard Coded Information** section  
+Finally, click on **Activate Public Distribution**
+
+![](/images/abc6e53-Screenshot_2023-01-11_at_10.59.31.png "Screenshot 2023-01-11 at 10.59.31.png")
+
+Great, you have now configured a Slack App.
+
+Now follow these steps to get the credentials that will be used in Frontegg.
+
+* Go to **Settings → Basic Information** page
+* Under **App Credentials** write down the **Client ID** and **Client Secret** that were generated for you. You will need those two credentials for the next step.
+
+![](/images/5d427de-Screenshot_2023-01-15_at_11.50.35.png "Screenshot 2023-01-15 at 11.50.35.png")
+
+#### Step 3: Configure Slack in Frontegg
+
+We are almost done!  
+Now all that is left is to copy the credentials to Frontegg’s portal.
+
+* Go to the social logins page in Frontegg’s portal under **Authentication → Social-Logins**, and click on **Manage**on the Slack card.
+
+![](/images/eb9645e-Screen_Shot_2023-01-12_at_12.22.35.png "Screen Shot 2023-01-12 at 12.22.35.png")
+
+* Choose **Custom**and start copying the credentials from your Slack app
+* Back in your slack app, go to **Settings → Basic Information** page in your Slack app, and under **App Credentials**copy the **Client ID** and **Client Secret** and paste them in the proper fields in Frontegg’s Portal
+
+**Don’t forget to save your changes!** 
+
+![](/images/9a83594-Screenshot_2023-01-11_at_11.07.41.png "Screenshot 2023-01-11 at 11.07.41.png")
+
+**Congrats!** you just enabled slack as a social login, and your users can now use their slack account to login into your app
+
+**Test your integration**
+
+* Go to your application
+* Login/Sign-up using Slack
+
+### Customizing Authentication Scopes for Slack
+
+![Customizing Scopes for Google Social Login](/images/f8ce8d1-Screenshot_2023-11-12_at_10.40.49.png)
+
+Customizing Scopes for Slack Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate via their Slack account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes. You can check Slacks's supported scopes [here](https://api.slack.com/scopes).

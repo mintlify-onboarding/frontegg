@@ -1,0 +1,83 @@
+---
+title: "Custom Domains"
+description: "Add custom domains"
+---
+
+### Adding Custom Domains
+
+To avoid frustrating cookie issues and to enhance your branding, we encourage you to use a custom domain.
+
+By default, you have a Frontegg Domain, which ends with   **.frontegg.com**. By using this Frontegg Domain, however, you may encounter unwanted cookie issues and use a domain that is not consistent with your brand. 
+
+### Why Use a Custom Domain?
+
+#### Avoid Cookie Issues
+
+Some browsers block third-party cookies by default. Providing a custom domain as your application UI domain will give you the ability to support these browsers.
+
+#### Enhance Your Brand
+
+Instead of seeing .frontegg.com in your domain, you might prefer to have your customers see your custom domain. For instance, when your customers use your application to login, your application might direct them to the following URL:  
+  
+HTTP
+
+`https://your-application.frontegg.com/oauth/account/login
+`
+
+Rather than see a domain with .frontegg.com in it, you might prefer that your customer see **your** domain instead.
+
+Read below to learn how to configure a custom domain.
+
+### Configuring Custom Domains
+
+To configure custom domains, your Frontegg portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Env Settings ➜ Domains**. 
+
+> ### ❗️
+> 
+> Domain Limitation
+> 
+> Note that you can configure one custom domain per environment, and up to 2 domains in total. If you need to configure more custom domain, [contact us](support.frontegg.com).
+
+To configure a new custom domain, press _Configure_, and in the popup dialog box, insert the your desired domain name which will generate the CNAME record you need for your DNS configuration. 
+
+![Configuring a new custom domain](/images/f4fb0aa-Screenshot_2023-10-31_at_11.16.51.png)
+
+Configuring a new custom domain
+
+![Add your desired domain url](/images/f6fc836-Screenshot_2023-10-31_at_11.17.48.png)
+
+Add your desired domain
+
+> ### 📘
+> 
+> Use Subdomain as Custom Domain
+> 
+> A common practice is to use a subdomains as the custom domain because if your app is hosted on app.sample.com and you have an existing A Record for that domain, you cannot use app.sample.com as a custom domain on Frontegg. Instead, use a subdomain as the custom domain, like auth.sample.com.
+
+After adding the CNAME to your DNS configuration, click the _Verify_ button. If Frontegg is able to verify the CNAME record, you will see a success message. After a successful setup, you should also see your custom domain listed on the Administration Page's Domain tab with a _verified_ tag.
+
+![Verify your custom domain](/images/f6bf620-Screenshot_2023-10-31_at_11.18.09.png)
+
+Verify your custom domain
+
+> ### 🚧
+> 
+> Custom Domains and Environments
+> 
+> Note that managing custom domains is performed for each environment separately.
+
+> ### 📘
+> 
+> SSL Certificate
+> 
+> Frontegg generates an SSL certificate for your custom domain.
+
+### Custom Domain in Frontend SDK
+
+Note that when using a custom domain on Frontegg, That domain should also be passed in the `baseUrl` in the `contextOptions` of your Frontegg integrations package. 
+
+> ### 📘
+> 
+> Possible Errors
+> 
+> In the setup, you may encounter an error if Frontegg is unable to verify your custom domain. If that happens to you, double check that you entered your CNAME correctly with your DNS provider and try again.

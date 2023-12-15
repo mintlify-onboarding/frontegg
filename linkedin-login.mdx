@@ -1,0 +1,102 @@
+---
+title: "Linkedin login"
+---
+
+### Overview
+
+Adding social login to your login page allows users to sign in to your website or application using their existing social media accounts, such as Facebook, Google, or Linkedin. This can make the login process faster and more convenient for users, as they don't have to create a new account or remember a separate username and password.
+
+To enable LinkedIn social login to your login page, you will need to 
+
+1. Enable LinkedIn as a social login in the builder
+2. Create LinkedIn Credentials in the environments
+
+### Prerequisite
+
+#### Enable LinkedIn login in the Builder
+
+* On the Homepage click “Go to Builder”
+* Toggle on the LinkedIn social login placed in the left panel (please note - you can have up to four social logins on your login page)
+* Click “Review to Publish” button and “Publish to Dev”
+
+![](/images/9085ed2-Untitled_3.png "Untitled (3).png")
+
+### Configure LinkedIn credentials
+
+First, Login to your LinkedIn developer account at[ https://developer.linkedin.com/](https://developer.linkedin.com/)  
+Click on the My Apps on the top right corner 
+
+![](/images/47085f1-Untitled_11.png "Untitled (11).png")
+
+Now, follow the steps below to configure a new LinkedIn application
+
+#### Step 1: Create an Application
+
+To create your LinkedIn application, under My Apps, click on the Create App button
+
+![](/images/e57d868-Untitled_12.png "Untitled (12).png")
+
+**Then follow these steps**
+
+1. Name your application
+2. Select your company's LinkedIn page from the dropdown (the company profile must exist on LinkedIn)
+3. Set your link to the privacy policy (optional)
+4. Select your company’s logo
+5. Accept the terms of service
+6. Click on the Create app button
+
+![](/images/6944246-Untitled_16.png "Untitled (16).png")
+
+**Your application is now created.** 
+
+Under the Products tab, request access on the “Sign in with LinkedIn” tab. This will allow your users to log in to your product via LinkedIn
+
+**This is how the products section should look after granting access to the Sign In with LinkedIn** 
+
+![](/images/eb6bdf8-Untitled_6.png "Untitled (6).png")
+
+Under the **Auth tab**, Navigate to the **OAuth 2.0** section to add your environment login redirect URL to the allowed redirect URLs as follows:
+
+![](/images/1ab4dfa-Untitled_14.png "Untitled (14).png")
+
+* **For hosted login**, the redirect URL should be https://{{YOUR-FRONTEGG-DOMAIN}}/oauth/account/social/success.
+* \*For embedded login\*\*, the redirect URL should be https://{{YOUR-APPLICATION-URL}}/account/social/success
+
+![](/images/73a93a7-Untitled_7.png "Untitled (7).png")
+
+Store the Client ID and Client Secret from the Application Credentials section.  
+We will use them in the next step.
+
+![](/images/a1d8b21-Untitled_8.png "Untitled (8).png")
+
+#### Step 2: Configure LinkedIn Provider in Frontegg
+
+**We are almost done!**   
+Now all that is left is to copy the credentials to Frontegg’s portal.
+
+* Go to the social logins page in Frontegg’s portal under Authentication → Social-Logins, and click on Manage on the LinkedIn card.
+
+![](/images/c93d5ba-Untitled_9.png "Untitled (9).png")
+
+* Choose **Custom** and start copying the credentials you wrote down  
+   * Under **Client ID** paste the **Client ID** you created in the previous step  
+   * Under **Secret** paste the **Client Secret** you created in the previous step  
+   * Under **Redirect URL** paste the redirect url to which you want the user to be redirected to after a successful login  
+   **Don’t forget to save your changes!**
+
+![](/images/a477b45-Untitled_10.png "Untitled (10).png")
+
+**Congrats!** you just enabled LinkedIn as a social login, and your users can now use their LinkedIn identity to login into your app
+
+##### Test your integration
+
+1. Go to your application
+2. Login/Sign-up using LinkedIn
+
+### Customizing Authentication Scopes for LinkedIn
+
+![Customizing Scopes for Google Social Login](/images/e5a2fc1-Screenshot_2023-11-12_at_10.42.12.png)
+
+Customizing Scopes for LinkedIn Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate with their LinkedIn account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes.

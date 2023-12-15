@@ -1,0 +1,48 @@
+---
+title: "Stale Users"
+---
+
+The presence of stale users within an app can pose several risks and challenges. These inactive or disengaged users may occupy valuable database space, impacting system efficiency and performance. Moreover, they can skew analytics and reporting metrics, making it difficult to accurately assess user engagement and behavior. Stale user accounts can also become attractive targets for malicious actors seeking to exploit abandoned profiles for fraudulent activities or data breaches. To mitigate these risks, it's essential for app developers and administrators to regularly review and clean up inactive accounts, implement proper user lifecycle management practices, and encourage user engagement to maintain a healthy and secure user base.
+
+### How it works
+
+Once a day, we run a check on all your users and see when they last logged in to any of the accounts they're in. If their last login day is above the number of days you configured, stale users gets triggered on that user.
+
+If you chose Allow, Challenge, or Block, that action will happen on their next login. If you chose Lock, they will get locked immediately (in the daily check).
+
+### Prerequisites
+
+There are no prerequisites for detecting stale users.
+
+### Configure Stale Users
+
+#### In the Frontegg Portal
+
+You can choose from the following actions when a user become stale
+
+1. Allow - Let the user continue to the app on their next login
+2. Challenge - Challenge the user with MFA on their next login. If they pass, let them continue to the app
+3. Block - Block their subsequent login attempts
+4. Lock - Lock the user immediately during the daily checks
+![](/images/8ea1429-Screenshot_2023-09-10_at_21.52.41.png) 
+
+### How the end user experiences stale users on login
+
+1. Allow - The user is allowed to continue to the app, and therefore become non-stale
+2. Challenge - The user will get an MFA challenge. If they pass, they continue to the app and become non-stale. If they fail, their login gets blocked.
+3. Block - The user will get a failed login message.
+4. Lock - The user will see that their account is locked
+
+### Notify end users of stale user logins
+
+You can choose to notify users when there is a login attempt once they are stale by checking the relevant checkbox.
+
+## Analyzing Stale Users in your App
+
+#### Security Events
+
+If you’re curious how many times stale users log iton your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).
+
+#### Logs
+
+Coming soon!

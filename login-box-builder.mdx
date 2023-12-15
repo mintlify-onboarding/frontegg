@@ -1,0 +1,125 @@
+---
+title: "Login Box Integration"
+---
+
+When proceeding with your Frontegg's Login Box Integration, your next steps rely on whether you want to opt for the _Hosted_ or _Embedded_ options. Read on to learn more about each option. 
+
+[ Hosted Login Box Integration Learn more about how to create your login box and admin portal est. 3 min ](https://docs.frontegg.com/docs/hosted-login) [ Embedded Login Box Integration Learn more about how to create your login box and admin portal est. 3 min ](https://docs.frontegg.com/docs/embedded-login) 
+
+### Hosted or Embedded Login?
+
+Embedded and hosted login both come with the same pre-built but highly customizable login box and robust set of authentication functionality. 
+
+The main difference is that embedded login allows you to embed the login box into your code, whereas with hosted login you host the login box on Frontegg servers. 
+
+With [Embedded Login ](/docs/embedded-login) you import one of our software packages into your application and then use components, links, and subdomains to handle authentication for you with. You actually embed the login box into your code. When your customers click a button on your application to log in or sign up, your application handles authentication for you.
+
+> ### 📘
+> 
+> Embedded Login Limitations
+> 
+> Embedded login operates using cross-site authentication using cross-site `http-only` cookies. For this to operate flawlessly on modern browsers (which block 3rd party cookies by default) it is required to [Add Custom Domains](/docs/custom-domains)
+
+With [Hosted Login](/docs/hosted-login) Frontegg hosts the authentication. When your customers click a button on your application to log in or sign up, your application redirects the user to the login page hosted by frontegg. The user is then authenticated and redirected using Open ID connect protocol back to your application. 
+
+This mode is extremely useful if your application is protected using standard API gateways such as [Kong](https://konghq.com/kong/) or [NGINX](https://www.nginx.com/)
+
+An additional very popular use case is when the login dialog is used by multiple applications and you want to share the user pool. In these use cases, hosted login will be a perfect choice.
+
+### Moving from Hosted to Embedded Login
+
+If you are using Frontegg's Hosted Login and wish to increase your code flexibility and customization options, you may choose to move to Embedded login. To do so, you will need to do the following:
+
+* [STEP 1: Change Cookie Policy](#STEP-1:-Change-Cookie-Policy)
+* [STEP 2: Update Redirect URLs](#STEP-2:-Update-Redirect-URLs)
+* [STEP 3: Integrate Embedded](###STEP-3:Integrate-Embedded)
+* [STEP 4: Turn Off Hosted](###STEP-4:-Turn-Off-Hosted)
+
+#### STEP 1: Change Cookie Policy
+
+Change cookie policy to none using the Frontegg API. You can use postman or any other api tool.
+
+Call the [update identity management configuration](/reference/vendorconfigcontroller%5Faddorupdateconfig) route.
+
+Send the following payload in the POST body.
+
+JSON
+
+`{
+   cookieSameSite: NONE
+}
+`
+
+> ### 📘
+> 
+> Authentication APIs
+> 
+> Learn how to [get started with the Frontegg API](/reference/getting-started-with-your-api) and [how to authenticate as a vendor](/reference/authenticate%5Fvendor).
+
+#### STEP 2: Update Redirect URLs
+
+Your application uses Redirect URLs for various features, like Email Templates, Social Logins, and SSO.
+
+How you update the Redirect URLs depends upon whether you are using the {{LOGIN\_URL}} template in your Redirect URLs.
+
+Here is an example of Email Templates using the {{LOGIN\_URL}} template as their base URL.
+
+![](/images/eb9946d-Screen_Shot_2022-05-04_at_13.11.44.png "Screen Shot 2022-05-04 at 13.11.44.png") 
+
+##### If all of the Redirect URLs on Email Templates, Social Logins, and SSO use the {{LOGIN\_URL}} template.
+
+Change your Login URL to be the same as App URL.
+
+![](/images/9974499-Snip20221117_30.png "Snip20221117_30.png")
+
+  
+> ### 📘
+> 
+> Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Settings ➜ URLs** to manage Login URL and App URL.
+
+  
+##### If the Redirect URLs on Email Templates, Social Logins, and SSO do **NOT** use the {{LOGIN\_URL}} template.
+
+Check the following to make sure the Redirect URLs use {{APP\_URL}} as the base.
+
+* [Email Templates](/docs/email-templates)
+* [Social Logins](/docs/adding-social-logins) 7
+* [SSO](/docs/adding-sso#step-2-configure-sso)
+
+Here is an example email template with the Redirect URL using {{APR\_URL}} as its base.
+
+![](/images/a69c448-Screen_Shot_2022-05-04_at_11.41.59.png "Screen Shot 2022-05-04 at 11.41.59.png")
+
+#### STEP 3: Integrate Embedded
+
+> ### 📘
+> 
+> If you already integrated your application with Frontegg
+> 
+> You just need to change option **hostedLoginBox** to **false** in your Frontegg wrapper.
+
+Or follow the relevant guide to integrate embedded login into your code.
+
+[ ![](/images/30cad74-Screen_Shot_2021-11-19_at_13.19.32.png) Angular Integrate embedded login into an Angular application est. 5 min ](https://docs.frontegg.com/docs/angular-embedded-login-guide) [ ![](/images/4baa1cf-Screen_Shot_2021-11-19_at_13.19.08.png) React Integrate embedded login into a React application est. 5 min ](https://docs.frontegg.com/docs/react-embedded-login-guide) [ ![](/images/2f35681-Screen_Shot_2021-11-19_at_13.19.49.png) Vue Integrate embedded login into a Vue application est. 5 min ](https://docs.frontegg.com/docs/vue-embedded-login-guide) [ ![](/images/61f166f-next-js-logo-8FCFF51DD2-seeklogo.com.png) Next.js Integrate embedded login into a Next.js application est. 5 min ](https://docs.frontegg.com/docs/nextjs-ssr-embedded-login-guide) 
+
+#### STEP 4: Turn Off Hosted
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Login Method**.
+
+Choose **Embedded login**.  
+  
+> ### 🚧
+> 
+> Turning off 'Hosted Login'
+> 
+> Please complete the steps above before turning off hosted login. Otherwise, your users will no longer have access to the login/signup page.
+
+  
+![](/images/ff7b674-Snip20221117_29.png "Snip20221117_29.png")
+
+  
+> ### 🚧
+> 
+> Hosted Login Status
+> 
+> Note the you need to _manually_ update the _hosted login status_ for each environment separately.

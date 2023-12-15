@@ -1,0 +1,37 @@
+---
+title: "Brute Force Protection"
+---
+
+Brute force attacks are probably the oldest authentication attacks out there as they are very straightforward. A brute force attack entails attempting all possible passwords or encryption keys to gain unauthorized access to a system, account, or data.
+
+This method relies on the assumption that eventually, the correct combination will be guessed due to the exhaustive nature of the attempt. Brute force attacks can be time-consuming and resource-intensive, especially when dealing with complex passwords or encryption keys. However, advancements in computational power and techniques have made certain brute force attacks more feasible within a reasonable timeframe.
+
+To counter brute force attacks, security measures such as account lockouts, rate limiting, and the use of strong, unique passwords are recommended. Additionally, employing techniques like CAPTCHAs and multi-factor authentication can significantly enhance the security of systems and data, making them more resilient against this type of attack.
+
+### How it works
+
+You can choose how many incorrect attempts a user can make before something happens to them. Of course, since the passwords are incorrect they never gain access to the app, but you can decide that after a certain number of incorrect tries, that user gets locked and can’t access their account (even with the correct password).
+
+### Prerequisites
+
+In order to use Brute Force, you must be using passwords as an authentication method in your app.
+
+### Configuring Brute Force
+
+1. Choose how many incorrect password attempts trigger this
+2. Choose whether you want to lock this user after that many attempts or not
+![](/images/6a6dce1-Screenshot_2023-09-10_at_21.46.25.png) 
+
+### Your User's Experience
+
+When a user enters an incorrect password, they will get an error. If they enter it a number of times (the number you defined), it will still be incorrect, but they will either be allowed to continue trying or have their account locked.
+
+### Notifying end users of brute force attacks
+
+You can choose to notify users when their is a brute force attack on their account by checking this checkbox.
+
+### Analyzing brute force in your App
+
+#### Security Events
+
+If you’re curious how many times breached passwords events happen in your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).

@@ -1,0 +1,162 @@
+---
+title: "Custom Login Box"
+---
+
+Custom Login Box gives you the opportunity to create a unique login page for your customers and separate them from a standard login box. By using the _Custom Login Box_ you are offering clients and giving them their own security preferences for login and even their own branding atop of yours. 
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> Supported versions for this feature are as follows: 
+> 
+> React - 5.0.33  
+> Vue.js - 2.0.29  
+> Angular - 5.23.0
+
+As mentioned above, when creating a Custom Login Box you’ll be able to differentiate a client login page with the following 
+
+1. Security  
+   * Choose the login methods - Password / Social logins / Passkeys and more.  
+   * Decide which MFA measured you want for this specific account, Regardless of the main MFA strategy.
+2. Branding and Styling  
+   * Logo  
+   * Primary color  
+   * Any other style option you have in our builder.
+
+#### How it works
+
+When creating a customize login box to an account, you are basically creating a separate URL (login page) to this account, and by that making sure Frontegg recognize the account before a user logs in. Think of it as you are creating a branch for a specific account. 
+
+#### Prerequisite
+
+In order to begin and customize a login box to an account, you initially must
+
+1. Integrate to the Frontegg app
+2. Create an account/ test account in one of the environments - Development, Staging, QA, or Production.
+3. If you would like to use only a **query param** to identify the account add in fronteggProvider options, `tenantResolver` function.  
+js  
+`https://{your_domain}.com/?**organization**={account_name}  
+tenantResolver: () => {  
+    const urlQueryParams = new URLSearchParams(window.location.search);  
+    const organization = urlQueryParams.get('organization');  
+    return {  
+      tenant: organization  
+    }  
+  },  
+`
+4. If you are about to provide a unique **subdomain** to each account add in fronteggProvider options, the following `tenantResolver` function.  
+js  
+`https://{account_name}.{your_domain}.com  
+tenantResolver: () => {  
+		organization = window.location.host.replace('.{your_domain}', '')  
+    return {  
+      tenant: organization  
+    }  
+  },  
+    
+`
+5. Then add tenantResolver to your contextOptions.  
+js  
+`const contextOptions = {  
+  baseUrl: "[YOUR_BASE_URL]",  
+  clientId: "[YOUR_CLIENT_ID]",  
+  tenantResolver,  
+}  
+`
+
+#### Steps to Create a Custom Login Box
+
+1. Go to any of your environments
+2. Choose an account and click it
+3. Click on the “Customize login box” button
+
+![](/images/0d50c0f-image_9.png)
+
+![](/images/9870733-table-1_1.png)
+
+1. Click “Start customizing" to get to the mini-account-builder and start managing the login-box. This is where you can edit logo, style and brand it, choose social logins and more.
+
+![](/images/b80deec-builder.png)
+
+The sign-in page you’ll view on the mini builder is the state of your login configured in the main builder. Once you’ll add changes you will overwrite the sign-in page.
+
+After customizing this is the result for this example would be;
+
+![](/images/dfc1b24-builder-1.png)
+
+> ### 📘
+> 
+> Social login configurations
+> 
+> If you enable social logins that are different than yours (for example Google), make sure you configure them on the relevant environment in the [Social Logins](/reference/social-logins) tab.
+
+1. Click Review changes and publish the changes to the environment you are working on.
+2. Go to settings tab - this is where you will determine the login URL, the redirect URL to your app, and choose the Alias.
+* Login URL - This is your account’s unique login URL
+
+| Query param | Subdomain                                             |                     |
+| ----------- | ----------------------------------------------------- | ------------------- |
+| Hosted      | {YOUR\_DOMAIN}.com/oauth?organization={ACCOUNT\_NAME} | Same as query param |
+| Embedded    | {YOUR\_DOMAIN}.com/?organization={ACCOUNT\_NAME}      | {ACCOUNT\_NAME}.com |
+
+* App URL - add your app URL, this is where your users will be redirected to after the sign in.
+
+| Query param       | Subdomain                                        |                                    |
+| ----------------- | ------------------------------------------------ | ---------------------------------- |
+| Hosted & Embedded | {DOMAIN\_NAME}.com/?organization={ACCOUNT\_NAME} | {ACCOUNT\_NAME}.{DOMAIN\_NAME}.com |
+
+* Alias - The alias is the identifier of your account it should match exactly the `{account_name}` mentioned in the points above.
+
+![](/images/eb4658f-image_10.png)
+
+1. Click “Save settings” once you are done.
+2. Toggle on “Go live” to publish the login page.  
+Now, your account's users will have their unique login link, you need to share it with them since their credentials will work only when accessing the account from this link.
+
+#### Deactivating the Custom login box
+
+You can also decide to turn off the "Go live" button, this action will in return accept the users credentials in the main login box. Make sure you update the account for this change. 
+
+#### Adding the account logo to the emails
+
+If you’d like to brand the whole login flow, you’d probably want to replace the logo to the account’s logo in the emails too. In order to do that you need to edit each email template and add this;
+
+`{{#if tenant.logoUrl}}
+<img height="24px" src="{{tenant.logoUrl}}" />
+{{else}}
+<img height="24px" src="https://picsum.photos/200/300" />
+{{/if}}
+`
+
+#### Security limitations
+
+1. Moving between accounts - Users that are assigned to multiple accounts would have to re-login to an account with a unique customized login page.
+2. Manage MFA - the MFA requirements are based on the strictest decision - whether it is your decision or your account’s.  
+When enabling Custom Login Box, you are actually creating a separate workspace to the account’s users, hence eliminating the multi-tenancy aspect and allowing it’s own MFA requirements.
+3. Sign-up to a specific account is not available at the moment for account with Custom login box. Therefore, we removed the option to add add the “Sign up” link from the mini-builder. In addition, the account’s users will be allowed to add others only by sending a specific invite.
+
+#### Self-service configurations
+
+Your customers can adjust their login box style; upload logo, change the box _primary color_, and change the position of their social logins, directly from the Admin portal. This functionality is enabled automatically for users with _Account Settings_ [Permissions](/docs/permissions-1).
+
+![Customize your login box styling and logo
+
+](/images/50199b9-customization.png)
+
+Customize your login box styling and logo
+
+> ### 📘
+> 
+> NextJS
+> 
+> Currently NextJS is supported only with query params
+
+#### Going live checklist
+
+1. Create an environment and an account to start with
+2. Add the relevant tenantResolver function to your App
+3. Customize the login box and update the settings
+4. Test in testing environments
+5. Create the relevant custom login box for an account in Production
+6. Send the client their unique App URL

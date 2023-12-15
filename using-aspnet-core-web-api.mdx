@@ -1,0 +1,164 @@
+---
+title: "ASP.NET Core Backend Protection"
+---
+
+Control access to your backend using ASP.NET Core Web API. When your routes receive API calls, ASP.NET Core Web API checks the caller's identity and only gives access if the caller is authorized to access the route.
+
+## Step-By-Step Guide
+
+Follow the steps below to validate tokens using ASP.NET Core Web API.
+
+### Step 1: Install Dependency
+
+To get started with ASP.NET core token validation, you first need to install the required dependency  
+  
+Shell
+
+`Install-Package Microsoft.AspNetCore.Authentication.JwtBearer
+`
+
+### Step 2: Configure Startup
+
+In Frontegg, go to **Workspace Settings ➜ General**.
+
+Copy your workspace name and client ID. 
+
+Next, configure your authentication middleware in your `Startup.cs` file. Enter your workspace name and client ID into the code sample below in the placeholders for each.  
+  
+C#
+
+`` // Startup.cs
+
+public void ConfigureServices(IServiceCollection services)
+{
+    // ...
+    // ...
+
+    string domain = "https://[my-workspace-name].frontegg.com"; // Put your workspace name instead of [my-workspace-name]
+    services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Authority = domain;
+            options.Audience = "[my-client-id]" // Put your client ID instead of [my-client-id]
+            // If the access token does not have a `sub` claim, `User.Identity.Name` will be `null`. Map it to a different claim by setting the NameClaimType below.
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                NameClaimType = ClaimTypes.NameIdentifier
+            };
+        });
+}
+ ``
+
+To add the authentication and authorization middleware to the middleware pipeline, add a call to the `UseAuthentication` and `UseAuthorization` hooks on your `Startup.cs` file.  
+  
+C#
+
+`// Startup.cs
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    // ...
+    // ...
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    // ...
+    // ...
+}
+`
+
+### Step 3: Validate Roles
+
+Next, you need to validate that the token has the required roles claims.
+
+Create a new authorization checker called `HasRoleRequirement`. This validator checks if the `roles` claim issued by your Frontegg workspace is present. If the `roles` claim exists, the validator checks if the `roles` claim contains the `requested role`.  
+  
+C#
+
+`// HasRoleRequirement.cs
+
+public class HasRoleRequirement : IAuthorizationRequirement
+{
+    public string Issuer { get; }
+    public string Role { get; }
+
+    public HasRoleRequirement(string role)
+    {
+        Role = role ?? throw new ArgumentNullException(nameof(role));
+        Issuer = issuer ?? throw new ArgumentNullException(nameof(issuer));
+    }
+}
+`
+
+  
+C#
+
+`// HasRoleHandler.cs
+
+public class HasRoleHandler : AuthorizationHandler<HasRoleRequirement>
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, HasRoleRequirement requirement)
+    {
+        // If user does not have the scope claim, get out of here
+        if (!context.User.HasClaim(c => c.Type == "roles" && c.Issuer == requirement.Issuer))
+            return Task.CompletedTask;
+
+        // Split the roles string into an array
+        var roles = context.User.FindFirst(c => c.Type == "roles" && c.Issuer == requirement.Issuer).Value.Split(' ');
+
+        // Succeed if the roles array contains the required role
+        if (roles.Any(s => s == requirement.Role))
+            context.Succeed(requirement);
+
+        return Task.CompletedTask;
+    }
+}
+`
+
+On the Startup's `ConfigureServices` method, add a call to the `AddAuthorization` method. 
+
+To add policies for the roles, call `AddPolicy` for each role. 
+
+One more thing we have to ensure that you register the `HasRoleHandler` as a singleton:  
+  
+C#
+
+`// Startup.cs
+
+public void ConfigureServices(IServiceCollection services)
+{
+    //...
+
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("admin", policy => policy.Requirements.Add(new HasRoleRequirement("admin", domain)));
+    });
+
+    services.AddSingleton<IAuthorizationHandler, HasRoleHandler>();
+
+    //...
+}
+`
+
+The usage of the `Authorization` protection on your web API endpoints is as simple as the below:  
+  
+C#
+
+`// Controllers/ApiController.cs
+
+[Route("api")]
+public class ApiController : Controller
+{
+    [HttpGet("admin-scoped")]
+    [Authorize("admin")]
+    public IActionResult Scoped()
+    {
+        return Ok(new
+        {
+            Message = "Hello from a private admin endpoint! You need to be authenticated and have a role of admin to see this."
+        });
+    }
+}
+`

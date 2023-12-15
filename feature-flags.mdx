@@ -1,0 +1,91 @@
+---
+title: "Feature Flags"
+---
+
+With Feature Flags, you can safely test features in production and allow designated access to internal teams, beta customers, QA new features, and more. Frontegg's feature flagging utilizes the `isEntitledTo` query to wrap specific areas of your app with designated access according to a user's associated **attributes**. 
+
+### Getting Started with Feature Flags
+
+Feature flags are built atop existing features. So, to _flag_ a feature, you initially need to create one via the features' dashboard. To create a feature, go to **Entitlements --> Features**. Learn more about creating features [here](/docs/features). 
+
+![Add, edit, and manage your features](/images/daf928e-Screenshot_2023-10-26_at_15.34.07.png)
+
+Add, edit, and manage your features
+
+### Creating a New Feature Flag
+
+To create a new feature flag, go to **Entitlements --> Feature Flags**. Press the _Create feature flag_ button and use the drop-down menu to choose the feature you want to flag from your features list. 
+
+![Create a new feature flag
+
+](/images/4b0a1c9-Screenshot_2023-10-26_at_12.04.46.png)
+
+Create a new feature flag
+
+![Use the 'Linked feature' menu to choose the relevant feature to flag](/images/e2ef35a-ff_create.png)
+
+Use the 'Linked feature' menu to choose the relevant feature to flag
+
+> ### 🚧
+> 
+> Feature limit
+> 
+> Note that you can only use **one** flag per **feature**. A flag cannot be linked to multiple features.
+
+### Feature Flag Settings
+
+Each feature flag has a _Settings_ and a _Targeting_ tab. The _Settings_ tab includes fields like the flag's name and linked its features, and the _Targeting_ tab includes the targeting rules you create for your flag. 
+
+![Feature flag settings](/images/81515e5-Screenshot_2023-10-28_at_19.35.15.png)
+
+Feature flag settings
+
+![Control the default state when a feature flag is switched off](/images/5c2b728-Screenshot_2023-10-27_at_19.35.09.png)
+
+Control the default state when a feature flag is switched off
+
+### Adding Targeting Rules
+
+To create designated access to a feature flag, go to _Add new targeting rules_ and select the attributes you wish to apply for that specific flag. 
+
+![Add targeting rules via the 'Add new targeting rules' button.](/images/2d5e530-Screenshot_2023-10-26_at_15.35.15.png)
+
+Add targeting rules via the 'Add new targeting rules' button.
+
+#### Attributes for Targeting
+
+The default attributes we currently support for feature flagging are: _email verified_ (`frontegg.emailVerified`), _user Id_ (`frontegg.userId`), _tenant Id_ (`frontegg.tenantId`), and _email_ (`frontegg.email`). These attributes are included in the drop-down attributes menu. In addition to frontegg attributes, _Custom_ attributes can also be used. Learn more about custom attributes in the following section. 
+
+![You can add multiple rules to work in tandem. In case there's conflict, the first rule will apply](/images/bea1a0d-Screenshot_2023-10-26_at_15.36.39.png)
+
+You can add multiple rules for each flag. In case there's conflict, the first matching rule will apply
+
+![](/images/93d23c8-Screenshot_2023-10-26_at_15.36.53.png) ![](/images/7b28b99-Screenshot_2023-11-06_at_14.34.35.png) 
+
+### Custom Attributes
+
+You have the flexibility to create custom attributes that for rule-based/feature flagging purposes. When creating a custom attribute, the attribute _Key_ will be useful when you insert it in the targeting rules field (see below). 
+
+![](/images/7b28b99-Screenshot_2023-11-06_at_14.34.35.png) 
+
+#### JWT Attributes
+
+In addition to _Custom_ attributes and default _Frontegg attributes_, you can target attributes from the user's JWT. Since we _flat_ the `jwt` object, you can access its nested properties, including arrays. For example, if you store information such as the user's date of birth as `dateOfBirth`, you can target this attribute in your feature flagging engine by inserting a `jwt.dateOfBirth` in the attribute field. For JWT attributes, you need to use the `jwt` prefix. 
+
+![](/images/1e00e66-Screenshot_2023-11-07_at_16.00.21.png) 
+
+> ### 👍
+> 
+> Check our [Entitlements SDKs](/docs/entitlements-sdks) Collection
+
+#### Feature Flag Limitations
+
+When creating _Feature flags_, note that there are some limitations: 
+
+* Each environment (developing/staging/production) is limited to **500 feature flags** ([Contact us](https://support.frontegg.com/hc/en-us/requests/new) if you need to set more flags).
+* Each _Feature Flag_ is limited to up to **10 Rules**
+* Each _Rule_ is limited to up to up to **10 conditions**
+* The _Attribute_ field is limited to up to **100 characters**
+* The   _Value/Segment_ field can contain up to **25 items**
+* Each _Value/Segment_ is limited to up to **50 characters**
+![](/images/7b28b99-Screenshot_2023-11-06_at_14.34.35.png)

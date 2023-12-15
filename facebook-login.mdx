@@ -1,0 +1,145 @@
+---
+title: "Facebook login"
+---
+
+To enable your users to login with Facebook, you must enable Facebook login in the builder and then create an application with Facebook to serve as the OAuth provider.
+
+Read below to learn how.
+
+### Enable In Builder
+
+Go to **Home** and click on the Login Box builder.
+
+In the left panel, toggle the switch to _on_ for Facebook.  
+  
+![2880](/images/8047a8b-Screen_Shot_2022-04-17_at_11.29.18.png "Screen Shot 2022-04-17 at 11.29.18.png")   
+
+> ### 👍
+> 
+> Moving Environments
+> 
+> When moving a project from one environment to another, Frontegg moves the social login environment configurations for you. For instance, if moving from development to production, Frontegg moves the development social login configurations to production.
+
+### Step 1: Register Your App
+
+To create your OAuth application, go to [Facebook for Developers](https://developers.facebook.com).
+
+Next, select **My Apps** .  
+  
+![1919](/images/429b289-facebook-_register_app_-1.png "facebook- register app -1.png")   
+
+Then, click on **Create App**.  
+  
+![1919](/images/237a773-facebook-_register_app_-2.png "facebook- register app -2.png")   
+
+Select an app type. Learn more about [Facebook's app types](https://developers.facebook.com/docs/development/create-an-app/app-dashboard/app-types), set your app name, and set your app contact email.  
+  
+![1919](/images/4fea9bc-facebook-_register_app_-3.png "facebook- register app -3.png")   
+
+### Step 2: Add Facebook Login
+
+On your Facebook application's dashboard, click the Facebook Login **Set Up** button.  
+  
+![1919](/images/e6c320d-facebook-_add_facebook_login.png "facebook- add facebook login.png")   
+
+Then, enable **Client OAuth Login**, enable **Web OAuth Login**, and set your **Redirect URI** (for example, `http://localhost:3000/account/social/success`).  
+  
+![1919](/images/b88a509-facebook-_login_configure.png "facebook- login configure.png") 
+
+### Step 3: Enable public\_profile advanced permission
+
+Depending upon which Facebook application type you registered, you may need to enable public\_profile advanced permission. 
+
+In **App Review**, select **Permissions and Features**, look for **public\_profile** and click **Get Advanced Access**.  
+  
+![1919](/images/2362fe9-facebook-_permissions.png "facebook- permissions.png")   
+
+> ### 📘
+> 
+> Advanced Permission
+> 
+> If you do not see the option to Get Advanced Access, either the app type you selected already has it by default or else it is not available with the app type you selected.
+
+  
+### Step 4: Enter Credentials In Frontegg
+
+  
+> ### 👍
+> 
+> Test Environment
+> 
+> If you are still developing your app, create a Facebook test app and enter those credentials into the Frontegg Portal. See the [guide](/docs/facebook-login#create-test-environment). When ready for production, switch your credentials to your Facebook production app.
+
+  
+Copy the **App ID** and **App Secret** from Facebook Login.  
+  
+![1919](/images/69458d9-facebook-_client_and_secret.png "facebook- client and secret.png")   
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ Social Logins**. 
+
+Click on the Facebook manage button.  
+  
+![](/images/cb3af61-Screen_Shot_2022-04-17_at_11.31.40.png "Screen Shot 2022-04-17 at 11.31.40.png")
+
+  
+Enter your Facebook information. Then save and publish.
+
+  
+![](/images/6a4d785-Screen_Shot_2022-04-17_at_11.33.20.png "Screen Shot 2022-04-17 at 11.33.20.png")
+
+  
+### Step 5: Test Facebook Button
+
+In your login screen, you should see a **Facebook** button that redirects to the Facebook OAuth Consent screen for login. Test it to make sure it works.  
+  
+![](/images/7fd35bd-Screen_Shot_2021-11-18_at_17.19.24.png "Screen Shot 2021-11-18 at 17.19.24.png")
+
+  
+> ### 📘
+> 
+> Set Who Can Login With Facebook
+> 
+> By default, only invited users can login with Facebook. If you want to allow **new users** to signup with Facebook, go to the Login Box builder and enable Allow Signups in the left panel.
+
+  
+## Create Test Environment
+
+To test your app in a development environment, create a Facebook test app.
+
+### Step 1: Create Test App
+
+To create a test app, click on your app name on the top left corner. Select **Create Test App** .  
+  
+![](/images/0e2279c-Screen_Shot_2021-04-23_at_19.12.23.png "Screen Shot 2021-04-23 at 19.12.23.png")
+
+  
+Give it a name and select **Create Test App**.  
+  
+![](/images/111de91-Screen_Shot_2021-04-23_at_19.12.48.png "Screen Shot 2021-04-23 at 19.12.48.png")
+
+  
+### Step 2: Add Facebook Login
+
+To add Facebook login, it is the same process as for the setup you did for the production app:
+
+* On your app's dashboard, click   **Set Up** for **Facebook Login**.
+
+![](/images/2a5e9d2-Screen_Shot_2021-04-23_at_19.13.12.png "Screen Shot 2021-04-23 at 19.13.12.png")
+
+  
+### Step 3: Enter Credential In Frontegg
+
+From your Facebook test app, copy your **App ID** and **App Secret** and enter them into the Facebook Login configuration section of your Frontegg Portal.  
+  
+![](/images/af3d1f3-Screen_Shot_2021-04-23_at_19.13.27.png "Screen Shot 2021-04-23 at 19.13.27.png")
+
+  
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ Social Logins**, click on the Facebook Login manage button and enter your Facebook information.
+
+### Customizing Authentication Scopes for Facebook
+
+![Customizing Scopes for Google Social Login](/images/1c74549-Screenshot_2023-11-12_at_10.41.33.png)
+
+Customizing Scopes for Facebook Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate with their Facebook account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes.

@@ -1,0 +1,101 @@
+---
+title: "Entitlements Overview"
+description: "Control your users' access to specific features or functionalities based on their designated user entitlements."
+---
+
+### Getting Started with Entitlements
+
+The Frontegg Entitlements Engine allows businesses to control their users' access to specific features or functionalities based on their designated _user entitlements_. Thanks to the engine, you can control accounts and levels of data access and consequently have a flexible approach to service delivery (e.g., adding features to users when their feature bundle changes).
+
+### How are users granted access?
+
+The Entitlements Engine is built atop the `isEntitledTo` query, and is used to allow and/or limit user access across your app by granting them specific roles, permissions, feature access, and more. To understand the interplay between the different entitlements features, here's a quick recap that clarifies the relationship between them: 
+
+**Roles**: Roles are linked to [Permissions](/docs/permissions-1). If a user has an _Admin_ role, for example, the role will include permissions that frame the role-holder access. When the user receives a role, he automatically receives the role's associated [Permissions](/docs/permissions-1) (e.g., Read, Edit, Delete, etc.) 
+
+**Permissions**: Permissions frame what a user can or can't do in your app, e.g., _Read_, _Write_, _Delete_, etc. You can also link permissions to [Features](/docs/features), and decide that a feature will include the desired permissions (e.g., read, write, delete, etc.). 
+
+**Features**: You can create features and link them to users. you can also include them as part of feature [Plans](/docs/feature-bundles), or create [Feature Flags](/docs/feature-flags) for them. 
+
+**Plans**:Plans are built on [Features](/reference/features-1). After creating features, you can add them to a feature plan. 
+
+**Feature flags**: Feature flags are associated with [Features](/reference/features-1). There can only be one flag per feature, though. Flags are associated with attributes. This topic will cover all you need to know to set and customize feature flags. 
+
+### Entitlements Engine Features
+
+The engine is divided into four distinctive areas that control a user's access to data: 
+
+[ Roles Enable access based on user-specific roles est. 3 min ](https://docs.frontegg.com/v2.0.2/docs/roles-1) [ Permissions Allocate Permissions to specific areas based on user Entitlements est. 3 min ](https://docs.frontegg.com/v2.0.2/docs/permissions-1) [ Features Create Entitlement-based access to specific Features est. 3 min ](https://docs.frontegg.com/docs/features)[ Feature Bundles Create Entitlement-based access to specific Feature Bundles est. 3 min ](https://docs.frontegg.com/v2.0.2/docs/feature-bundles) 
+
+#### Main use cases for Entitlements Management:
+
+1. User Entitlements: User entitlements define the level of access a user has based on their subscription plan or specific permissions granted. Entitlements can range from basic feature(s) access, handpicked set of features to full feature access.
+2. Subscription Plans: Subscription plans in B2B SaaS platforms are typically tiered, offering different levels of service to customers. Frontegg's Entitlements Engine can help you ensure your users gain access only to specific features included in their subscription plan.
+3. Feature Availability: The availability of features can also be controlled via the Entitlements Engine— i.e., which features are open to higher-tiered subscription plans, and which are accessible to all users— simply by enabling or disabling them for specific customers or user groups.
+
+#### Utilizing the Entitlements Engine vs. Traditional RBAC
+
+While basic RBAC provides a framework to access control and should be used, the Entitlements feature management increases access granularity, personalization, revenue optimization, and agility. All of these can empower SaaS platforms to offer **tailored user experiences**, monetize their offers more effectively, and maintain strong security. 
+
+> ### 📘
+> 
+> Maintaining RBAC approach
+> 
+> You can always maintain the RBAC approach using. Learn more about protecting [Protecting Backend APIs](/docs/protecting-backend-apis).
+
+#### The Engine's Core Components
+
+The Entitlements Engine is built on four core components: 
+
+* User Roles: such as Admin, Editor, etc. Each role entails specific permissions.
+* Permissions: read, edit, access to specific areas, etc. Permissions affect the usability of the app by your users.
+* Feature: features are resources in your app that you’d like to protect or grant access to certain users (via feature bundles). Based on your use case, you can customize and tailor them to your needs.
+* Feature bundles: feature bundles can include a stack of features or a single feature, and can be assigned to specific users/accounts. Subscription plans are an excellent example of such usage.
+
+#### Granting Users with Feature Access
+
+Based on the four concepts above, the Entitlements Engine gathers the different variables to makes a decision whether a user is entitled to access a feature, or not: 
+
+![](/images/0c6fed4-Screenshot_2023-07-05_at_15.55.19_1.png) 
+
+Users can receive access based on their role, and this access can be limited by the features they are can access if they are associated with a feature bundle. Refer to the use cases below to learn more. 
+
+#### Use Case: Protect Your Application's SSO Connection
+
+To clarify the flow, let’s take an example where a user wants to set up a new SSO connection (i.e., a feature ) in your SAAS application.
+
+##### Your End
+
+Let’s assume that your code currently protects this feature with an `sso.read` permission.
+
+To create a user entitlement in the Frontegg portal you will need to perform the following actions: 
+
+1. Create a permission with an `sso.read` key (check the [Permissions](/docs/permissions-1) guide for more information).  
+   1. Add an `sso.read` permission to an existing role or create a new role using that permission.  
+   2. Assign the role to user X.
+2. Create a [Feature](/docs/features). For the sake of the example, let’s call this feature _User SSO_. (check the Feature guide for more information)  
+   1. Link the `sso.read` permission to _User SSO_ .
+3. Create a [Plan](/docs/feature-bundles) e.g., “Basic Bundle”, and add _User SSO_ to it.
+4. Add the feature to the new bundle.
+5. Assign feature bundle to user X.
+
+##### Frontegg's End
+
+When a user tries to perform an `sso.read` permission, Frontegg runs the following logic: 
+
+1. **Does the user have an `sso.read` permission?** (this information is derived from the user’s [Roles](/docs/roles-1).
+
+i. If **‘No’**, the user will be denied.
+
+ii. If **‘Yes’** —>
+
+1. Frontegg will subsequently check for **features linked to said permissions** in the portal.
+2. Frontegg will check if the user is granted to feature-access as a part of a [Feature Bundles](/docs/feature-bundles). If ‘yes’, the user will be entitled to access the\_ User SSO \_feature. (see note)
+
+![](/images/a287436-Untitled_1.png)
+
+> ### 📘
+> 
+> Linking between permissions and features
+> 
+> While permissions can be linked to one or more feature(s), if a user is granted access to at least **one** feature, they will be granted with the permission as well.

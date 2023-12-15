@@ -1,0 +1,105 @@
+---
+title: "Microsoft login"
+---
+
+To enable your users to login with Microsoft, you must enable Microsoft login in the builder and then create an application with Microsoft to serve as the OAuth provider.
+
+Read below to learn how.
+
+### Enable In Builder
+
+Go to **Home** and click on the Login Box builder.
+
+In the left panel, toggle the switch to _on_ for Microsoft.  
+  
+![2880](/images/8047a8b-Screen_Shot_2022-04-17_at_11.29.18.png "Screen Shot 2022-04-17 at 11.29.18.png")   
+
+> ### 🚧
+> 
+> When making changes to the settings in the builder, be sure to [commit your changes and then publish](/docs/editing-builder-settings) for them to take effect and to configure them in your environments.
+
+## Create Microsoft App
+
+Follow the steps to below to configure Microsoft login.  
+  
+> ### 👍
+> 
+> Moving Environments
+> 
+> When moving a project from one environment to another, Frontegg moves the social login environment configurations for you. For instance, if moving from development to production, Frontegg moves the development social login configurations to production.
+
+### Step 1: Open Project
+
+To create your OAuth application, go to [Microsoft Azure](https://portal.azure.com/#home) and select **Manage Azure Active Directory**.  
+  
+![1918](/images/171a85a-Microsoft_-_First_Step.png "Microsoft - First Step.png")   
+
+### Step 2: Register Your Application
+
+Click on **App registrations** and then **New Registration**.  
+  
+![1918](/images/a90235f-Microsoft_-_Second_Step.png "Microsoft - Second Step.png")   
+
+Then, do the following: 
+
+* Set your application name.
+* Select your **Supported account types**.
+* Set your **Redirect URI** (for example, `http://localhost:3000/account/social/success`).
+![1918](/images/0638daa-Screen_Shot_2021-03-30_at_11.40.46.png "Screen Shot 2021-03-30 at 11.40.46.png")   
+
+> ### 📘
+> 
+> Supported Account Types
+> 
+> Choose the option **Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)**
+
+  
+### Step 3: Get ClientId and Client Secret
+
+Your Microsoft ClientId is located on your Microsoft app's Overview page. Look for Application (client) ID.
+
+To create a client secret, open **Certificates & secrets** and click on **New client secret**.  
+  
+![1918](/images/aac1d36-5-_secret.png "5- secret.png")   
+
+Set an expiration time and description for you client secret.  
+  
+![1918](/images/50e94bf-5-_secret_b.png "5- secret  b.png")   
+
+Copy and save the **Value** for your client secret. You will **not** be able to see it again in your Microsoft account.  
+  
+![1918](/images/a397b61-5-_secret_c.png "5- secret c.png")   
+
+### Step 4: Enter Credentials In Frontegg
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ Social Logins**. 
+
+Click on the Microsoft manage button.  
+  
+![](/images/cb3af61-Screen_Shot_2022-04-17_at_11.31.40.png "Screen Shot 2022-04-17 at 11.31.40.png")
+
+  
+Enter your Microsoft Client ID, Client Secret, and Redirect URL. Then save and publish.  
+  
+![](/images/b65320c-Screen_Shot_2022-04-17_at_11.33.11.png "Screen Shot 2022-04-17 at 11.33.11.png")
+
+  
+### Step 5: Test Microsoft Button
+
+In your login screen, you should see a **Microsoft** button that redirects to the Microsoft OAuth Consent screen for login. Test it to make sure it works.  
+  
+![1440](/images/848ec0c-Screen_Shot_2021-11-18_at_17.19.24.png "Screen Shot 2021-11-18 at 17.19.24.png")   
+
+> ### 📘
+> 
+> Set Who Can Login With Microsoft
+> 
+> By default, only invited users can login with Microsoft. If you want to allow **new users** to signup with Microsoft, go to the Login Box builder and enable Allow Signups in the left panel.
+
+### Customizing Authentication Scopes for Microsoft
+
+![Customizing Scopes for Google Social Login](/images/33f22f8-Screenshot_2023-11-12_at_10.41.11.png)
+
+Customizing Scopes for Microsoft Social Login
+
+Scopes let you specify exactly what type of information your application can fetch from your users after they grant it access— and the generated access token includes these approved scopes. Frontegg currently fetches a _user profile_ and _user email_ as default scopes when users authenticate via their Microsoft account. You can add additional, custom scopes to your social login via your Frontegg portal. To do so, go to \[_Environment name_\] > Authentication > Social login > Custom > Scopes. You can check Microsoft's supported scopes [here](https://learn.microsoft.com/en-us/entra/identity-platform/scopes-oidc).

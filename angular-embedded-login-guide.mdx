@@ -1,0 +1,281 @@
+---
+title: "Embedded Login Integration (Angular)"
+---
+
+The following guide will walk you through adding Frontegg login box to your Angular application.
+
+**Code samples in this guide are also available in the [Frontegg Samples repository](https://github.com/frontegg-samples/angular-embedded-login-box)**
+
+> ### 🚧
+> 
+> Server-Side Rendering (SSR) Support
+> 
+> Server-Side Rendering (SSR) is currently not supported for this integration.
+
+### Before Getting Started
+
+We highly encourage you to create your custom domains before going live. [Custom Domains](/docs/custom-domains) are important to avoid third party cookie-issues. Switching to a custom domain after you've gone live is very cumbersome- especially if you have active SSO connections - so we encourage you to configure them in your Production environment from the get-go. Go [here](/docs/custom-domains) to learn more. 
+
+> ### 📘
+> 
+> Getting your Frontegg subdomain
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `baseUrl` in the integration, navigate to your workspace 'Settings' menu, 'Domains' and copy the `Frontegg domain` and `clientId`. 
+> 
+> You will need them for this guide.
+
+#### STEP 1: Create a new Angular application
+
+**If you already have an existing app, skip this step.** 
+
+Install Angular CLI (if not already installed): 
+
+Shell
+
+`npm install -g @angular/cli
+`
+
+Create a new app using the following script: 
+
+Shell
+
+`ng new my-app
+cd my-app 
+ng serve --open
+`
+
+#### STEP 2: Install Frontegg Angular Library
+
+Run the following command to Install the Frontegg Angular library.
+
+npmyarn
+
+`npm install @frontegg/angular
+`
+
+`yarn add @frontegg/angular
+`
+
+#### STEP 3: Configure your app
+
+> ### 📘
+> 
+> Modules vs. Standalone
+> 
+> Note that your configuration depends on whether you have a _standalone_ app or not. If you have a _standalone_ app, please refer to the `app.config.ts` script. Otherwise, use `app.module.ts`.
+
+1. Add FronteggAppModule to AppModule.imports\[\]
+2. Add FronteggComponent to AppModule.entryComponents\[\]
+
+app.module.tsapp.config.ts
+
+`import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { CommonModule } from "@angular/common";
+import { FronteggAppModule, FronteggComponent } from "@frontegg/angular";
+const fronteggConfig = {
+  contextOptions: {
+    baseUrl: "https://[YOUR-SUB-DOMAIN].frontegg.com",
+    clientId: "[YOUR-CLIENT-ID]",
+  },
+  authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: false,
+};
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+
+    /** Import Frontegg Module **/
+    FronteggAppModule.forRoot(fronteggConfig),
+  ],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+`
+
+`import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { FronteggAppOptions } from '@frontegg/types';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+import { FronteggAppModule } from '@frontegg/angular';
+
+const fronteggConfig: FronteggAppOptions = {
+  contextOptions: {
+    baseUrl: 'https://[YOUR-SUB-DOMAIN].frontegg.com',
+    clientId: '[YOUR-CLIENT-ID]'
+  },
+  authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+  },
+  hostedLoginBox: false,
+}
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    importProvidersFrom(FronteggAppModule.forRoot(fronteggConfig))
+  ],
+};
+`
+
+  
+Connect your application bootstrap component with `fronteggService` to listen for the frontegg loading state.  
+  
+app.component.ts
+
+`import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FronteggAuthService, FronteggAppService } from '@frontegg/angular';
+import { Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  standalone: true //comment out if you're not using a standalone app
+})
+export class AppComponent implements OnInit, OnDestroy {
+  isLoading = true;
+  loadingSubscription: Subscription;
+  user?: any;
+
+  constructor(private fronteggAuthService: FronteggAuthService, private fronteggAppService: FronteggAppService) {
+    this.loadingSubscription = fronteggAppService.isLoading$.subscribe((isLoading) => this.isLoading = isLoading)
+  }
+
+  ngOnInit(): void {
+    this.fronteggAuthService?.user$.subscribe((user) => {
+      this.user = user
+    })
+  }
+
+  logIn(): void {
+    window.location.href = "/account/login";
+  }
+
+  logOut(): void {
+    this.fronteggAuthService.logout()
+  }
+
+  ngOnDestroy(): void {
+    this.loadingSubscription.unsubscribe()
+  }
+}
+`
+
+  
+Wrap your application with the `@if(!isLoading){}` to make sure you have the right context.  
+  
+app.component.html
+
+`@if(!isLoading){
+  <router-outlet></router-outlet>
+}
+`
+
+  
+#### STEP 4: Getting the user context
+
+Frontegg exposes the user context and the authentication state via a `FronteggAppService`. You can access the whole authentication state via the `FronteggAppService`. To have access to memoized authentication substates like user state, SSO state, MFA state, and more, use FronteggAuthService as in the following sample.
+
+Update `app.component.html` to display the user's name and avatar:
+
+app.component.html
+
+`@if(!isLoading){
+<div>
+  @if(user){
+  <div>
+    <img src={{user?.profilePictureUrl}} alt={{user?.name}} />
+    <div>User name: {{user?.name}}</div>
+    <button (click)="logOut()">Log out</button>
+  </div>
+  } @else {
+  <div>
+    <button (click)="logIn()">Login</button>
+  </div>
+  }
+</div>
+}
+`
+
+#### STEP 5: Add FronteggAuthGuard to your routing module
+
+Use the `FronteggAuthGuard` to redirect the user to the login page if the user not authenticated and trying to reach a private route.  
+  
+app.routing.module.ts
+
+`import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { ProtectedAppComponent } from './components/protected.component';
+import { NotFoundComponent } from './components/not-found.component';
+import { HomeComponent } from './components/home.component';
+import { UsersComponent } from './components/users.component';
+import { FronteggAuthGuard } from '@frontegg/angular';
+
+/** Option to protect a specific route **/
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'test-private-route', canActivate: [FronteggAuthGuard], component: ProtectedAppComponent },
+  { path: '**', component: NotFoundComponent },
+]
+
+/** Option to protect all routes **/
+const routes: Routes = [
+  {
+    path: '',
+    canActivate: [FronteggAuthGuard],
+    children: [
+      { path: '', component: HomeComponent },
+      { path: 'users', component: UsersComponent },
+      { path: '**', component: NotFoundComponent },
+    ]
+  },
+]
+
+@NgModule({
+  declarations: [ProtectedAppComponent, HomeComponent, UsersComponent, NotFoundComponent],
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+`
+
+  
+#### STEP 6: Run the app, signup & login
+
+We are all set. Let's run the application and see Frontegg in action.  
+  
+npmyarn
+
+`npm start
+`
+
+`yarn start
+`
+
+  
+Great, Frontegg is now integrated with your app!
+
+**Login and logout routes have been added to your app:**
+
+* Signup screen is at http://localhost:4200/account/sign-up
+* Login screen is at http://localhost:4200/account/login
+
+If you are already logged in, go to http://localhost:4200/account/logout and log out.
+
+**Give it a try now!**
+
+Open http://localhost:4200/account/sign-up and sign up with your first user.
+
+> ### 🚧
+> 
+> Avoid Clickjacking
+> 
+> To prevent _Clickjacking_ vulnerabilities, make sure you add an `X-Frame-Options` Header with `SAMEORIGIN` value to your hosting service.

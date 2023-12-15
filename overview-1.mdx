@@ -1,0 +1,48 @@
+---
+title: "Exchanging Token Types"
+---
+
+The token exchange API follows the OAuth 2.0 Token Exchange RFC. The purpose of this API is to allow the exchange of tokens from one type to another, e.g., exchanging SAML 2.0 Assertions with JWT. An additional purpose of this API is to get a delegation token, so given two access tokens: one of a user and a second of an actor, one will get a new access token with an indication that actions are done by an actor on behalf of a user.
+
+### Exchanging Tokens of Different Types
+
+In order to exchange tokens of different types, you need the following data first:
+
+* The token you want to exchange
+* Entity Id
+
+The token you have and want to exchange can be of the following types: SAML 1.0, SAML 2.0, and JWT (access token). To use SAML 2.0/SAML 1.0 assertion as a token, you will have to take the <saml:assertion> tag from your SAML response and encode it using a base 64 encoding. Once you have it encoded, you can use it in the API `subject_token` parameter.
+
+When configuring SAML in the portal, you have to set a field called EntityId. You should take this value and set it in the "audience" parameter sent in the token exchange API.
+
+### Delegation Token
+
+A delegation token is actually a user token with an additional indication of an _Actor_. An _actor_ can be an external app that uses your system, a service, or even an administrator. 
+
+In the token, you will get the "actor claims" that will look as follows:
+
+`"act": {
+    "sub": "ee851aea-9cff-4d33-af68-57af67ab0f17",
+    "type": "delegation",
+    "email": "[[email protected]](/cdn-cgi/l/email-protection)"
+  },
+`
+
+This claim will allow you to identify that the actions made by these tokens are actually done by the actor [\[email protected\]](/cdn-cgi/l/email-protection#2243464f4b4c62475a434f524e470c414d4f) on behalf of the user that the token belongs to.
+
+> ### 🚧
+> 
+> Delegation Token Support
+> 
+> We currently support only delegation of access tokens (JWTs) from the following types: userToken, userAccessToken, userApiToken. Tenant API tokens are not supported.
+> 
+> SAML assertions are not supported for delegation.
+
+Note that a delegation Token is not enabled by default. To enable the feature, you will need to set the delegation configuration to `true`. 
+
+To generate a delegation token you will need the following details:
+
+* User token
+* Actor token
+
+_Actor token_ can be a regular user token you get after authentication; It can also be a personal access token received after using our admin portal/API, or it can be a user API token received in the same way.

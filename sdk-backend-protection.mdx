@@ -1,0 +1,189 @@
+---
+title: "SDK Backend Protection"
+---
+
+Control access to your backend using one of the Frontegg SDKs. When your routes receive API calls, Frontegg's SDK checks the caller's identity and only gives access if the caller is authorized to access the route based on their roles or permissions.
+
+## Step-By-Step Guide
+
+### Step 1: Protect Backend Routes
+
+Protect your routes with the `withAuthentication` middleware from one of the Frontegg SDKs. For each route, decide whether to allow access to all authenticated users or just a limited subset of authenticated users.  
+  
+> ### 📘
+> 
+> Frontegg SDKs
+> 
+> Frontegg offers SDKs in several languages, including the [Frontegg SDK for node.js](https://www.npmjs.com/package/@frontegg/client) and the [Frontegg SDK for Python (Flask & FastAPI)](https://pypi.org/project/frontegg/). 
+> 
+> Check the relevant package for information how to initialize Frontegg on the backend.
+> 
+> Review the [Supported Frameworks](/docs/supported-frameworks) to see a list of frameworks you can use.
+
+  
+Regardless of which SDK you use, after installing it, you need to set the `Frontegg client ID` and `Frontegg API key` as backend environment variables.  
+  
+Shell
+
+`export FRONTEGG_CLIENT_ID=[YOUR-CLIENT-ID]
+export FRONTEGG_API_KEY=[YOUR-API-KEY]
+`
+
+#### All Authenticated Users
+
+Use the `withAuthentication` hook to control who can access your routes. For instance, use the following code to allow access to authenticated users only.  
+  
+Node.JSPython - Flask
+
+`const { withAuthentication } = require('@frontegg/client');
+
+...
+...
+...
+
+app.use('/shift', withAuthentication());
+`
+
+`from frontegg.flask.secure_access import with_authentication
+
+...
+
+@app.route('/secret')
+@with_authentication()
+def cool():
+    return g.user
+`
+
+> ### 🚧
+> 
+> Important note on API regions!
+> 
+> By default, the `withAuthentication` hook calls api.frontegg.com (our EU region)
+> 
+> If your account is on the US region, you need to add the following environment variable:  
+> `FRONTEGG_API_GATEWAY_URL=https://api.us.frontegg.com/`
+
+#### Grant Access by Roles
+
+Instead of allowing all authenticated users, choose which authenticated users can access your routes based on the user's roles.
+
+##### Single Role
+
+Allow only a single role to access a route by telling the `withAuthentication` hook which role is allowed. Use the `role` key and set its value to an array of one role name. Here is an example.  
+  
+Node.JSPython - Flask
+
+`app.use('/admin', withAuthentication({ roles: ['admin'] }));
+`
+
+`@app.route('/admin')
+@with_authentication(role_keys=['admin'])
+def get_authorized():
+    return g.user
+`
+
+##### Multiple Roles
+
+Allow multiple roles to access a route by telling the `withAuthentication` hook which roles can access the route. Instead of including a single role, you list multiple inside the array of roles.  
+  
+Node.jsPython - Flask
+
+`app.use('/home', withAuthentication({ roles: ['admin', 'read-only'] }));
+`
+
+`@app.route('/home')
+@with_authentication(role_keys=['admin', 'read-only'])
+def get_home():
+    return g.user
+`
+
+#### Grant Access by Permissions
+
+Choose which authenticated users can access your routes based on the user's permissions.
+
+##### Single Permission
+
+Grant access to users who have a specific permission by telling the `withAuthentication` hook which permissions are allowed. Use the `permissions` key and set its value to an array of one permission name. Your route will only grant access to users with that permission.  
+  
+Node.JSPython - Flask
+
+`app.use('/uploads', withAuthentication({ permissions: ['uploadFile'] }));
+`
+
+`@app.route('/uploads')
+@with_authentication(permission_keys=['uploadFile'])
+def cool():
+    return g.user
+`
+
+##### Multiple Permissions
+
+Allow multiple permissions to access a route by telling the withAuthentication which permissions are allowed. Instead of including a single permission, you list multiple inside the array of permissions.
+
+If you list multiple permissions, then any user who has one or more of those permissions will be granted access.
+
+### Step 2: Send Access Token From Frontend
+
+To access a protected route from your frontend application, you need to append an `Authorization Bearer Token` as a header in your GET requests. The token is available as an `accessToken` property of the `user` object, as shown below.  
+  
+JavaScript
+
+`` fetch('http://localhost:8080/shift', { // Your server's secured endpoint
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${user.accessToken}`,
+  },
+});
+ ``
+
+  
+> ### 📘
+> 
+> The `withAuthentication` middleware processes the `authorization Bearer` header and validates the `JWT`.
+
+  
+Upon successful authorization, the user context and the entire authentication context are available from the Frontegg SDKs. See the examples below.  
+  
+ReactAngularVue
+
+`import { useAuth } from '@frontegg/react';
+const { user, isAuthenticated } = useAuth();
+`
+
+`import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@frontegg/ng-auth';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+})
+export class HomeComponent implements OnInit {
+  user = null;
+
+  constructor(public authService: AuthService) {
+    this.user = authService.user$;
+  }
+
+  ngOnInit(): void { }
+}
+`
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <div v-if="this.authState.user">
+      <span>Logged in as: {{this.authState.user.name}}</span>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "App",
+  data() {
+    return {
+      ...this.mapAuthState(),
+    }
+  }
+};
+</script>
+`

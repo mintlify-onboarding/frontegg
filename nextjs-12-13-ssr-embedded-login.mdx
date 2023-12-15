@@ -1,0 +1,519 @@
+---
+title: "Embedded Login Integration (Next.js)"
+---
+
+### What will we build?
+
+In this quick start, we will add the Frontegg Embedded login box to your Next.js application.
+
+In 5 minutes from now, your application will have a login box with Sign in, Sign up, and SSO. All this with just a few lines of code using redirects, Open Id Connect, and OAuth2\. 
+
+  
+**⚡ Before you start: ⚡** 
+
+> ### 📘
+> 
+> Getting your Frontegg subdomain and clientId
+> 
+> Frontegg creates a unique `subdomain` and `client id` for every environment created on the account. In order to retrieve the `clientId` `subdomain` that will act as the `FRONTEGG_BASE_URL` in the integration, navigate to your environment 'Settings' menu, copy the `Frontegg domain` and `clientId` and use them in .env.local file.
+
+  
+> ### 📘
+> 
+> Prerequisites:
+> 
+> Node >= 16  
+> Next >= 12  
+> Typescript >= 3.9.7  
+> @frontegg/nextjs >= 7.0.0  
+>  
+>  
+> If you are using @frontegg/nextjs =< 7.0.0, please see the migration guide [here](/docs/nextjs-migration-guide-v6-to-v7)
+
+#### STEP 1: Create Frontegg Next.js sample app.
+
+> ### 📘
+> 
+> If you have an existing app with Next.js app, skip this step.
+
+  
+To create a new app based on our sample or Next.js template or a new Next.js app, run the below commands.  
+
+npmyarn
+
+`// Next.js 13 will be installed by default
+npx create-next-app my-nextjs-app-name
+
+// Next.js with experimental app directory
+npx create-next-app --experimental-app my-nextjs-app-name
+
+cd my-nextjs-app-name
+`
+
+`// Next.js 13 will be installed by default
+yarn create next-app my-nextjs-app-name
+
+// Next.js with experimental app directory
+yarn create-next-app --experimental-app my-nextjs-app-name
+
+cd my-nextjs-app-name
+`
+
+  
+> ### 🚧
+> 
+> Working with SAML / OIDC on Frontegg Embedded Login and using SSR
+> 
+> You will need to configure the `Single Sign On URL` on your IDP to use `[your-application-url]/api/frontegg/saml/callback`, instead of the ACS URL that you have configured on the Frontegg portal. 
+> 
+> The configuration on the Frontegg portal can stay the same as configured per [Configuring SAML](/docs/configuring-saml#acs-url) guide.
+
+#### STEP 2: Install `frontegg/nextjs`
+
+Run the following command to install `@frontegg/nextjs`.
+
+  
+npmyarn
+
+`npm install @frontegg/nextjs@latest
+`
+
+`yarn add @frontegg/nextjs@latest
+`
+
+  
+> ### 📘
+> 
+> Note - the files in this guide are in typescript - if you are working in js, simply change the file types and remove the typing
+
+#### STEP 3: Configure the App file, Router, Middleware files
+
+When integrating Next.js application with Frontegg, Next.js custom app and several files should be added. Make sure that these exist in the project you cloned from our sample or created.
+
+##### Next.js `pages` Architecture
+
+Create custom Next.js files under the `pages` directory and paste the snippets below:
+
+  
+> ### 📘
+> 
+> Existing custom Next.js app
+> 
+> If you have a custom app already (the file `_app.tsx` exists), wrap and replace the default export component with `withFronteggApp` function and pass your original component.
+
+  
+./pages/\_app.tsx./pages/api/frontegg/\[...frontegg-middleware\].ts./pages/\[...frontegg-router\].tsx
+
+`import { withFronteggApp } from "@frontegg/nextjs/pages";
+
+function CustomApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+
+export default withFronteggApp(CustomApp, {
+  hostedLoginBox: false,
+  authOptions: {
+    // keepSessionAlive: true, // Uncomment this in order to maintain the session alive
+  },
+});
+`
+
+`import { FronteggApiMiddleware } from '@frontegg/nextjs/middleware';
+
+export default FronteggApiMiddleware;
+export const config = {
+  api: {
+    externalResolver: true,
+    // https://nextjs.org/docs/messages/api-routes-response-size-limit
+    responseLimit: false,
+  },
+};
+`
+
+`import { FronteggRouter, FronteggRouterProps } from '@frontegg/nextjs/pages';
+
+export const getServerSideProps = FronteggRouterProps;
+export default FronteggRouter;
+`
+
+##### Next.js `appDir` Architecture
+
+Create custom Next.js files under `app` directory and paste the snippets below. The `./pages/api/frontegg/[...frontegg-middleware].ts` file should stay in the `pages` directory:
+
+  
+./app/layout.tsx./app/\[...frontegg-router\]/page.tsx./pages/api/frontegg/\[...frontegg-middleware\].ts./app/ClientComponent.tsx./app/ServerComponent.tsx./app/page.tsx
+
+`import { FronteggAppProvider } from '@frontegg/nextjs/app';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const authOptions = {
+      keepSessionAlive: true // Uncomment this in order to maintain the session alive
+    }
+    
+    return (
+      <html>
+        <head></head>
+        <body>
+            {/* @ts-expect-error Server Component for more details visit: https://github.com/vercel/next.js/issues/42292 */}
+            <FronteggAppProvider authOptions={authOptions} hostedLoginBox={false}>
+                {children}
+            </FronteggAppProvider>
+        </body>
+      </html>
+    );
+}
+`
+
+`import { FronteggAppRouter } from '@frontegg/nextjs/app';
+
+export default FronteggAppRouter;
+`
+
+`import { FronteggApiMiddleware } from '@frontegg/nextjs/middleware';
+
+export default FronteggApiMiddleware;
+export const config = {
+  api: {
+    externalResolver: true,
+    // https://nextjs.org/docs/messages/api-routes-response-size-limit
+    responseLimit: false,
+  },
+};
+`
+
+`"use client";
+import { useAuth, useAuthUser } from "@frontegg/nextjs";//, useLoginWithRedirect 
+import { AdminPortal } from '@frontegg/nextjs'
+import { useRouter } from 'next/navigation';
+
+export const ClientComponent = () => {
+  const { isAuthenticated } = useAuth();
+  const user = useAuthUser(); //redirects by default to /account/login if user isn't found
+  const router = useRouter();
+
+  const logout = useCallback(() => {
+    router.replace('/account/logout');
+  }, [router]);
+
+  return (
+    <div className="App">
+      {isAuthenticated ? (
+        <div>
+          <div>
+            <img src={user?.profilePictureUrl} alt={user?.name} />
+          </div>
+          <div>
+            <span>Logged in as: {user?.name}</span>
+          </div>
+          <div>
+            <button onClick={() => alert(user?.accessToken)}>
+              What is my access token?
+            </button>
+          </div>
+          <div>
+            <button onClick={() => logout()}>Click to logout</button>
+          </div>
+          <div>
+            <button onClick={handleClick}>Settings</button>
+          </div>
+        </div>
+      ) : (
+        <>
+        </>
+      )}
+    </div>
+  );
+};
+`
+
+`import { getAppUserSession, getAppUserTokens } from '@frontegg/nextjs/app';
+
+export const ServerSession = async () => {
+  const userSession = await getAppUserSession();
+  const tokens = await getAppUserTokens();
+  return (
+    <div>
+      <div>user session server side: {JSON.stringify(userSession)}</div>;
+      <div>user tokens server side: {JSON.stringify(tokens)}</div>
+    </div>
+  );
+};
+`
+
+`import { ClientComponent } from "./ClientComponent";
+import { ServerSession } from "./ServerComponent";
+
+export default function MainPage() {
+
+  return (
+    <div>
+      <h3>Next JS application with frontegg</h3>
+      {/* @ts-expect-error Server Component for more details visit: https://github.com/vercel/next.js/issues/42292 */}
+      <ServerSession />
+      <ClientComponent/>
+    </div>
+  );
+}
+`
+
+  
+> ### 🚧
+> 
+> File Names
+> 
+> The locations and the file names should be exactly as written on the file names, including the brackets and the three dots. 
+> 
+> **For `pages` directory** \- `./pages/[...frontegg-router].tsx`, `./pages/api/frontegg/[...frontegg-middleware].ts` and `./pages/_app.tsx`.
+> 
+> **For `app` directory** \- `./app/layout.tsx` , `./app/[...frontegg-router]/page.tsx`, `./app/ServerComponent.tsx`, `app/ClientComponent.tsx`.
+
+#### STEP 4 Setup Environment
+
+To set up your Next.js application to communicate with Frontegg, you have to create a new file named `.env.local` under your root project directory, this file will be used to store environment variables that will be used, configuration options:
+
+.env.local
+
+`# The AppUrl you set during integration - this is to tell Frontegg your application hostname
+FRONTEGG_APP_URL='http://localhost:3000'
+
+# The Frontegg domain is your unique URL to connect to the Frontegg gateway
+FRONTEGG_BASE_URL='https://[YOUR_SUBDOMAIN].frontegg.com'
+
+# Your Frontegg application's Client ID
+FRONTEGG_CLIENT_ID='[YOUR_CLIENT_ID]'
+
+# The statless session encruption password, used to encrypt
+# jwt before sending it to the client side.
+#
+# For quick password generation use the following command:
+#    node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+FRONTEGG_ENCRYPTION_PASSWORD='[64_CHAR_SESSION_ENCRYPTION_PASSWORD]'
+
+# The statless session cookie name - you should not change this
+FRONTEGG_COOKIE_NAME='fe_session'
+`
+
+Remember to replace the relevant fields in this file with your personal information!
+
+#### STEP 5 (optional) `NextRequest`
+
+> ### 📘
+> 
+> Support for NextJS middleware is available from @frontegg/nextjs v6.4.0
+> 
+> To prevent access of an unauthenticated user to all routes, use [Next.js middlewares](https://nextjs.org/docs/advanced-features/middleware).
+> 
+> NOTE: If you were using Middleware prior to 12.2, please see [the upgrade guide](https://nextjs.org/docs/messages/middleware-upgrade-guide).
+
+  
+> ### 🚧
+> 
+> Note
+> 
+> It is recommended to check for the user's session either on the `middleware.ts` or per each page. It is not recommended to use several sources for getting or checking for a user's session.
+> 
+> Frontegg uses `getInitialProps` in the Next.js wrapper, therefore, there is no need to call default `getInitialProps` and instead use `context`. Frontegg wrapper holds this data already.
+
+middleware.ts
+
+`import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getSessionOnEdge, shouldByPassMiddleware, redirectToLogin } from '@frontegg/nextjs/edge';
+
+export const middleware = async (request: NextRequest) => {
+  const pathname = request.nextUrl.pathname;
+
+  if (shouldByPassMiddleware(pathname)) {
+    return NextResponse.next();
+  }
+
+  const session = await getSessionOnEdge(request);
+  if (!session) {
+    return redirectToLogin(pathname);
+  }
+  return NextResponse.next();
+};
+
+export const config = {
+  matcher: '/(.*)',
+};
+`
+
+  
+> ### 📘
+> 
+> When to use `shouldByPassMiddleware`
+> 
+> * To protect all application routes.
+> * Static files and image requests.
+> 
+> **The default whitelists:** 
+> 
+> * `_next/static` (static files)
+> * `_next/image` (image optimization files)
+> * `favicon.icon` (favicon file)
+> * `api/frontegg` (API frontegg middleware)
+> * `account/[login|logout|saml/callback|...]` (Frontegg authentication routes)
+> 
+> You can override the whitelist by passing the `options` parameter
+> 
+> **NOTE**: this will slow down your application due to session checks.
+
+#### STEP 6: Redirect to login from a page
+
+Alternatively, you can use the Frontegg `withSSRSession` on each page, to redirect users to the login screen if they are not authenticated.  
+  
+./pages/index.tsx
+
+`` import { useCallback } from "react";
+import { GetServerSideProps } from "next";
+import { getSession } from "@frontegg/nextjs/pages";
+import { useAuth } from "@frontegg/nextjs";
+import { useRouter } from "next/router"
+
+export default function MyPage({ products }) {
+  const { user } = useAuth();
+
+  const router = useRouter();
+
+  const logout = useCallback(() => {
+    router.replace('/account/logout');
+  }, [router]);
+ 
+  return (
+    <div>
+      <h1>My Page</h1>
+      {products}
+      <div>
+        <img src={user?.profilePictureUrl} alt={user?.name} />
+      </div>
+      <div>
+        <span>Logged in as: {user?.name}</span>
+      </div>
+      <div>
+        <button onClick={logout}>Log out</button>
+      </div>
+    </div>
+  );
+}
+
+// In the `getServerSideProps` method you can get data from an external service to pull relevant data for a logged in user.
+// we used the prop `products`. See the commented code for an example.
+
+export const getServerSideProps: GetServerSideProps = withSSRSession(
+  async (context, session) => {
+    //     const { data } = await fetch('{external}/product', {
+    //      headers: {
+    //        Authorization: 'bearer ' + session.accessToken,
+    //      },
+    //    });
+    return { props: {} };
+  }
+);
+ ``
+
+#### STEP 7 (optional) `getSession`
+
+As an extension of step 6, for any page that requires an `AccessToken` on the server side (e.g. you'd like to load the data only if a user is logged in), you can use the `getSession` method. Remember to replace `external` with the link to your external service.
+
+./pages/index.tsx
+
+`import { GetServerSideProps } from 'next';
+import { getSession } from '@frontegg/nextjs/pages';
+
+export default function MyPage({ products }) {
+  return (
+    <div>
+      <h1>My Page</h1>
+      {products}
+    </div>
+  );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context.req);
+  if (session) {
+    const { data } = await fetch('{external}/product', {
+      headers: {
+        Authorization: 'bearer ' + session.accessToken,
+      },
+    });
+    return { props: { products: data } };
+  }
+
+  return { props: { products: [] } };
+};
+`
+
+#### STEP 8 (optional) `customLoader`
+
+\_app.tsx
+
+`import "../styles/globals.css";
+
+export default withFronteggApp(CustomApp, 
+  {
+    hostedLoginBox: true, 
+  	customLoader: true,
+    authOptions: {
+    // keepSessionAlive: true // Uncomment this in order to maintain the session alive
+    }
+});
+`
+
+Add `_document.tsx` file under the pages folder.  
+  
+\_document.tsx
+
+`import { Html, Head, Main, NextScript } from 'next/document';
+
+export default function Document() {
+  return (
+    <Html>
+      <Head />
+      <body>
+        <Main />
+        <NextScript />
+        <div className="custom-loader"> I am a custom loader!</div>
+      </body>
+    </Html>
+  );
+}
+`
+
+Add the following styles to styles/globals.css:  
+  
+globals.css
+
+`.custom-loader {
+    width: 100vw;
+    height: 100vh;
+    background: red;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    color: white;
+}
+
+body.frontegg-loading .custom-loader {
+    display: flex;
+}
+`
+
+  
+Great, Frontegg is now integrated with your app!
+
+**Try it now!**
+
+Run your app and you should be automatically redirected to your hosted login box.
+
+> ### 🚧
+> 
+> Avoid Clickjacking
+> 
+> To prevent _Clickjacking_ vulnerabilities, make sure you add an `X-Frame-Options` Header with `SAMEORIGIN` value to your hosting service.

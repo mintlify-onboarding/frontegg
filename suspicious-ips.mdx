@@ -1,0 +1,42 @@
+---
+title: "Suspicious IPs"
+---
+
+The risk of login attempts from suspicious IP addresses represents a significant security concern for any app. These attempts often indicate malicious intent, such as unauthorized access attempts or brute force attacks, where attackers try to gain entry by repeatedly guessing usernames and passwords. Such activities can potentially lead to data breaches, unauthorized access to user accounts, and the compromise of sensitive information. To mitigate this risk, robust security measures such as IP blocking, multi-factor authentication, and monitoring for unusual login patterns are essential. Vigilance and proactive security measures are crucial in safeguarding user data and maintaining the overall integrity of the app.
+
+### Prerequisites
+
+There are no prerequisites for detecting suspicious IPs.
+
+### Configure Suspicious IPs
+
+#### In the Frontegg Portal
+
+You can choose from the following actions when a suspicious IP is detected
+
+1. Allow - Let the user continue to the app
+2. Challenge - Challenge the user with MFA. If they pass, let them continue to the app.
+3. Block - Block their login
+4. Lock - Lock the user
+![](/images/5746ec5-Screenshot_2023-09-10_at_14.29.27.png) 
+
+### How the end user experiences suspicious IPs on login
+
+1. Allow - The user is allowed to continue to the app
+2. Challenge - The user will get an MFA challenge. If they pass, they continue to the app. If they fail, their login gets blocked.
+3. Block - The user will get a failed login message
+4. Lock - The user will have their account is locked
+
+### Notify end users of suspicious IP logins
+
+You can choose to notify users when there is a login attempt by a suspicious IP by checking the relevant checkbox.
+
+## Analyzing Suspicious IPs in your App
+
+#### Security Events
+
+If you’re curious how many times suspicious IP login events happen in your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).
+
+#### Logs
+
+Coming soon!

@@ -1,0 +1,85 @@
+{
+    "name": "Frontegg",
+    "logo": {
+      "light": "/logo/light.png",
+      "dark": "/logo/dark.png"
+    },
+    "backgroundImage": "/background-image.png",
+    "favicon": "/favicon.svg",
+    "colors": {
+      "primary": "#003AE4",
+      "light": "#426CE7",
+      "dark": "#003AE4"
+    },
+    "topbarCtaButton": {
+      "name": "Sign Up for Frontegg",
+      "url": "https://portal.frontegg.com/signup"
+    },
+    "anchors": [
+      {
+        "name": "Help Center",
+        "icon": "block-question",
+        "url": "https://support.frontegg.com/hc/en-us/categories/5057250979229-FAQ"
+      },
+      {
+        "name": "Community",
+        "icon": "slack",
+        "url": "https://frontegg-community.slack.com/join/shared_invite/zt-e1oxi1vn-SZErBZcwHcbgj4vrwRIp5A#/shared-invite/email"
+      },
+      {
+        "name": "Blog",
+        "icon": "newspaper",
+        "url": "https://frontegg.com/blog"
+      }
+    ],
+    "tabs": [
+        {
+            "name": "API Reference",
+            "url": "api-reference"
+        },
+        {
+            "name": "Product Updates",
+            "url": "https://updates.frontegg.com/en"
+        }
+    ],
+    "navigation": [
+        {
+            "group": "Welcome to Frontegg",
+            "pages": [
+              "home-page",
+              "our-offering",
+              "solution-highlights"
+            ]
+          },
+          {
+            "group": "Getting Started",
+            "pages": [
+              "how-to-use-our-docs",
+              "adding-frontegg-to-your-app",
+              "migrating-from-different-platforms",
+              "customizing-styles",
+              "portal-navigation",
+              {
+                "group": "Environments",
+                "pages": [
+                  "environments-introduction",
+                  "email-templates"
+                ]
+              },
+              "sub-account-management"
+            ]
+          },
+          {
+            "group": "Vendor authentication",
+            "pages": [
+              "api-reference/vendor-authentication/vendor-authentication"
+            ]
+          }         
+    ],
+    "footerSocials":
+      {
+          "facebook": "https://www.facebook.com/frontegg",
+          "twitter": "https://twitter.com/FronteggForSaaS",
+          "linkedin": "https://www.linkedin.com/company/frontegg/"
+      }
+  }

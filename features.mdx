@@ -1,0 +1,41 @@
+---
+title: "Features"
+---
+
+### Overview
+
+_Features_ are the resources you want to protect in your app. The features page is where you add your app features to and create a key that links the two. 
+
+![](/images/d9e667d-Screenshot_2023-07-31_at_12.56.58.png) 
+
+#### How to manage features for your app
+
+To add a new feature, you will need to jump over to the _Settings tab:_ 
+
+1. Click “add new feature”
+2. Add feature name - the internal name of the feature
+3. Add description (optional)
+4. Add key - create a key that you intend to use in your code. (key validation)
+![](/images/8d24e66-Screenshot_2023-07-31_at_13.00.22.png) 
+
+**Permission tab**
+
+You can assign related permissions to the feature if you would like to protect the resource using the `useEntitlementsPermission` function. This function will allow you to protect a resource by using permissions only. 
+
+> ### 📘
+> 
+> If you are **not** assigning permissions you can use the function `useFeatureEntitlements`read more in the SDK (link)
+
+You can assign as many permissions as you wish to one feature. The best practice here would be to add the relevant permissions to the feature. For example; if you have an “SSO” feature, you can add `sso.read` and `sso.write` to the permission list \[link to permission doc\]. If a user will have one of the permissions (granted by their role), they will be entitled to use the SSO feature.
+
+In order to link permission to a feature follow these steps:
+
+1. Click on the permission tab
+2. Click "Assign permissions"
+3. Choose the relevant permissions
+4. Click Assign permissions and save.
+![](/images/29b3bb0-Screenshot_2023-07-31_at_13.02.23.png) ![](/images/edd4ef6-Screenshot_2023-07-31_at_13.02.52.png) 
+
+#### Next steps
+
+When adding a new feature, users won't access it until you'll assign it into a bundle and grant the bundle to users or accounts. Go to feature bundle guide to learn how to create and manage a bundle.

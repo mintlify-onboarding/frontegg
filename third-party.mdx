@@ -1,0 +1,58 @@
+---
+title: "Third-Party Webhooks"
+---
+
+Our platform comes with pre-built custom webhooks for frequently used services such as Slack, Microsoft Teams, Hubspot, and many more.
+
+### Step-By-Step Guide
+
+Follow the steps below to subscribe to create a new third-party integration
+
+#### Step 1: Create a new connection
+
+In your Frontegg Portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Integrations**. Click **Connect** next to the service of your choice. Fill in the connection display name and choose the event you want to integrate with the third-party service.
+
+#### Step 2: Customizing the payload data
+
+Once you choose the service, the payload data will be prefilled with a basic example of the necessary JSON data structure, Edit the payload data to match your needs, and use double curly brackets syntax to reference data from the event. Learn more [Customizing the payload data](/docs/custom-webhooks).
+
+#### Step 3: Test & Save
+
+Click on the "Test" button and confirm that the service responds with a success message.
+
+### Available Integrations
+
+#### Slack Integration
+
+Follow the following steps to send event notifications via Slack.
+
+1. Set up an incoming webhook integration on Slack, following the instructions provided by Slack here: [Create an Incoming Webhook](https://api.slack.com/messaging/webhooks)
+2. In your Frontegg Portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Integrations** and create a new Slack Connection. Fill the connection display name and choose the event you want send to Slack.
+3. Copy the **Incoming Webhook URL** provided by slack, and paste it in the URL field of the connection your just created.
+4. The payload will be pre-filled with a basic Slack message as an example. Edit it according to your needs. You can read Slack's [Messages composition guide](https://api.slack.com/messaging/composing) to learn how to write more complex message payloads.
+5. Click on the **Test** button and verify that the message was received in your Slack account. Click **Save** to save the connection.
+6. That's it! You have successfully created a new Slack connection.
+
+#### Microsoft teams Integration
+
+`Coming soon!`
+
+#### Salesforce Integration
+
+`Coming soon!`
+
+#### Hubspot Integration
+
+`Coming soon!`
+
+#### Twilio Integration
+
+`Coming soon!`
+
+#### Other Platforms
+
+> ### 📘
+> 
+> Configuring Custom Webhooks
+> 
+> Even if the platform you want to integrate with is not available as a preset, you can still integrate with it by configuring your own [Custom Webhooks](/docs/custom-webhooks).

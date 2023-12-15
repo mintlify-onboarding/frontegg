@@ -1,0 +1,176 @@
+---
+title: "Prehooks"
+---
+
+Frontegg offers you to setup _prehooks_ so that you can control important aspects of user management. 
+
+As a user management platform, not surprisingly Frontegg controls critical user management flows, such as user signup, user invites, user update and more. 
+
+As an engineer, product developer, or executive, you may want the ability to dictate what happens in the user management flows. 
+
+Frontegg offers you prehooks to do exactly that. Subscribe to prehooks to receive a REST call every time the corresponding event is triggered. 
+
+Based on the response, your application can decide what to do. For instance, with prehooks you can configure your application to decide whether to continue a flow or stop it based on the logic in your application.
+
+[ ⚡️ Check out some video examples! ⚡️ ](#prehook-use-cases) 
+
+Here are some example use cases:
+
+* Prevent signup if email is listed on a \_denied \_list.
+* Prevent new member invitations based on a pre-set number or trial period.
+* Add [custom claims on JWTs](/docs/jwt-token-authentication) used in the hosting application.
+
+Read below to learn how to subscribe to and work with prehooks.
+
+## Step-By-Step Setup Guide
+
+Follow the steps below to subscribe to prehook events.
+
+### STEP 1: Select Prehook Event
+
+In your Frontegg Portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Hooks ➜ Prehooks**.  
+  
+> ### 📘
+> 
+> Prehook Events
+> 
+> Prehook events are listed [below](#Working-With-Prehook-Events)
+
+  
+The page lists all your prehooks and has a button for adding a new prehook.
+
+To select a prehook event: 
+
+* click on the add new hook button
+* choose an event to trigger the prehook
+* click the `Next` button
+  
+![](/images/7a7ea5b-Screen_Shot_2022-01-12_at_13.19.02.png "Screen Shot 2022-01-12 at 13.19.02.png")
+
+### STEP 2: Enter Basic Details
+
+Next, fill in the hook details.
+
+The display name and description can be whatever you want.
+
+For the URL, enter the URL at which you will receive the prehook data. The URL acts like an address that Frontegg can send a JSON message to when the assigned event happens. 
+
+For the secret key, enter a value that is confidential.  
+  
+> ### 🚧
+> 
+> Frontegg generates a header called `x-webhook-secret` and signs the prehook request using the secret. Therefore, for enhanced security, Frontegg recommends that you use the prehook secret.
+
+  
+![](/images/b4fe54c-Screen_Shot_2022-01-12_at_13.20.30.png "Screen Shot 2022-01-12 at 13.20.30.png")
+
+#### Handling Failures
+
+In case the call for the hook endpoint failed (response 500+ or request timeout which is set to 5 seconds), you can set your fail methodology:
+
+* Fail open: if the call failed or timed out, the operation will continue
+* Fail close: if the call failed or timed out, the operation will stop
+  
+  
+### STEP 3: Test Hook
+
+In order to create the hook, you are first required to verify that everything is setup correctly. 
+
+Click the run test button to verify, and then wait for the response. You should see the prehook data that you will receive and the response that Frontegg expects to receive from your application.  
+  
+![](/images/3415064-Screen_Shot_2022-01-12_at_13.21.07.png "Screen Shot 2022-01-12 at 13.21.07.png")
+
+  
+> ### 📘
+> 
+> Prehook Testing
+> 
+> Before testing your setup, make sure you are familiar with[working with prehook events](#Working-With-Prehook-Events) to get a better idea of how to configure the data in your response.
+
+  
+If the response is good, the prehook is ready!  
+  
+> ### 📘
+> 
+> Error Only Required If Continue is False
+> 
+> Note that the expected data includes error. The `error` field is required in your response to Frontegg _only if_ you set `continue` to false. Also, you must set the error `status` between 400 and 499.
+
+### Working With Prehook Events
+
+When you subscribe to a prehook, you may want to do some configuration. Read below to learn more about how to work with prehook events.
+
+#### JWT Custom Claims
+
+If you want to customize the data encoded by the JWT, subscribe to the prehook event for JWT Generation. It allows you to intercept the JWT and customize the JWT claims.
+
+For subscriptions to the prehook for JWT Generation, Frontegg sends a new prehook event every time the hosting application requests a new JWT.
+
+The prehook event sent to the hosting application contains whatever data Frontegg has stored for each of the claims in the table below. 
+
+| Key         | Value                     |                |
+| ----------- | ------------------------- | -------------- |
+| sub         | string                    |                |
+| tenantId    | string                    |                |
+| roles       | string\[\]                |                |
+| permissions | string\[\]                |                |
+| metadata    | Record <string, any>      |                |
+| type        | userToken \| userApiToken | tenantApiToken |
+
+To override the default claims, include in your prehook response the data that you want to change.
+
+Here are the claims you can include in your prehook response:
+
+| Key          | Value                           |
+| ------------ | ------------------------------- |
+| tenantId     | string                          |
+| permissions  | string\[\]                      |
+| customClaims | Record<string, unknown> \| null |
+
+  
+> ### 📘
+> 
+> If you do not customize the claims, the JWT will contain the default data.
+
+  
+When you subscribe to the JWT Generation prehook event, you need to test it. 
+
+The test page looks like the following: 
+
+  
+![](/images/618dc6d-Screen_Shot_2022-02-16_at_14.41.02.png "Screen Shot 2022-02-16 at 14.41.02.png")
+
+  
+> ### 📘
+> 
+> JWT Availability
+> 
+> JWT custom claims are available as long as JWT is. To change JWT claims, you need to refresh the token.
+
+### Prehook Events List
+
+Here is a list of events available for using with prehooks:
+
+| Event                          | Event Key           | When do we send it?                                 |
+| ------------------------------ | ------------------- | --------------------------------------------------- |
+| User signup                    | USER\_SIGNUP        | Local/Social/SSO sign ups                           |
+| User invite                    | USER\_INVITE        | On every user invite                                |
+| User update                    | USER\_UPDATE        | On every user update                                |
+| User delete                    | USER\_DELETE        | When user is removed from tenant/completely deleted |
+| JWT Generation                 | JWT\_GENERATION     | On every JWT generation                             |
+| Social login exchange          | SOCIAL\_LOGIN\_AUTH | On each social login token exchange                 |
+| Open ID connect authentication | OIDC\_AUTH          | On each OIDC authentication exchange                |
+| SAML authentication            | SAML\_AUTH          | On each SAML authentication exchange                |
+
+## Prehook Use Cases
+
+Here are two common examples of how to use pre-hooks in your app:  
+  
+### Limiting sign-ups for a limited number of users
+
+  
+[undefined](https://frontegg-4.wistia.com/medias/b5p7ku5nuu "frontegg-4.wistia.com") 
+
+### Limiting user invitations
+
+[undefined](https://frontegg-4.wistia.com/medias/8nqhdgoq7c "frontegg-4.wistia.com")

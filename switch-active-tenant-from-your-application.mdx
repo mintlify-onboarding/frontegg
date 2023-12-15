@@ -1,0 +1,159 @@
+---
+title: "Switching Between Active Tenants"
+---
+
+This guide explains how to switch the active tenant for a user who is subscribed to multiple tenants. This feature applies _only_ to users who have been both added to _and_ confirmed for more than one tenant.
+
+### Overview
+
+Frontegg offers the ability to change which tenant is the **active** tenant for a user who is subscribed to multiple tenants. 
+
+The **active** tenant is the tenant the user is logged into each time the user logs into your application. Once the user is logged into your application, you can allow them to switch their active tenant and therefore switch the tenant they are logged into.
+
+One way to implement this is to allow a user to select their own active tenant. For instance, you can present to the user a list of the tenants they are subscribed to. Then, based on which tenant the user selects, call the **switch tenant** function with the **tenant id** from the user's selected tenant. 
+
+Frontegg offers this feature in React, Angular, and Vue. Regardless of which you use, you need access to the user object and the function that sets the active tenant. 
+
+Read below to learn how to implement this.
+
+### Code Examples
+
+To implement this feature, you need the user object and the function that switches the active tenant. 
+
+You need the user object because it gives you a list of the tenants the user is subscribed to. The list of tenants is `user.tenantIds`. 
+
+You need the function that switches the active tenant in order to set one of user's tenants as the active tenant. That function is called `switchTenant` and requires one argument in the following format: `switchTenant({tenantId: 'new-tenant-id'})`. 
+
+> ### 📘
+> 
+> A note on tenantId
+> 
+> Instead of 'new-tenant-id', use the tenantId for the tenant that you want to become the active tenant for the user. Note that the tenantId that you set as the active tenant needs to be a tenant that the user actually belongs to.
+
+#### React
+
+To access the `user` object and the `switchTenant` function, import `useAuth` and `useAuthActions` from `@frontegg/react`. 
+
+Use the `useAuth` hook to get the `user` object and the `useAuthActions` hook to access the `switchTenant` function. 
+
+Here is an example:
+
+App.jsx
+
+`import { useAuth, useAuthActions } from "@frontegg/react";
+
+function App() {
+  const { switchTenant } = useAuthActions();
+  const { user } = useAuth();
+
+  // Use user.tenantIds to get the tenants the user is a member of
+  const handleSwitchTenant = () => { 
+      switchTenant({ tenantId: 'new-tenant-id' });
+  };
+  
+  return <button onClick={handleSwitchTenant}>Select Active Tenant</button>;
+}
+
+export default App;
+`
+
+#### Angular
+
+Inject the `fronteggAuthService` into your application. This service gives you the `user` object and the `switchTenant` function.
+
+Here is an example: 
+
+app.component.tsapp.component.html
+
+`import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FronteggAppService, FronteggAuthService} from "@frontegg/angular";
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+})
+export class AppComponent implements OnInit, OnDestroy {
+  isLoading = true;
+  loadingSubscription: Subscription;
+  user?: any;
+
+  constructor(private fronteggAuthService: FronteggAuthService, private fronteggAppService: FronteggAppService) {
+    this.loadingSubscription = fronteggAppService.isLoading$.subscribe((isLoading) => this.isLoading = isLoading)
+  }
+
+  ngOnInit(): void {
+    this.fronteggAuthService?.user$.subscribe((user) => {
+      this.user = user
+    })
+  }
+
+	switchTenant(): void {
+    // Use this.user.tenantIds to get the tenants the user is a member of
+    this.fronteggAuthService.switchTenant({ tenantId: 'new-tenant-id' })
+  }
+
+  ngOnDestroy(): void {
+    this.loadingSubscription.unsubscribe()
+  }
+}
+`
+
+`<frontegg-app>
+    <div *ngIf="authenticated">
+      <img src="{{ user?.profilePictureUrl }}" alt="{{ user?.name }}" />
+      <div>User name: {{ user?.name }}</div>
+      <div><button (click)="showApp()">Admin Panel</button></div>
+      <div><button (click)="switchTenant()">Switch Tenant</button></div>
+    </div>
+    <router-outlet></router-outlet>
+  </frontegg-app>
+`
+
+#### Vue
+
+Use `authState` to access the `user` object and the `switchTenant` function. Because it is required as part of the generic frontegg/vue.js setup, you already have access to `authState` from the `mapAuthState` method. 
+
+Here is an example:
+
+App.vue
+
+`<template>
+  <div id="app" v-if="fronteggLoaded">
+    <img alt="My logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js with Frontegg App" />
+    <p>
+      Logged in as
+      {{ this.authState.user ? this.authState.user.email : "Not logged in" }}
+    </p>
+    <button v-on:click="switchTenant">Switch Tenant</button>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: "App",
+  components: {
+    HelloWorld,
+  },
+  data() {
+    return {
+      ...this.mapAuthState(),
+    };
+  },
+  methods: {
+		switchTenant() {
+      // Use this.authState.user.tenantIds to get the tenants the user is a member of
+      this.fronteggAuth.tenantsActions.switchTenant({ tenantId: 'new-tenant-id' });
+    },
+  },
+};
+</script>
+`
+
+> ### 🚧
+> 
+> A note on switching user's active tenants
+> 
+> We recommend calling a `window.location.reload()` method after the user's active tenant is switched.

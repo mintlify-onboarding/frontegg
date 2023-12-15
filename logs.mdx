@@ -1,0 +1,70 @@
+---
+title: "Logged Events and Monitoring"
+---
+
+> ### 🚧
+> 
+> Backoffice and Your Environments
+> 
+> Note that Each capability is available in all the environments you are using (Development, Staging, QA, and Production). Each environment will reflect it’s own accounts and users, so the accounts and users in Development, Stating, and QA environments are probably testing accounts/users, while those in Production will be your customers, as well as possibly testing accounts/users. 
+> 
+> **You can filter your testing users** by filtering your domain in the \_Excluded domains \_filter in the users section.
+
+### [](#section-)
+
+### Logged Events
+
+Logs in your Frontegg portal allow you to view and analyze activity performed within your app and on additional third-party apps you are integrated with. You can use this feature for troubleshooting and debugging, and to monitor your users' activity. Logs will start to appear after completing your basic Frontegg integration and will include logs for events that are mentioned in the [Logged Events](/docs/logged-events) list.
+
+[ Logged Events Check out which events are logged in Frontegg est. 3 min ](https://docs.frontegg.com/v2.0.2/docs/logged-events) 
+
+### Viewing Your Logs
+
+To access your logs, go to the portal and choose _Environment_ → _Backoffice_ → _Monitoring_ → _Logs_. Logs are viewable for _Admin_ ,_Backoffice Editor_ , and_Viewer_ roles only. 
+
+![](/images/822fe58-Screenshot_2023-08-31_at_11.45.57.png "log screenshot.png") 
+
+In the Log tab, you will find a list of the latest events performed on your platform. Click on the relevant event to open a detailed view of the log and associated data. 
+
+#### Filtering Logs
+
+To filter your log's data, simply use the filter and select specific criteria, such as date range, account, actor (who performed the action), and event type.
+
+#### Data retention
+
+Note that your logs are retained for 7 days before deletion. If you require longer retention times, please [contact us](support.frontegg.com).
+
+### Log Streaming
+
+You can stream your logs to 3rd party services e.g., _Datadog_ and _Amazon EventBridge_. Log streaming is available via your Monitoring dashboard located under \[ENVIRONMENT\] → Backoffice → Monitoring. 
+
+![Log streaming to 3rd party services](/images/cf278ad-Screenshot_2023-11-20_at_13.17.46.png)
+
+Log streaming to 3rd party services
+
+Here, you can link/disconnect and manage your third-party tools e.g., _Datadog_, and _Amazon EventBridge_ . 
+
+> ### 📘
+> 
+> Good to Know
+> 
+> Your logs are searchable and filterable by different criteria such as date and event type. Logs can also be streamed in real-time to third-party tools e.g., _Datadog_, _Amazon EventBridge_ to monitor the Frontegg platform with your existing tools and workflows.
+
+#### Connect/Manage Log Streaming
+
+To connect or manage your log-streaming: 
+
+1. Click the _Connect_/_Manage_ button for the relevant third-party tool.
+2. Fill the required fields for each integration.
+3. Click _Save_.
+
+![Adding Connectivity with Amazon EventBridge](/images/40c6556-Screenshot_2023-11-20_at_13.18.00.png)
+
+Adding Connectivity with Amazon EventBridge
+
+#### Disconnect log streaming
+
+To disconnect log-streaming from 3rd party tools: 
+
+1. Click the _Manage_ button on the relevant third-party tool.
+2. Click _Disconnect_ and approve. You can always re-connect in case you want to.

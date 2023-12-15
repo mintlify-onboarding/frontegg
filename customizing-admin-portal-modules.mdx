@@ -1,0 +1,497 @@
+---
+title: "Admin Portal Modules"
+description: "Customizing admin portal modules"
+---
+
+The Admin Portal consists of modules that you can offer your customers and users.  
+Each module contains features for SaaS businesses. For instance, the modules include features for Profile, Privacy & Security, Account Details, Audit Logs, API Tokens, and more.
+
+Use this guide for extra flexibility within the admin portal. You can decide which modules you would like your users to view or edit. 
+
+For example, on the ‘Profile’ module you can decide whether to let the user view or edit the following fields - name, phone number, address, job title.
+
+> ### 🚧
+> 
+> This customization is available through `themeOptions` in the App file.
+
+> ### 📘
+> 
+> Prerequisite: Complete Admin Portal integration
+> 
+> If you haven't integrated the Admin portal into your application, please integrate it before. Read about how to add Admin Portal into your application on the [Admin Portal Integration page.](/docs/admin-portal-integration).
+> 
+> Required versions:
+> 
+> @frontegg/react v5.0.12  
+> @frontegg/angular v5.7.1  
+> @frontegg/vue v2.0.11  
+> @frontegg/nextjs v6.7.5
+
+### How To Customize Tabs And Fields?
+
+This guide explains which modules can be customized and how to do it.  
+In order to customize the appearance of the admin portal modules, provide the \_appearance option \_to the admin box.
+
+#### Choose one of the following options:
+
+**Edit** \- your users will be able to make changes and edit  
+**View only** \- your users will be able to view the settings you’ve updated in App settings but won’t be able to  
+overwrite or edit your decisions  
+**Hide** \- your users won’t be able to view and access the tab / field 
+
+**These are the available customizations by module:**
+
+### Profile Module
+
+**For the profile module, you can customize the following fields:**
+
+1. Name - hide
+2. Phone number - hide
+3. Address - hide
+4. Job title - hide
+
+> ### 🚧
+> 
+> The interface is available by importing ProfileFieldsProperties from @frontegg/types.
+
+Before customization, this is how the profile module looks like:
+
+![](/images/8ecacc3-Group_222_1.png "Group 222 (1).png")
+
+Use customization in order to hide field. This is how the code looks like:
+
+TypeScript
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+    adminPortal: {
+      pages: {
+        profile: {
+          fieldsProperties: {
+            name: {
+              appearance: 'hidden'
+            },
+            phoneNumber: {
+              appearance: 'hidden'
+            },
+            address: {
+              appearance: 'hidden'
+            },
+            jobTitle: {
+              appearance: 'hidden'
+            },
+          },
+        },
+      },
+    },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+As you can see below, in this example we are hiding name, phone number, address and job title.  
+Note that email field can’t be hidden.
+
+![](/images/abda935-Group_230_1.png "Group 230 (1).png")
+
+### Privacy & Security Module
+
+For the Privacy & Security module, you can hide the following fields:
+
+1. Login sessions
+2. MFA
+
+> ### 📘
+> 
+> Note!
+> 
+> If you hide the MFA section you won’t allow your user to configure MFA for his own account
+
+> ### 🚧
+> 
+> The interface is available by importing PrivacyFieldsProperties from @frontegg/types.
+
+Before customization, this is how the privacy and security module looks like:
+
+![](/images/42ac29a-Group_229_1.png "Group 229 (1).png")
+
+Now, let's customize its fields.
+
+For example, if you want to hide the MFA field:
+
+TypeScript
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+	 adminPortal: {
+      pages: {
+        privacy: {
+          fieldsProperties: {
+            mfa: {
+              appearance: 'hidden'
+            },
+          },
+        },
+      },
+    },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+The result: 
+
+![](/images/3cc5821-Group_228_1.png "Group 228 (1).png")
+
+### Account Details Module
+
+**For the account details module, you can customize the following fields:**
+
+1. Company name - can be hidden or set as view only
+2. Address - hide
+3. Website - hide
+4. Timezone - hide
+5. Currency - hide
+
+> ### 📘
+> 
+> Note!
+> 
+> By setting company field as view only, your users won’t be able to overwrite the company name and change it.
+
+> ### 🚧
+> 
+> The interface is available by importing AccountFieldsProperties from @frontegg/types.
+
+Before customization, this is how the account details module looks like:
+
+![](/images/7efd82b-Group_227_1.png "Group 227 (1).png")
+
+Now, lets customize its fields:
+
+TypeScript
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+			adminPortal: {
+        pages: {
+          account: {
+            fieldsProperties: {
+              companyName: {
+                appearance: 'viewOnly',
+              },
+              address: {
+                appearance: 'hidden',
+              },
+              website: {
+                appearance: 'hidden',
+              },
+              timezone: {
+                appearance: 'hidden',
+              },
+              currency: {
+                appearance: 'hidden',
+              },
+            },
+          },
+        },
+      },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+Company name field is provided with “view only” mode, so the edit button will disappear.  
+all of other fields are provided with hidden mode, so they are hidden also.
+
+![](/images/ac9789d-Group_226_1.png "Group 226 (1).png")
+
+### Invite Users Module
+
+In the invite users module, you can customize the form sections and the form fields' appearance and settings.
+
+**For the invite users module, you can customize the following sections and fields:**
+
+1. Invite users by email - enable | disable
+* Full name - hide | edit + required | not required
+* Phone number - hide | edit + required | not required
+1. Invite the user by magic link -  
+In order to show/hide this section, you can configure this option via [this link](https://portal.frontegg.com/on-boarding/builder/app-experience/collaboration) in the admin portal users page settings.
+
+![](/images/36dd5ad-Screen_Shot_2022-12-18_at_12.24.08.png "Screen Shot 2022-12-18 at 12.24.08.png")
+
+> ### 🚧
+> 
+> The interface is available by importing InviteUserModalOptions from @frontegg/types.
+
+Before customization, this is how the invite user module looks like:
+
+![](/images/b476021-Group_1_1.png "Group 1 (1).png")
+
+You can hide the invite user by email section, following the code below
+
+App.tsx
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+			adminPortal: {
+		    pages: {
+          users: {
+            inviteUserModal: {
+              inviteByEmail: {
+                enabled: false,
+              }
+            }   
+          }
+        },
+      },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+The result:
+
+![](/images/6eb316a-Group_2.png "Group 2.png")
+
+You can hide the Full name field in the form:
+
+App.tsx
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+			adminPortal: {
+		    pages: {
+          users: {
+            inviteUserModal: {
+              inviteByEmail: {
+                enable: false,
+                fieldsProperties: {
+                  name: {
+                    appearance: 'hidden',
+                  }
+                }
+              }
+            }   
+          }
+        },
+      },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+This result:
+
+![](/images/c21d1bd-Group_3.png "Group 3.png")
+
+You can change the Full name validation to be optional, so the user will be able to submit the form without filling out this field:
+
+App.tsx
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+			adminPortal: {
+		    pages: {
+          users: {
+            inviteUserModal: {
+              inviteByEmail: {
+                enable: false,
+                fieldsProperties: {
+                  name: {
+                    appearance: 'edit',
+                    settings: {
+                      validation: {
+                        required: false
+                      }
+                    },
+                  }
+                }
+              }
+            }   
+          }
+        },
+      },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+The result:
+
+![](/images/0fc38f1-Group_4_1.png "Group 4 (1).png")
+
+### Security Module
+
+In the security module, you can also customize the tabs (security features) appearance and the appearance of the fields inside of the tabs.  
+**For the security module, you can customize the following tabs and fields:**
+
+1. Session management - hide | edit  
+   * Idle Session Timeout - hide | view only  
+   * Force Re-login - hide | view only  
+   * Maximum Concurrent Sessions - hide | view only
+2. General Settings - hide | edit  
+   * MFA - hide | view only  
+   * User lockout - hide | view only  
+   * Password history - hide | view only
+3. IP Restrictions - hide | edit  
+   * IP address restrictions - hide
+4. Domain restrictions - hide | edit  
+   * Restrict signup by email domain - Hide
+
+> ### 🚧
+> 
+> The interface is available by importing SecurityTabsProperties from @frontegg/types.
+
+Before customization, this is how the security module looks like:
+
+![](/images/b127ae7-Group_225_1.png "Group 225 (1).png")
+
+There are four tabs (General Settings, Session Management, IP Restrictions and Domain Restrictions), and each tab has fields inside of it.
+
+You can hide a full tab, as you can see here:
+
+TypeScript
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+			adminPortal: {
+		    pages: {
+          security: {
+            tabsProperties: {
+              generalSettings: {
+                appearance: 'hidden',
+              },
+            },
+          },
+        },
+      },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+This code will result three tabs existing and one tab hidden:
+
+![](/images/f6b396c-Group_233.png "Group 233.png")
+
+In addition, you can decide which fields inside of a tab will be hidden or in view only mode.  
+For example, lets take the general settings tab:
+
+TypeScript
+
+`import React from "react";
+import {FronteggProvider, FronteggThemeOptions} from "@frontegg/react";
+import contextOptions from './context-options';
+
+const themeOptions: FronteggThemeOptions = {
+adminPortal: {
+        pages: {
+          security: {
+            tabsProperties: {
+              generalSettings: {
+                appearance: 'edit',
+                fieldsProperties: {
+                  mfa: {
+                    appearance: 'viewOnly',
+                  },
+                  userLockout: {
+                    appearance: 'hidden',
+                  },
+                  passwordHistory: {
+                    appearance: 'hidden',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+};
+
+const Provider = () => (
+    <FronteggProvider contextOptions={contextOptions} themeOptions={themeOptions}>
+        <div />
+    </FronteggProvider>
+);
+
+export default Provider;
+`
+
+The result:  
+MFA field is provided with view only mode, so the edit button in its line disappeared.  
+In addition, user lockout and password history are in hidden mode, so they are disappeared also, as you can see here:
+
+![](/images/a7209d2-Group_224_1.png "Group 224 (1).png")
+
+Now, you can play with the options to customize your own appearance preferences.
+
+> ### 📘
+> 
+> Note!
+> 
+> If you hide all fields within a module it’s better to go back to the builder in the Frontegg portal and turn off the module (i.e security, account details, etc) as described in this [guide](/docs/admin-portal-integration) . If you decided to keep the module without any fields, users will view an empty module as shown below:

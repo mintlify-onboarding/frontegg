@@ -1,0 +1,130 @@
+---
+title: "Configuring Frontegg as SAML IDP for 3rd party services"
+description: "This capability is fully supported if you are using Frontegg Hosted Login"
+---
+
+Hosted login with SAML (Security Assertion Markup Language) is a secure and efficient authentication mechanism that allows organizations to delegate the authentication process to a trusted identity provider (IdP). Instead of handling user authentication themselves, organizations can rely on a third-party IdP to verify users' identities and grant them access to their services. If you'll want to connect 3rd party applications to your Frontegg Hosted login using SAML protocol, you can follow the steps below for configuring your Frontegg Environment as an IDP for a 3rd party service.
+
+> ### 🚧
+> 
+> Prerequisites:
+> 
+> This capability is fully supported if you are using **Frontegg Hosted Login**. If you are using Frontegg Embedded Login, social and SSO login methods will not redirect the end user to the 3rd party application out of the box.
+
+Some of the use cases for this scenario can be:
+
+* Add a support tool (such as Zendesk) and have your users share the same identity with the intended tool.
+* Add support for documentation platforms (such as readme.io) and allow your users to share the same identity with that platform.
+
+In such cases, the flow will be usually as in the below example with Zendesk (Help Center):
+
+![](/images/f4481aa-SAML_IDP_-_1.png "SAML IDP - 1`.png")
+
+## Configuring Frontegg as SAML IDP
+
+The configuration of Frontegg as SAML IDP can be implemented with a few simple API calls.  
+Follow the guide below and send the requests in the order that they are listed to get your Frontegg IDP working with 3rd party SAML service providers.
+
+#### Registering the Service Provider
+
+The first step will be registering the service provider (in our example, Zendesk) on the Frontegg side. 
+
+Follow the instructions for \[using Frontegg APIs\] (doc:getting-started-with-your-api)
+
+Use your environment's credentials to authenticate with the Frontegg API:
+
+cURL
+
+`curl --location --request POST 'https://api.frontegg.com/auth/vendor' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "clientId": "[YOUR-CLIENT-ID]",
+    "secret": "[YOUR-API-KEY]"
+}'
+`
+
+#### Receiving a Token
+
+That will return a `token` you can use for the configuration process:
+
+JSON
+
+`{
+    "token": "[THE-ACCESS-TOKEN]",
+    "expiresIn": [EXPIRES-IN-SECONDS]
+}
+`
+
+#### Creating the SAML Configuration
+
+Using the `token`, create the SAML configuration:  
+(Please note: the `entityId` on the URL **_MUST_** match the `entityId` on the POST)
+
+cURL
+
+`curl --location --request POST 'https://api.frontegg.com/oauth/resources/configurations/saml/v1/[ENCODED-ENTITY-ID]' \
+--header 'frontegg-vendor-host: [YOUR-FRONTEGG-HOST-URL]' \
+--header 'Authorization: Bearer [token]' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "acsUrl": "[ACS-URL-FROM-SP]",
+    "entityId": "[ENTITY-ID-FROM-SP]",
+    "singleLogoutService": "[REDIRECT-URL-AFTER-LOGOUT]
+}'
+`
+
+This API will return the XML metadata to use for the SAML configuration on the service provider configuration.
+
+XML
+
+`<EntityDescriptor
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:assertion="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="http://frontegg.com/saml">
+    <IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo
+                xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>[THE-PUBLIC-CERTIFICATE]</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <KeyDescriptor use="encryption">
+            <ds:KeyInfo
+                xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>[THE-PUBLIC-CERTIFICATE]</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="[YOUR-VENDOR-HOST]/oauth/sso/SingleSignOnService"></SingleSignOnService>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="[YOUR-VENDOR-HOST]/oauth/sso/SingleSignOnService"></SingleSignOnService>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="[YOUR-VENDOR-HOST]/oauth/sso/SingleLogoutService"></SingleLogoutService>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="[YOUR-VENDOR-HOST]/oauth/sso/SingleLogoutService"></SingleLogoutService>
+    </IDPSSODescriptor>
+</EntityDescriptor>
+`
+
+#### Adding Redirect URLs
+
+For Frontegg to be able to authorize the redirect back to the third-party application, you'll need to add the ACS URL from your Service Provider to the list of authorized redirect URLs for Hosted login. 
+
+In your application **\[NAME OF ENVIRONMENT\] ➜ Login Method ➜ Hosted Login**
+
+![](/images/b664c4c-Screenshot_2023-02-20_at_10.24.18.png "Screenshot 2023-02-20 at 10.24.18.png")
+
+#### Configuring the Service Provider
+
+On your service provider (Zendesk in this example), configure the SSO configuration.
+
+In case your service provider supports XML upload, upload the XML provided on the API.
+
+In case your service provider doesn't support XML upload, configure the fields manually:
+
+* Under the SSO endpoint specify `[YOUR-VENDOR-HOST]/oauth/sso/SingleSignOnService`
+* Under the (Remote) Logout URL specify `[YOUR-VENDOR-HOST]/oauth/sso/SingleLogoutService`
+* Under the public certificate, copy the certificate value from the XML (`ds:X509Certificate`). Some service providers might require a certificate fingerprint instead, which you can extract with external tools.
+
+_Your service provider should now allow users to authenticate through Frontegg as a SAML provider_

@@ -1,0 +1,36 @@
+---
+title: "Admin portal integration (Angular)"
+---
+
+> ### 📘
+> 
+> Prerequisite: Complete Frontegg Authentication integration
+> 
+> If you haven't integrated Frontegg Authentication into your application, please integrate it before moving to Admin Portal integration. Read about how to [add Frontegg to your application](/docs/adding-frontegg-to-your-app).
+
+## Admin Portal Integration
+
+Embed the admin portal into your application by following this guide.  
+  
+For Frontegg admin portal integration, we will import the `FronteggAppService` from the `@frontegg/angular` package and use `showAdminPortal` method when clicking on the relevant button.  
+  
+Angular.js
+
+`import { Component } from '@angular/core';
+import { FronteggAppService } from '@frontegg/angular';
+
+@Component({
+  selector: 'show-admin-portal',
+  template: '<button (click)="showAdminPortal()">Show Admin Portal</button>',
+})
+export class ShowAdminPortalComponent {
+  constructor(private fronteggAppService: FronteggAppService) { }
+
+  showAdminPortal(): void {
+    this.fronteggAppService?.showAdminPortal()
+  }
+}
+`
+
+  
+**You are good to go!**  You should now see the admin portal in your application and able to use our full self-served experience with your product.

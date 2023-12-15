@@ -1,0 +1,41 @@
+---
+title: "Configuring SSO for SAML and OIDC"
+---
+
+Single Sign On allows users to sign in using credentials they already have. This eliminates the need to create a new username and password for your application. 
+
+Two popular SSO protocols are SAML and OpenID Connect. They manage and authenticate individual users across multiple applications.
+
+This guide is the starting point for adding SSO to your Frontegg application so that users can sign in using their IDP credentials via SAML 2.0 or OpenID Connect. 
+
+The following are required to get SSO up and running for your customers and their organizational users.
+
+##### Enable SSO in the Frontegg Portal. The SSO options include SAML and OpenID Connect.
+
+Go to **Home ➜ Builder ➜ Login Box**.
+
+In the left panel, toggle the switch to **on** for each SSO standard you want to enable.  
+  
+![](/images/76d769b-image_74.png)
+
+[ ![](/images/81c072b-Screen_Shot_2021-11-19_at_12.44.31.png) Service Provider SAML Assist customers configuring SAML est. 5 min ](https://docs.frontegg.com/v2.0.1/docs/configuring-saml) [ ![](/images/68ae8c3-Screen_Shot_2021-11-19_at_12.44.59.png) Service Provider OpenID Assist customers configuring OpenId Connect est. 5 min ](https://docs.frontegg.com/v2.0.1/docs/configuring-openid-connect) 
+
+### Additional resources
+
+##### APIs related to SSO
+
+[Create SSO configuration (manual)](/reference/ssoconfigurationcontrollerv1%5Fcreatessoconfiguration)
+
+[Create SSO configuration automatic (XML)](/reference/ssoconfigurationcontrollerv1%5Fcreatessoconfigurationbymetadata)
+
+[Get SSO configurations](/reference/ssoconfigurationcontrollerv1%5Fgetssoconfigurations)
+
+[Create SSO domain and link to a configuration](/reference/ssodomaincontrollerv1%5Fcreatessodomain)
+
+[Validate SSO domain (when using TXT records)](/reference/ssodomaincontrollerv1%5Fdeletessodomain)
+
+[Force validate an SSO domain (No TXT records needed)](/reference/vendoronlyssoconfigurationcontrollerv1%5Fforcessodomainvalidation)
+
+[Add SSO default groups](/reference/ssorolescontrollerv1%5Fsetssodefaultroles)
+
+[Create SSO roles to groups mapping](/reference/ssogroupscontrollerv1%5Fcreatessogroup)

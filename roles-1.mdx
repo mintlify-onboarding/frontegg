@@ -1,0 +1,151 @@
+---
+title: "Roles"
+---
+
+### What are Roles?
+
+Frontegg's role-based solution for managing users makes it easy to implement and assign roles, giving you the maximum ability to customize which users can access various parts of your application. Role-based access control is a common approach for restricting access to parts of an application to only authorized users. 
+
+A user's access to information and functionality in your application is defined by the roles assigned to the user. Every user has one or more roles. Each role is defined by the group of permissions assigned to that role. Each permission corresponds to the ability to do something in your application.
+
+The way you design roles in Frontegg is intuitive and behaves as you would expect from any standard role-based system. We do, however, have a few unique features explained in our guides. 
+
+With just a few clicks you can define multiple roles and assign them to users. Read more about permissions [here](/docs/permissions-1).
+
+#### How to manage roles for your app
+
+Roles exist in every environment, within your _Entitlements_ section. Roles are linked to [Permissions](/docs/permissions-1), thus granting users who are holding them their subset permissions. 
+
+#### Frontegg roles and defaults
+
+By default, we've configured two preset roles including permissions— _Admin_ and _Read Only_. You can use, edit, or delete them. 
+
+##### You can set roles and assign them to users. This action can happen in two different ways:
+
+By you Self service 
+
+In the Backoffice - When you will add users to different accounts.
+
+![](/images/49526de-image_31.png) 
+
+By your customer within the [admin portal](https://docs.frontegg.com/docs/managing-users#ways-your-customers-invite-other-users) \- when inviting new users. Users must assign the invited user a role.
+
+![766](/images/b057e1f-image_30.png) 
+
+### Role Properties
+
+| Property          | Description                                                                                                                                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name              | This property will be presented to all users when inviting others on the Frontegg portal within the Backoffice or when adding users to accounts in your app. Try to make it descriptive.                                                                                  |
+| Description       | The description is intended to help you and your teammates understand the role internally.                                                                                                                                                                                |
+| Key               | An internal identifier that must be unique. As mentioned above, the JWT includes a ‘roles’ array, that contains the role keys associated with that user.                                                                                                                  |
+| Level             | A role level can refer to the level of authority or privilege associated with a specific role for a user. Usually, higher role levels have more permissions and access than lower role levels. Users can only apply roles (to other users) with levels lower than theirs. |
+| Permissions list  | An individual permission allows someone to perform a specific task, such as uploading a video or editing a profile. Essentially, each role contains a set of permissions assigned to it.                                                                                  |
+| Assigned accounts | The role can be assigned to a specific account or all accounts in the environment.                                                                                                                                                                                        |
+| ID                | Each role has a unique ID that is generated automatically upon role creation (see note\*)                                                                                                                                                                                 |
+
+> ### 📘
+> 
+> Role ID
+
+#### Roles table and actions
+
+In the roles table, you can see all roles created by Frontegg (Admin and Read only roles) and by you (custom roles). 
+
+1. **Search bar** \- gives you the option to search for a specific role
+2. **Filters** \- you can filter roles by levels
+3. **Delete a role** \- use the three dots on the right side of each role line to delete it.
+
+> ### 🚧
+> 
+> Delete a role
+> 
+> In the case of deleting a role, make sure there are no users without any roles.
+
+![](/images/abe2f80-Screenshot_2023-10-29_at_18.05.07.png "roles.png") 
+
+#### Role Creation and Editing
+
+Create a new role by clicking the "Add new role" button.
+
+![Create a new role ](/images/81a1d06-Screenshot_2023-10-30_at_19.52.58.png)
+
+Create a new role 
+
+When creating a new role, note that you have a Key and Level fields. The Key field represents the identifying key that will be stored in the user's JWT and will be associated with the role if you wish to use it as an attribute, possibly for [Feature Flagging](/docs/feature-flags). The _Level_ field will indicate the level of this role and will allow the person holding it to invite or assign roles only to users with an equal or greater level than theirs. 
+
+##### On the Settings tab add the following details:
+
+| Field          | Description                                                                                                                                                                                                                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name           | each role must have a unique name.                                                                                                                                                                                                                                                                                                                                    |
+| Description    | we advise you to add a description that will help you manage your roles.                                                                                                                                                                                                                                                                                              |
+| Key            | add a unique key, which will be used to identify the role.                                                                                                                                                                                                                                                                                                            |
+| Level          | a numeric input that helps you manage role hierarchy. Roles can only invite/assign roles with a level equal to or greater than their own role level.                                                                                                                                                                                                                  |
+| Default role   | When you or other teammates on the Frontegg portal will add users to accounts, you will be able to set default roles as ‘suggested’ in the backoffice. Please note, this can be reversed when adding new users.                                                                                                                                                       |
+| Select account | as default, a role is set to all accounts in an environment, but, you can decide to attach it to a specific account. In that way, just one account in that environment will be able to see and use the role. Once you click on the Save button, you won’t be able to reverse the decision. (You will still be able to delete the role and change the settings though) |
+
+> ### 🚧
+> 
+> Default role
+> 
+> Make sure you have at least one role you include as "Default". This role will be added to a user when signing up.
+
+![](/images/ee2b97c-roles-2.png "roles-2.png")
+
+##### On the Permissions tab you are able to add new permissions:
+
+1. Click on “Assign Permissions”
+2. Mark the permissions you would like to add to this role
+3. Click “Assign permissions”
+4. Click ‘Save’ to add the role to the role table
+
+> ### 📘
+> 
+> A role can be saved without permissions and you can add those later on.
+
+![](/images/e28b575-roles-3.png "roles-3.png")
+
+![](/images/9e1547f-roles-6.png "roles-6.png")
+
+### Edit existing roles
+
+In order to go back and edit an existing role, click on the role line in the table and edit its settings. 
+
+### How does roles work in Frontegg?
+
+When Frontegg generates a user/API M2M access token (JWT), it includes a ‘roles’ array which contains the role keys associated with this user, and also a ‘permissions’ array with all the permission keys contained in those roles.
+
+The Frontegg backend SDKs can verify the JWT and enforce roles and permissions for you, and you can specify the ‘permissions’ and/or ‘roles’ that are required for a certain operation. See more details on the implementation [here](/docs/using-frontegg-sdk#grant-access-by-roles).
+
+### Wrapping it all up - Who uses roles and where?
+
+You Self service 
+
+1. Setting up roles and permissions on each environment (this guide explains how you can do that)
+2. Adding/ editing roles for specific [users](https://docs.frontegg.com/docs/manage-users) within the backoffice
+3. Inviting users to an account within the backoffice
+
+Your users can [invite](https://docs.frontegg.com/docs/managing-users#ways-your-customers-invite-other-users) others and attach roles via admin portal
+
+#### Going live checklist
+
+1. Make sure you’ve enabled the roles and permission option under the authorization → Roles (in each environment).
+2. In case you created custom roles and added custom permissions, make sure you’ve added them to your code to be enforced.
+3. Create roles and permissions in one of the testing environments before moving them to Production.  
+Add a new test user with that role and validate the enforcement on your side.
+4. Move the roles and Permissions to Production
+
+#### Additional resources
+
+##### APIs related to Roles
+
+1. [Get roles](/reference/permissionscontrollerv1%5Fgetallroles)
+2. [Create roles](/reference/permissionscontrollerv1%5Faddroles)
+3. [Delete role](/reference/permissionscontrollerv1%5Fdeleterole)
+4. [Update role](/reference/permissionscontrollerv1%5Fupdaterole)
+5. [Set multiple permissions to a role](/reference/permissionscontrollerv1%5Fsetpermissionstorole)
+
+#### See next
+
+[Managing Permissions](https://docs.frontegg.com/docs/managing-permissions) 

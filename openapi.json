@@ -1,0 +1,82 @@
+{
+        "openapi": "3.0.0",
+        "info": {
+            "title": "Vendor authentication",
+            "description": "",
+            "version": "1.0",
+            "contact": {}
+        },
+        "tags": [],
+        "servers": [
+            {
+                "url": "https://api.frontegg.com/auth/"
+            }
+        ],
+        "components": {
+            "schemas": {
+                "VendorAuthenticationRequest": {
+                    "type": "object",
+                    "required": [
+                        "clientId",
+                        "secret"
+                    ],
+                    "properties": {
+                        "clientId": {
+                            "type": "string"
+                        },
+                        "secret": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "VendorAuthenticationResponse": {
+                    "type": "object",
+                    "properties": {
+                        "token": {
+                            "type": "string"
+                        },
+                        "expiresIn": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "paths": {
+            "/": {
+                "post": {
+                    "operationId": "authenticate_vendor",
+                    "summary": "Vendor authentication",
+                    "description": "Authenticate as vendor using clientId and API key",
+                    "requestBody": {
+                        "required": true,
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VendorAuthenticationRequest"
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Authentication succeeded",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/VendorAuthenticationResponse"
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Invalid authentication"
+                        }
+                    },
+                    "tags": [
+                        "Vendor authentication"
+                    ]
+                }
+            }
+        }
+}

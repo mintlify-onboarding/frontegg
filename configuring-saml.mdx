@@ -1,0 +1,77 @@
+---
+title: "Vendor SAML Configuration"
+---
+
+Follow the instructions below to learn how to configure SSO for the SAML 2.0 standard.
+
+> ### 🚧
+> 
+> Configuring Custom Domains Before SAML Configuration
+> 
+> We highly recommend using Custom Domains to avoid third party cookie-issues and this recommendation is appies to both _Embedded_ and _Hosted_ login customers. Since it is very cumbersome to switch to a custom domain after you've gone live - and especially if you have active SSO connections - we encourage you to configure custom domains in your Production environment from the get-go. Learn more about [Custom Domains](/docs/custom-domains).
+
+#### Configuring SAML in Your Frontegg Portal
+
+Go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Authentication ➜ SSO**.
+
+![](/images/e04cf71-image_75.png)
+
+> ### 🚧
+> 
+> SSO/SAML Enablement
+> 
+> If you do not see SSO ➜ SAML in the sidebar, make sure it is enabled [in that specific environment](/docs/adding-sso).
+
+To configure SAML, you need to do the following: 
+
+##### Add your ACS URL
+
+The _ACS URL_ will contain your domain followed by `/auth/saml/callback`. We strongly encourage you to configure a [custom domain](/docs/adding-custom-domain) in your Frontegg app before configuring your SAML connection, as it may require downtime to change it retroactively _after_ configuring your SAML connection. Custom Domains are beneficial for a number of reasons, such as avoiding cookie issues and enhancing your brand. Learn more about [Custom Domains](/docs/custom-domains).
+
+If you opt **not** to configure a custom domain, use your `frontegg subdomain` followed by `/auth/saml/callback` for your ACS URL. 
+
+##### Add the SP Entity ID
+
+Customers use this value when they configure their identity provider. We recommend you use the name of your application for this field.
+
+##### Add a Redirect URL
+
+If you are using the **Hosted login** method, the Redirect URL should be **https://\[your-frontegg-domain\].frontegg.com/oauth/account/saml/callback.**
+
+If you are using the **Embedded Login** method, the Redirect URL should be \[your-application-url\]/account/saml/callback, for example: **http://localhost:3000/account/saml/callback**. 
+
+![](/images/ac17fa2-SAML.png)
+
+### Allow your customers to apply the connection or apply it for them
+
+After configuring SAML in the Frontegg Portal, you can allow your end users either to apply the SSO connection via the Self-service or apply the connection details from their IDP on their behalf, via the Backoffice ➜ Accounts ➜ Account ➜ Actions SSO ➜ Configurations. 
+
+##### Enable SSO Tab in the Admin portal
+
+For enabling the SSO tab in the Self-Service for your end users:
+
+> ### 🚧
+> 
+> Admin portal integration
+> 
+> Make sure that you have integrated the Admin portal into your application as described in (doc:react-self-service).
+
+![](/images/43a96c7-image_76.png)
+
+After the SSO tab is enabled, your customers can follow the instructions for adding the details of the connection from the IDP - [here](/docs/saml-idp-instructions). 
+
+##### Apply the connection from the Environment Backoffice
+
+For applying the SSO connection on behalf of your customers, you can use the Backoffice or do it by using our [APIs](/reference/ssoconfigurationcontrollerv1%5Fcreatessoconfiguration).
+
+![](/images/29ca047-image_73.png)
+
+### Additional resources
+
+##### FAQs related to SAML SSO
+
+[What do tenant SSO failed logs mean?](https://support.frontegg.com/hc/en-us/articles/10181013298077-Why-do-I-see-Tenant-SSO-Failed-logs-)
+
+[Why do I get an error when uploading an XML file from Jumpcloud?](https://support.frontegg.com/hc/en-us/articles/8745328787357-Why-do-I-get-an-error-when-uploading-my-XML-metadata-)
+
+[How to pass custom user attributes via SAML?](https://support.frontegg.com/hc/en-us/articles/10159750685853-How-can-I-pass-custom-user-attributes-from-Okta-SSO-)

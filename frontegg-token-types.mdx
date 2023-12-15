@@ -1,0 +1,178 @@
+---
+title: "Token Types"
+description: "Learn about the different token types in Frontegg and when they are used"
+---
+
+Tokens play a pivotal role in securing and optimizing your interactions with Frontegg. There are four distinct types of tokens in the Frontegg ecosystem: **Vendor Tokens, User Tokens, User API Tokens, and Tenant API Tokens**. Each token type has its unique purpose and structure, enabling a seamless and secure experience tailored to your specific needs. There are 4 different types of tokens in Frontegg:
+
+* Vendor Token
+* User Token
+* User API Token
+* Tenant API Token
+
+The following article will provide you with detailed information on the different types of tokens, when each one is used, and show a sample of the structure of each token.
+
+### Vendor Token
+
+Vendor Token: Your Swiss Army Knife  
+The Vendor Token is your master key to Frontegg's kingdom. By combining your environment's client ID and secret, you can create a Vendor Token. This versatile token empowers you to perform a plethora of actions, from tenant management to user invitations and role assignments. Whenever you need to interact with api.frontegg.com, the Vendor Token is your trusty companion.
+
+Here's a sneak peek into the anatomy of a Vendor Token:
+
+JavaScript
+
+`{  
+    "scopes": string\[],  
+    "type": "vendor",  
+    "vendorId": string,  
+    "iat": Date,  
+    "exp": Date  
+}
+`
+
+Obtaining a Vendor Token is effortless – use the Vendor Authentication API endpoint and provide your Client ID and API Key from the Frontegg Portal's ➜ \[ENVIRONMENT\] ➜ Settings page.
+
+The Vendor Token is your key to unlock a plethora of capabilities within Frontegg. By combining the client ID and secret from your environment in the Frontegg Portal, you can create a Vendor Token. This versatile token empowers you to execute multiple actions, from tenant creation to user invitations and role assignments. When you need to perform a request to api.frontegg.com, a Vendor Token is your go-to companion.
+
+The anatomy of a Vendor Token:
+
+JSON
+
+`{  
+    "scopes": string\[],  
+    "type": "vendor",  
+    "vendorId": string,  
+    "iat": Date,  
+    "exp": Date  
+}
+`
+
+Obtain a Vendor Token effortlessly using the Vendor Authentication API endpoint. Just pass the Client ID and API Key found in the Frontegg Portal's ➜ \[ENVIRONMENT\] ➜ Settings page.
+
+### User Token
+
+Your Personalized Passport  
+For individual users embarking on their Frontegg journey, the User Token is the guiding star. This token becomes available post-login or through various authentication methods. It's your companion on requests made within your unique subdomain, like customer.frontegg.com, providing an exceptional user experience.
+
+The composition of a User Token:
+
+JSON
+
+`{  
+    "sub": string,  
+    "name": string,  
+    "email": string,  
+    "email_verified": boolean,  
+    "metadata": Record\<string, unknown>,  
+    "roles": string\[],  
+    "permissions": string\[],  
+    "tenantId": string,  
+    "tenantIds": string\[],  
+    "profilePictureUrl": string,  
+    "sid": string,  
+    "type": 'userToken',   
+    "aud": string,  
+    "iss": string,  
+    "iat": Date,  
+    "exp": Date,  
+    "customClaims?": Record\<string, unknown>,  
+    "samlAttributes?": any  
+}
+`
+
+### API Tokens (Client Credentials)
+
+#### Tenant API Tokens
+
+Machine-to-Machine interactions rely on API Tokens, streamlining your integration process. Sharing structural similarities with User Tokens, API Tokens possess distinct attributes. These tokens enable secure communication and data sharing, offering enriched metadata capabilities.
+
+The anatomy of an API Token:
+
+JSON
+
+`{  
+    "sub": string,  
+    "tenantId": string,  
+    "roles": string\[],  
+    "permissions": string\[],  
+    "metadata": Record\<string, unknown>,  
+    "userMetadata?": Record\<string, unknown>,  
+    "createdByUserId": string,  
+    "type": 'tenantApiToken',  
+    "customClaims?": Record\<string, unknown>,  
+    "aud": string,  
+    "iss": string,  
+    "iat": Date,  
+    "exp": Date  
+}
+`
+
+Differentiating API Tokens from User Tokens is the metadata value. API Tokens can possess their dedicated metadata, enhancing their purpose and use cases. User API Tokens house both userMetadata and metadata, while Tenant API Tokens exclusively contain metadata.
+
+Easily craft API Tokens tailored to specific tenants through the Admin Portal UI or create tokens from your Frontegg account by navigating to your profile picture in the Frontegg Portal ➜ Administration.
+
+With this comprehensive understanding of Frontegg tokens, you're poised to leverage their capabilities effectively, unlocking a world of possibilities in your integration journey.
+
+Unveiling the Power of Frontegg Tokens: Your Path to Enhanced Integration  
+Tokens lie at the heart of a secure and streamlined interaction with Frontegg, serving as digital keys to unlock various features. Within the Frontegg ecosystem, you'll encounter four distinct token types: Vendor Tokens, User Tokens, User API Tokens, and Tenant API Tokens. Each type carries a specific purpose and structure, tailored to cater to your unique integration needs.
+
+### User Token
+
+For individual users embarking on their Frontegg journey, the User Token is a digital passport. Post-login or through various authentication methods, this token becomes your companion for requests made within your unique subdomain, such as customer.frontegg.com. It promises an exceptional user experience tailored just for you.
+
+Discover the inner workings of a User Token:
+
+JSON
+
+`{  
+    "sub": string,  
+    "name": string,  
+    "email": string,  
+    "email_verified": boolean,  
+    "metadata": Record\<string, unknown>,  
+    "roles": string\[],  
+    "permissions": string\[],  
+    "tenantId": string,  
+    "tenantIds": string\[],  
+    "profilePictureUrl": string,  
+    "sid": string,  
+    "type":'userApiToken',  
+    "aud": string,  
+    "iss": string,  
+    "iat": Date,  
+    "exp": Date,  
+    "customClaims?": Record\<string, unknown>,  
+    "samlAttributes?": any  
+}
+`
+
+#### User API Tokens (Client Credentials )
+
+User API Tokens drive seamless integration. While resembling User Tokens, these tokens come with unique attributes, allowing secure communication and data exchange while supporting enriched metadata capabilities.
+
+Dive into the structure of an API Token:
+
+JSON
+
+`{  
+    "sub": string,  
+    "tenantId": string,  
+    "roles": string\[],  
+    "permissions": string\[],  
+    "metadata": Record\<string, unknown>,  
+    "userMetadata?": Record\<string, unknown>,  
+    "createdByUserId": string,  
+    "type": 'userToken' | 'userApiToken' | 'tenantApiToken',  
+    "customClaims?": Record\<string, unknown>,  
+    "aud": string,  
+    "iss": string,  
+    "iat": Date,  
+    "exp": Date  
+}
+`
+
+One standout feature of these Tokens is their dedicated metadata, enhancing their functionality. User API Tokens encompass both userMetadata and metadata, while Tenant API Tokens solely hold metadata.
+
+Crafting API Tokens is a breeze – tailor them for specific tenants through the Admin Portal UI, or swiftly generate tokens from your Frontegg account by navigating to your profile picture in the Frontegg Portal ➜ Administration.
+
+With an in-depth grasp of Frontegg tokens, you're armed to harness their potential, unlocking a world of seamless integration possibilities.

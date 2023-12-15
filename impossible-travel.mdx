@@ -1,0 +1,42 @@
+---
+title: "Impossible Travel"
+---
+
+Impossible travel refers to a situation where a user's actions suggest that they have accessed a particular system or resource from two different geographic locations in an impossibly short amount of time.
+
+For example, if a user logs into their email account from New York and then, within a span of just a few minutes, appears to log in from London, it would be considered impossible travel. This kind of activity often indicates a security breach or a compromised account, as it would be physically impossible for a person to travel between those two distant locations in such a short period.
+
+## Prerequisites
+
+There are no prerequisites for detecting impossible travel.
+
+## Configure Impossible Travel
+
+#### In the Frontegg Portal
+
+You can choose from the following actions when a user commits impossible travel:
+
+1. Allow - Let the user continue to the app
+2. Challenge - Challenge the user with MFA. If they pass, let them continue to the app
+3. Block - Block the login attempt
+![](/images/7017da3-Screenshot_2023-09-10_at_14.29.11.png) 
+
+## How the end user experiences impossible travel on login
+
+1. Allow - The user is allowed to continue to the app
+2. Challenge - The user will get an MFA challenge. If they pass, they continue to the app. If they fail, their login gets blocked.
+3. Block - The user will get a failed login message.
+
+## Notify end users of impossible travel
+
+You can choose to notify users when their is a brute force attack on their account by checking the relevant checkbox.
+
+## Analyzing impossible travel in your App
+
+#### Security Events
+
+If you’re curious how many times impossible travel events happen in your app, you can see them over time, along with where they happened in [Security Events](/docs/security-events).
+
+#### Logs
+
+Coming soon!

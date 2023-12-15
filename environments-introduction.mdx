@@ -1,0 +1,205 @@
+---
+title: "Environments"
+---
+
+Frontegg environments were designed with your ease of use in mind. You can now test Frontegg's capabilities and features in a development environment and seamlessly deploy it live to production. We also got rid of the complexities of managing multiple workspaces for development, staging, and production, so you are also liberated from copying the settings of each environment to another!
+
+The flow for using Frontegg environments follows industry best practices— It all starts when you create and thoroughly test Frontegg features and configurations within a dedicated development environment. This hands-on exploration allows you to gain confidence and familiarity with the platform before introducing it to your valued customers.
+
+Once ready, you can deploy it to a production environment and view it live in your application. 
+
+### Environment Setup and Settings
+
+![](/images/12cbfa8-Screen_Shot_2022-06-27_at_11.35.29.png "Screen Shot 2022-06-27 at 11.35.29.png")
+
+When you initially integrate Frontegg with your development environment, you will need to select your tech stack and proceed with integration. Check out the individual integration flows in our _Client Side SDKs_  found in the documentation menu to your left. 
+
+#### Configuring URLs
+
+Jumping into the [Portal](https://portal.frontegg.com/) following your initial integration, you will need to go to you Development environment (located in the left menu) and choose \_Env Settings. The URLs section is designed to facilitate the integration process and allow running Frontegg with minimal manual updates. This section is unique for each environment and includes the `App URL` that was inserted upon the creation of the environment, and `Login URL` that is constructed from your `frontegg-subdomain/oauth`. The defaults of this section are designed for Hosted Login which is the default Frontegg Integration type: 
+
+The **App URL** is used as `{{APP_URL}}` variable in Allowed origins, Email template Redirects, Hosted Login Authorized URLs, Social Logins Redirect URLs, SSO Redirect URLs.
+
+The **login URL** is used as `{{LOGIN_URL}}` variable in Allowed origins, Email template Redirect URLs, Hosted Login Authorized URLs, Social Logins Redirect URLs, SSO Redirect URLs. 
+
+![General Settings](/images/70186ae-small-Group_2.png)
+
+> ### 📘
+> 
+> URLs
+> 
+> Note that all the sections that are listed above, i.e. allowed origins and etc. accept explicit values as well and can be used alondg with variables.
+
+#### Domains
+
+##### Frontegg Domain
+
+This is the unique domain of your environment that is being used as `baseUrl` in Frontegg SDKs. You can change the default sub identifier `app-xxxxxx` that is generated upon the creation of the environment and choose a more meaningful subdomain that is unique on Frontegg. 
+
+##### Custom domain
+
+To avoid frustrating cookie issues and to enhance your branding, use a [Custom Domain](/docs/custom-domains) option. 
+
+By default, you have a Frontegg Domain. This domain ends with   **.frontegg.com**. By using this Frontegg Domain, however, you may encounter unwanted cookie issues and use a domain that is not consistent with your brand.
+
+> ### 📘
+> 
+> Custom Domain Best Practice
+> 
+> A common practice is to use a subdomain as the custom domain because if your app is hosted on app.sample.com and you have an existing A Record for that domain, you cannot use `app.sample.com` as a custom domain on Frontegg. Instead, use a subdomain as the custom domain, like `auth.sample.com`.
+> 
+> Learn more about [Adding Custom Domains](/docs/custom-domains).
+
+###### Avoid Cookie Issues
+
+Some browsers block third-party cookies by default. Providing a custom domain as your application UI domain will give you the ability to support these browsers. Learn more about [Custom Domains](/docs/custom-domains). 
+
+###### Enhance Your Brand
+
+Instead of seeing .frontegg.com in your domain, you might prefer to have your customers see your custom domain. For instance, when your customers use your application to login, your application will direct them to the following URL. Rather than see a domain with .frontegg.com in it, you might prefer that your customer see **your** domain instead `https://your-custom-domain.frontegg.com/oauth/account/login`
+
+In the Frontegg portal, go to **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Settings ➜ Domains**.
+
+On this page, you can manage your Frontegg Domains. You should see your Frontegg Domain and also a place to add a Custom Domain. 
+
+In the Custom Domain section, click the Configure button. You should see a dialog appear that asks for your domain name and gives you the information you need for creating the CNAME record in your DNS configuration.
+
+As the instructions in the dialog indicate, add the CNAME record to the DNS configuration with your DNS provider. 
+
+![](/images/d98d80b-small-Screenshot_2023-05-14_at_15.18.46.png)
+
+After adding the CNAME to your DNS configuration, click the Verify button.
+
+Frontegg generates an SSL certificate for your custom domain. 
+
+If Frontegg is able to verify the CNAME record, you will see a success message. If encounter an error if Frontegg is unable to verify your custom domain. If that happens to you, double-check that you entered your CNAME correctly with your DNS provider and try again.
+
+After a successful setup, you also should see your custom domain listed on the Administration Page's Domain tab with a verified tag.
+
+> ### 📘
+> 
+> Updating URLs and contextOptions
+> 
+> If you change your Frontegg domain or if you're using a custom domain on Frontegg, that should be also the domain that you're passing as the `baseUrl` in the `contextOptions` in your Frontend integration package. The `URLs` should be also updated accordingly, so if you decided to use a custom domain or chose a new Frontegg domain, you should update it in the Login URL as well (for Hosted Login).
+
+#### Allowed origins
+
+This section controls which origins will be able to access your Frontegg application. By default, on environment creation it will include the `{{APP_URL}}` and `{{LOGIN_URL}}`. You can add additional explicit URLs to the list.
+
+![](/images/32fe745-small-Group_3allowed_origins.png) 
+
+The URLs in this section allow the use of **wildcards** in the URL.
+
+##### Hosted Login Redirect URLs
+
+This section is located under **Environments ➜ \[NAME OF ENVIRONMENT\] ➜ Login Method ➜ Hosted Login**
+
+Frontegg Hosted login is based on the oauth2 protocol. The Hosted login flow is that your application URL is authorized on Frontegg and hence is able to redirect to the Frontegg Hosted Login page and redirect back to your application after authentication. In order for that flow to work, your application URL needs to be in the list of Authorized URLs on Frontegg.
+
+![](/images/2dd3f1b-small-Group_4redirects.png)
+
+The default during environment creation will be `{{APP_URL}}/oauth/callback` that is taking the value for the URLs section. You can add additional explicit URLs and use wildcards in the sub-domain of the URL. For example: 
+
+`https://*.acme.com` is an allowed value, while `https://subdomain.*.com` is forbidden.
+
+If you do not need a Frontegg development environment, you can go straight from integration to a production environment. 
+
+Read below to learn more about how Frontegg environments work and how you can use them.
+
+> ### 📘
+> 
+> What happened to workspaces?
+> 
+> Frontegg _Environments_ replaced the old workspaces approach, so you no longer need to create multiple workspaces and manually copy their configurations from one to the other.
+
+### Using Your Development and Production Environment
+
+After setting up your environment as per the instructions above, each Environment can then be adjusted and set with different features and configurations to test your user's authentication experience, security enablement, access, and more. After testing your settings in the Development environment and going to Production, all of the settings your see in your [Builder](/docs/builder-2) will be transferred to the new environment, but advanced fetures like user Entitlements and user roles will need to be set individually for each environment. 
+
+> ### 🚧
+> 
+> Configurations Copied from Development to Production
+> 
+> While Frontegg copies many of the settings from development to production but not all of them. Currently, the environment configurations that Frontegg copies are: Social Logins, SSO / SAML, Captcha, Emails, and Hooks.
+
+After integration, you will see your _Development_ environment in the Frontegg Portal sidebar (**Environments ➜ Development).**  
+  
+![](/images/3c39153-Screen_Shot_2022-03-03_at_11.58.27_copy_2.png "Screen Shot 2022-03-03 at 11.58.27 copy 2.png")
+
+In the _Development_ environment, you can set up your authentication preferences, add and manage users, create and use webhooks, edit email templates, and more.
+
+### Managing Your Production Environment
+
+To access your _Production_ environment, go to **Environments ➜ Production** in your portal's sidebar.  
+  
+![](/images/e788725-Screen_Shot_2022-03-03_at_11.58.27_copy.png "Screen Shot 2022-03-03 at 11.58.27 copy.png")
+
+The _Production_ environment looks virtually identical to the development environment, and you should see the same configurations in _Production_ that you already set up for your Development environment.
+
+![](/images/d8685f1-Screen_Shot_2022-03-03_at_11.22.51.png "Screen Shot 2022-03-03 at 11.22.51.png")
+
+  
+### First Production
+
+When you are ready to start using Frontegg _live_ in your application, effortlessly deploy your Frontegg development settings to a Frontegg _Production_ environment. 
+
+If it is your first time deploying from _Development_ to _Production_, go to the Portal and click _Publish to production_, and enter your production URL in the ensuing form.  
+  
+![](/images/f965f56-Screen_Shot_2022-06-27_at_11.39.04.png "Screen Shot 2022-06-27 at 11.39.04.png")
+
+The Frontegg API is waiting for your application to send a call to it from the URL that you input.
+
+In a separate browser window, go to your production application URL and open the Frontegg Login Box. This makes a call from your application's production URL to the Frontegg API.
+
+> ### 📘
+> 
+> Ensure Environment Activation
+> 
+> If you do not send a message from your application to the Frontegg API, Frontegg cannot activate your production environment. The easiest way is to just open the Frontegg Login Box from your application as described above.
+
+After making the call, you should see a _welcome to production_ message in your Frontegg Portal.
+
+When you go to production, Frontegg automatically copies your _Development_ environment configurations to your _Production_ environment.
+
+> ### 📘
+> 
+> Settings and Data Deployment
+> 
+> Note that Frontegg does not deploy **the data** from your development environment to your production environment. 
+> 
+> This means that the tenants and users and other data you created and managed in your development environment will not be in your production environment.
+
+### Adding New Environments
+
+Add a new environment from the sidebar. In addition to development and production, Frontegg offers Staging and QA environments.
+
+To add a new environment, click the **+** icon next to the _Environments_.  
+  
+![](/images/80e134d-Screen_Shot_2022-07-03_at_11.42.02.png "Screen Shot 2022-07-03 at 11.42.02.png")
+
+Select the environment and enter your application's URL. This will create a new environment you can play with!
+
+![](/images/6f19a3c-Screen_Shot_2022-06-29_at_10.03.59.png "Screen Shot 2022-06-29 at 10.03.59.png")
+
+When viewing environments in the Portal, you can tell which environment you are viewing because it says so in the sidebar and at the top of the page.
+
+> ### 🚧
+> 
+> User Data in Different Environments
+> 
+> Because Frontegg does not move your tenant and user data from development to production, you will have different tenant and user data in your development and production environments.
+
+### Using Multiple Environments
+
+Use an environment and make changes to it without worrying about impacting other environments until you want to.
+
+For instance, use your _Development_ environment and make changes after deploying them to production without worrying about impacting the _Production_ environment until you want to.  
+  
+![](/images/1c1e1da-Screen_Shot_2022-03-03_at_11.21.15.png "Screen Shot 2022-03-03 at 11.21.15.png")
+
+  
+> ### 📘
+> 
+> Best Practice
+> 
+> The order of implementing and deploying changes in your environments is via Development ➜ Staging ➜ QA ➜ Production.

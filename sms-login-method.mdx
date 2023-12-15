@@ -1,0 +1,67 @@
+---
+title: "SMS Login Authentication"
+---
+
+SMS login offers users the option to log in with an SMS code sent to their phone for identity verification. This makes for a speedy, and secure, login method. After enabling the option in your _Builder_ and allowing your users to configure their phone number, they will be presented with that login option in all future login attempts. 
+
+> ### 🚧
+> 
+> Prerequisites
+> 
+> To use the feature, you need to make sure you have the following versions installed: 
+> 
+> React 6.0.5  
+> Angular 6.5.0  
+> Vue 3.0.5  
+> Nextjs 8.0.5
+
+### Enabling SMS Login in Your Login Box
+
+To enable SMS login for your users to configure, you must go to your Admin portal, and in the _Quick sign-in_ section, toggle the _SMS login_ option:
+
+![](/images/d0d88d4-Screenshot_2023-10-15_at_7.50.02.png) 
+
+### MFA and SMS Login
+
+MFA and SMS login work in tandem. Given that authentication via SMS code is used for both MFA and login purposes, these two features need to coexist— so _SMS login_ cannot be the only configured method if you enable this option for both - they need to have alternative authentication methods configured. 
+
+### MFA Security Settings
+
+As mentioned in the previous section, MFA needs more than SMS verification if the login method is also set to SMS verification. When you unlock MFA options for your users in their admin portal, you can't enable just the SMS method for them but you also need to unlock additional authentication options if you have that option toggled on for login purposes as well. **Note that _SMS login_ will be disabled if no other factor is enabled.** 
+
+![](/images/e4f6e10-Social_logins.png) 
+
+### User Phone Setup
+
+After enabling _SMS Login_ in your builder, your users can head over to their _Privacy & Security_ tab and configure their phone number there. Note that setting up SMS login is available only if you already have another MFA option configured. The user will receive an email notification to verify the login configuration. Learn more about [Email Templates](/docs/email-templates).
+
+![](/images/f2a42b2-all_MFA-icons_1.png) 
+
+Once successfully configured, the next time a user tries to log in to your app, they will see the option to log in with their phone number (or, as in the case below, with their _phone number_ or _Email_. Both options will be available if you enable the _email verification_ option in the builder as well).
+
+![](/images/dce6db7-sign_in.png) 
+
+If the phone number is connected to the user and is successfully set up in the _Privacy & Security_ section, the user will receive a one-time code via SMS. If the code is valid — the user can access the app. If the code is invalid, the user can either try again and receive another code or log in with a different authentication method.
+
+### SMS Configuration via API
+
+You can perform several actions relating to SMS login via API. You can configure/update/remove a user's phone number, and choose whether to trigger an SMS verification sent to the user's mobile device. 
+
+[To create](/reference/userphonenumberscontrollerv1%5Fcreateuserphonenumber) an SMS login manually, you will need to use the `https://api.frontegg.com/identity/resources/users/phone-numbers/v1` route and include a`phoneNumber` field in your request. Note that to send the user an SMS code for verification, you will need to include a `verify` field set to `true`. Use `false` if you don't want to send the verification code.
+
+JavaScript
+
+`{  
+    "phoneNumber": "+972508929922",  
+    "verify": true  
+}
+`
+
+SMS Login API Collection: 
+
+[Create User Phone Number](/reference/userphonenumberscontrollerv1%5Fcreateuserphonenumber)
+
+[Pre-verify User](/reference/userphonenumberscontrollerv1%5Fpreverifyuserphonenumber)  
+[Verify User](/reference/userphonenumberscontrollerv1%5Fverifycreateuserphonenumber)  
+[Sms Pre-login](/reference/authenticationpasswordlesscontrollerv1%5Fsmscodeprelogin)  
+[Sms Post-login](/reference/authenticationpasswordlesscontrollerv1%5Fsmscodepostlogin)

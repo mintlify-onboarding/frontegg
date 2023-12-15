@@ -1,0 +1,122 @@
+---
+title: "Customer SAML IDP Setup"
+---
+
+SAML stands for Security Assertions Markup Language. This is an XML-based open standard that allows identity providers (IdP) to pass authorization credentials to service providers (SP).
+
+This guide explains how to create a SAML application in Okta (IDP) and configure the connection on the account's - Admin portal section. 
+
+  
+> ### 📘
+> 
+> In order to be able to log in via SAML SSO, [SAML needs to be enabled on the application login](/docs/configuring-saml) and configured.
+
+### Customer Configuration
+
+If SAML [is enabled and configured](/docs/configuring-saml), an end user can configure an SSO connection and allow other users to sign in to the account using SAML SSO.
+
+##### STEP 1: Create a New SAML Application
+
+Create a new SAML application with Okta that you can use as the Identity Provider for users.
+
+Below is an example with Okta.  
+  
+![](/images/34c048a-OKTA_1.png "OKTA 1.png")
+
+  
+##### STEP 2: Find Admin Portal
+
+Go to the **Admin Portal ➜ SSO**
+
+![](/images/f822a4b-Screenshot_2023-03-26_at_13.26.00.png "Screenshot 2023-03-26 at 13.26.00.png")
+
+##### STEP 3: Configure IDP
+
+Click the add new button to configure the type of connection and the Identity Provider by filling out the details or uploading a metadata file from the identity provider.
+
+![](/images/0d74fcb-Screenshot_2023-03-26_at_13.27.48.png "Screenshot 2023-03-26 at 13.27.48.png")
+
+We recommend selecting the automatic option. It is the same as manual but less prone to implementation errors.
+
+After selecting automatic, you will need to upload the XML file from the identity provider.
+
+Okta will require information from the Service Provider, ACS URL, and Entity ID. See the example below.  
+  
+![](/images/4ccb000-Group_1_1.png)
+
+  
+Open the new SSO configuration modal on Admin portal and use the values for ACS URL under the SSO URL on Okta (other IDP). this would be a domain followed by `/auth/saml/callback`. For the SP Entity ID, enter the Entity ID from the Admin portal.
+
+Choose the Name ID format of EmailAddress and Application username as Okta username.
+
+##### STEP 4: Transfer XML
+
+The final step is to transfer an XML file from the identity provider to Admin portal. To do that, first, download the metadata XML from the Identity Provider (Okta).
+
+![](/images/16da499-Group_okta.png)
+
+Next, upload the XML file to the Admin portal.
+
+> ### 📘
+> 
+> If the IDP does not offer an XML download, the user may need to copy the XML data from the IDP and save it to an .xml file then upload that file to the Admin Portal.
+
+If selected **manual**, you'll need to enter the SSO Endpoint and Public Certificate from the identity provider
+
+##### STEP 5: Claim Domain
+
+After configuring the identity provider, you will need to claim one or more domains for the account. This step is required in order to avoid abuse of a domain.  
+  
+![](/images/d4a0aa2-Screenshot_2023-03-26_at_13.29.40.png "Screenshot 2023-03-26 at 13.29.40.png")
+
+  
+The domain needs to be claimed by copying the TXT record and applying it to your DNS provider. If you cannot obtain access to your organization's DNS, please contact your application Administrator.
+
+  
+You can configure multiple domains for an account. This can be useful if you're using multiple environments for development or multiple production applications on separate domains and need the SSO connection to cover several domains.  
+  
+![](/images/4883242-Screenshot_2023-03-26_at_13.31.10.png "Screenshot 2023-03-26 at 13.31.10.png")
+
+##### STEP 6: Manage Authorization
+
+Select which roles should be assigned to SSO users by default and map IDP groups to specific roles. Roles you assign to users through SSO will apply regardless of whatever additional roles you assign to those users.
+
+##### Default SSO Roles
+
+Assign default roles to all SSO users by adding one or more Frontegg roles from your list of predefined roles. 
+
+  
+![](/images/ec9f3e7-Screenshot_2023-03-26_at_13.40.52.png "Screenshot 2023-03-26 at 13.40.52.png")
+
+  
+Whichever roles you include in the input, those roles will be assigned to all SSO users.
+
+> ### 📘
+> 
+> By default the groups that the user passes from the IDP are being checked only upon user creation - first login via SSO. If you'd like to check for the users groups' on each login, please contact Frontegg.
+
+##### STEP 7: Mapping Groups to Roles (Optional)
+
+When configuring SSO for an account, you have the option to map your IDP groups to roles available in the application. 
+
+For the mapping to work, first, you should configure your IDP so that the name of the group attribute that is sent in the SAML response is **groups**.
+
+You'll also need the IDP group names from your IDP that you want to map to your roles. Below is an example of how to find IDP group names in Okta. 
+
+Sign in to your Okta account and go to Directory and find the Groups page. In the image below of an example Okta account, Managers is an Okta Group Name.
+
+Use those Group Names to [map groups to roles](/docs/sso#mapping-groups-to-roles).  
+  
+![](/images/cc94b94-Okta_groups.png)
+
+In the configuration section of the Admin portal map the groups that your users will be passing to corresponding roles in your application.
+
+![](/images/1257a4d-Screenshot_2023-04-19_at_17.49.30.png)
+
+##### Step 8: Save the SSO connection
+
+Save the connection and make sure that it is enabled
+
+![](/images/78c0a0b-Group_1saml_config.png)
+
+That's it! Now all users with the domain that was configured for the connection, will be redirected to their IDP when they will try to sign in.

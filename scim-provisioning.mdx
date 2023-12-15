@@ -1,0 +1,116 @@
+---
+title: "SCIM Provisioning"
+---
+
+### What is SCIM?
+
+SCIM (or System for Cross-domain Identity Management) is a standard way for apps to manage user identities and accounts across different systems, making it easier to create, update, and delete user accounts, as well as manage attributes, groups, and roles. 
+
+It's commonly used in cloud-based and SaaS applications to automate and streamline user identity management, and vastly reduces manual efforts and ensures consistent access to different systems and resources.
+
+Let's say a company (your customer) uses multiple SaaS applications, such as email, project management, and customer relationship management (CRM) tools, and they want to streamline their user onboarding and off-boarding processes. They also want to ensure that user accounts, permissions, and group associations are consistent across all these applications to maintain security and access control.
+
+By implementing SCIM in their identity and access management (IAM) solution (IdP), the company can create a centralized system for user identity management. When a new employee joins the company, their user account can be provisioned automatically across all relevant applications using SCIM's RESTful API, without needing to manually create accounts in each application separately. This saves time and reduces the risk of human error.
+
+Similarly, when an employee leaves the company, changes roles, or joins a new group, their user account can be de-provisioned or updated centrally using SCIM, which **automatically propagates the changes** to all connected applications. This ensures that access to company resources is promptly revoked or updated, helping to maintain security and compliance.
+
+#### SCIM with Frontegg
+
+By using Frontegg, you can let your customers leverage SCIM to manage their user identities on your app.
+
+And by using the Frontegg Admin Portal, your customers can set up their SCIM connection by themselves so they can painlessly provision and deprovision user accounts, manage user attributes and roles, and synchronize user data between their IdP and your app. 
+
+The following SCIM capabilities are supported by apps built with Frontegg:
+
+* Provisioning of Users
+* Updating User Details
+* De-provisioning of Users
+* Provisioning of Groups
+* De-provisioning of Groups
+* Updating Group Details
+* Assigning Users to Groups
+* Un-assigning Users from Groups
+
+This guide shows you how you can
+
+* Enable provisioning for your customers
+* Set up roles and permissions
+* and how your customers can set up SCIM connections.
+
+### Enable Provisioning for Admin Portal
+
+Provisioning is currently available by request, so speak with Frontegg to enable it for your customers. Once you do, it will be visible in the Admin Portal.
+
+### Configure Provisioning Roles and Permissions
+
+Once you have set up provisioning in your Admin Portal, you'll have to decide in your Frontegg Portal which roles should be able to read, create, and delete provisioning configurations.
+
+To achieve that, you can assign the relevant provisioning permissions to your roles.
+
+The 3 relevant permissions are:
+
+1. Create new provisioning configurations - Allows users with this role to create provisioning configurations
+2. Read provisioning configurations - Allows users to see the provisioning tab and see existing configurations
+3. Delete provisioning configurations - Allows users to delete existing configurations
+
+![](/images/51a6653-Screenshot_2023-04-11_at_9.30.35.png)
+
+The only users who need access to provisioning settings in the Admin Portal are those responsible for configuring and maintaining identity provider settings. We do not recommend granting provisioning permissions to users who do not need it.
+
+Read more about [Creating Roles](/docs/roles-1).
+
+### Creating a connection with Okta
+
+To start using SCIM, your customers should:
+
+1. Open the Admin Portal and click "Provisioning"
+2. Click "Add Connection"
+3. Enter a connection name, and choose their provider from the list
+4. Copy the authorization token
+
+![](/images/6d0aab1-Screenshot_2023-04-16_at_10.09.24.png)
+
+1. Open your Application in Okta
+2. In the General tab, click "Enable SCIM Provisioning"
+3. Go to the Provisioning tab in the Application
+4. Click the Configure API Integration button
+5. Check the box next to Enable API Integration
+6. Change the "Authentication Mode" to "HTTP Header"
+7. Paste the Authorization Token in the field provided
+8. Change "Unique identifier field for users" to `email`
+9. Click "Test API Credentials" to ensure it's set up correctly
+10. When you get a success message, click "Save to apply"
+11. A few more options will now appear under the Provisioning section
+12. Select "To App" in the left-hand menu
+13. Choose desired settings
+14. Click Save to apply
+
+When your customer returns to your app, they should now see that they have a linked SCIM connection and that their account has started importing users from their IdP.
+
+### Creating a connection with Azure AD
+
+To start using SCIM, your customers should:
+
+1. In their Azure Portal, go to Enterprise Applications > All Applications
+2. Select your app
+3. Go to the Manage section and select Provisioning
+
+![](/images/ba34970-scim-figure-2b.png)
+
+1. Set the Provisioning Mode to Automatic
+2. Enter the following details in the Admin Credentials section:  
+   1. Enter the URL in the Tenant URL field + `?aadOptscim062020` query param that is required for de-provisioning by Azure. Read more [here](https://learn.microsoft.com/en-us/azure/active-directory/app-provisioning/application-provisioning-config-problem-scim-compatibility).  
+   2. Enter the API Token in the Secret Token field.  
+   3. Click Test Connection to make sure that Azure AD can connect to your app.
+3. Enter the desired email address in the Notification Email field
+4. Check the box next to Send an email notification when a failure occurs and click Save to apply
+5. In the Mappings section, select Synchronize Azure Active Directory Users to your app
+6. In the Attribute Mappings section, review the Azure Active Directory Attribute and the corresponding App Attribute
+7. Click the Save button to apply any changes
+8. Under Settings, toggle the Provisioning Status > On
+9. Define which users and/or groups you would like to provision to your app. Choose from:  
+   1. Sync all users and groups  
+   2. Sync only assigned users and groups
+10. Click Save to apply your provisioning settings.
+
+When your customer returns to your app, they should now see that they have a linked SCIM connection and that their account has started importing users from their Azure AD.

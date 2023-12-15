@@ -1,0 +1,145 @@
+---
+title: "Entitlements SDK"
+---
+
+The Entitlements backend SDK allows you to perform Entitlement-based actions in your backend, such as initializing your client, querying your client to check for their feature entitlements, using entitlement capabilities via REST API, validating JWT, and more. 
+
+[![@frontegg/client](/images/338e4905a2684ca96e08c7780fc68412.png)![npmjs.com](/images/da3ab40fb0861d15c83854c29f5f2962.png)npmjs.com@frontegg/client](https://www.npmjs.com/package/@frontegg/client?activeTab=readme)
+
+### Initializing the client
+
+JavaScript
+
+`const {
+    EntitlementsClient
+} = require('@frontegg/client');
+// initialize the FronteggContext
+FronteggContext.init({
+    FRONTEGG_CLIENT_ID: '<YOUR_CLIENT_ID>',
+    FRONTEGG_API_KEY: '<YOUR_API_KEY>',
+}, {
+    accessTokensOptions,
+}, );
+// initialize entitlements client
+const client = await EntitlementsClient.init( /* */ );
+await client.ready();
+`
+
+### Querying User Entitlements
+
+ The client can be used to determine if a user or tenant is entitled to a feature or permission.
+
+ You will first need to validate the token, using the `IdentityClient`, like so:
+
+JavaScript
+
+`// validate token and decode its properties  
+  const userOrTenantEntity = await identityClient.validateToken(token);
+`
+
+You can check the [Validating JWT manually](https://github.com/frontegg/nodejs-sdk/tree/FR-12366-entitlements-sdk#validating-jwt-manually) for more details.
+
+ When the user/tenant entity is resolved, you can start querying the Entitlements Engine:
+
+JavaScript
+
+`const userEntitlementsClient = client.forUser(userOrTenantEntity);
+let result;
+// asking for feature entitlement
+result = await userEntitlementsClient.isEntitledToFeature('foo');
+// or
+result = await userEntitlementsClient.isEntitledTo({
+    featureKey: 'foo'
+});
+// asking for permission entitlement
+result = await userEntitlementsClient.isEntitledToPermission('foo.read');
+// or
+result = await userEntitlementsClient.isEntitledTo({
+    permissionKey: 'foo'
+});
+`
+
+The query's returned object indicates whether the user is entitled to feature access. The `IsEntitledResult.result` returns a boolean. Note that If`IsEntitledResult.result` returns `true`, then the `IsEntitledResult.reason` will not show in the response. 
+
+JavaScript
+
+`type IsEntitledResult = {
+    result: boolean,
+    reason: string
+}
+`
+
+### Using Frontegg Attributes and Custom Attributes
+
+If you choose **Frontegg attributes** for your rule-based and [Feature Flagging](/docs/feature-flags) purposes, you will need to replace the `UserEntitlementsClient` initialization from:
+
+JavaScript
+
+`// validate token and decode its properties
+const userOrTenantEntity = await identityClient.validateToken(token, {
+    withRolesAndPermissions: true
+});
+const userEntitlementsClient = client.forUser(userOrTenantEntity);
+`
+
+To:
+
+JavaScript
+
+`// validate token and apply Frontegg & JWT attributes  
+const userEntitlementsClient = await client.forFronteggToken(token);
+`
+
+ So your code should look as follows: 
+
+JavaScript
+
+`// initialize entitlements client
+const client = await EntitlementsClient.init();
+await client.ready();
+// validate token and apply Frontegg & JWT attributes
+const userEntitlementsClient = await client.forFronteggToken(token);
+`
+
+ Note that `forFronteggToken` won’t work with custom JWT tokens. Only those issued by Frontegg can be used with this method. If you choose to use a different authentication provider, you can use the SDK the same way as with _Entitlements_, by just adding custom attributes to the `isEntitledTo` method calls, like so:
+
+`let result;
+// asking for feature entitlement
+result = await userEntitlementsClient.isEntitledToFeature('foo', {
+    'my-custom': 'attribute-value'
+});
+// or
+result = await userEntitlementsClient.isEntitledTo({
+    featureKey: 'foo'
+}, {
+    'my-custom': 'attribute-value'
+});
+// asking for permission entitlement
+result = await userEntitlementsClient.isEntitledToPermission('foo.read', {
+    'my-custom': 'attribute-value'
+});
+// or
+result = await userEntitlementsClient.isEntitledTo({
+    permissionKey: 'foo'
+}, {
+    'my-custom': 'attribute-value'
+});
+`
+
+### Operations and corresponding object structure
+
+The following table lists the correlating object structure that matches the operation (`op`) you perform in your _targeting rules_ : 
+
+| Operation (op)                                                              | Object structure                           |
+| --------------------------------------------------------------------------- | ------------------------------------------ |
+| starts\_with, ends\_with,in\_list, contains                                 | { "list": String \[ \]}                    |
+| matches                                                                     | { "string": String }                       |
+| equal, greater\_than, greater\_than\_equal, lower\_than, lower\_than\_equal | { "number": Number}                        |
+| between\_numeric                                                            | { "start": Number, "end": Number }         |
+| is                                                                          | { "boolean": Boolean}                      |
+| on, on\_or\_after, on\_or\_before                                           | { "date": DateString }                     |
+| between\_date                                                               | { "start": DateString, "end": DateString } |
+
+### Removing clients
+
+ To clean up your client SDK before your app stops, you can call the `client.destroy();` function.
