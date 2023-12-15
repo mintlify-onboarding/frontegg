@@ -9,7 +9,7 @@
         "tags": [],
         "servers": [
             {
-                "url": "https://api.frontegg.com/auth/"
+                "url": "https://api.frontegg.com/auth"
             }
         ],
         "components": {
@@ -43,7 +43,7 @@
             }
         },
         "paths": {
-            "/": {
+            "/vendor": {
                 "post": {
                     "operationId": "authenticate_vendor",
                     "summary": "Vendor authentication",
