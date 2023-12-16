@@ -1,8 +1,7 @@
 ---
 title: "Customization and Styling Options"
+description: Frontegg offers multiple customization options to style and enhance your interface to suit your brand's style guidelines and business needs. 
 ---
-
-Frontegg offers multiple customization options to style and enhance your interface to suit your brand's style guidelines and business needs. 
 
 ### Interactive Styling Code Samples
 
@@ -31,10 +30,10 @@ The idea is that you can always reach the level of customization you need within
 This top-down approach makes it easy to customize components that share the same design regardless of where the component appears in your application. But it also allows for the precision you need for uniquely styling specific parts of your application.
 
 The `FronteggThemeOptions` interface is the main interface that controls the entire customization of the Frontegg application.  
-  
-TypeScript
 
-`export interface FronteggThemeOptions {
+
+```TypeScript TypeScript
+export interface FronteggThemeOptions {
     palette?: ThemePaletteOptions;
     typographyStyleOptions?: CSSProperties;
     spacing?: SpacingOptions;
@@ -47,16 +46,16 @@ TypeScript
     adminPortal?: AdminPortalThemeOptions;
     loginBox?: LoginBoxThemeOptions;
 }
-`
+```
 
 As shown in the snippet above, the top-most level is the global level. A style applied at the global level impacts all Frontegg components unless you explicitly override that style at a lower level.  
   
-> ### 📘
-> 
-> Frontegg + Material-UI = 💚
-> 
-> Frontegg base components rely on the great [Material UI](https://mui.com/) (as we believe that wheels shouldn't be re-invented). Therefore, some of the links you see below will refer to the documentation of Material UI.
-
+<Note>
+ 
+ **Frontegg + Material-UI = 💚**
+ 
+ Frontegg base components rely on the great [Material UI](https://mui.com/) (as we believe that wheels shouldn't be re-invented). Therefore, some of the links you see below will refer to the documentation of Material UI.
+</Note>
   
 The customization options split into the following (no worries, we will go deeper for each of the components when we slide along this guide).  
   
@@ -84,10 +83,10 @@ First, this guide shows you how to integrate the `themeOptions` object into your
 When [integrating the Frontegg Provider](/docs/adding-frontegg-to-your-app), pass `themeOptions` as an initialization attribute. The value for `themeOptions` needs to be an object containing your custom styles. 
 
 For example, here is a simple example that sets the `fontFamily` at the global level to monospace:  
-  
-JavaScript
 
-`import { FronteggProvider } from "@frontegg/react";
+
+```JavaScript JavaScript
+import { FronteggProvider } from "@frontegg/react";
 
 const contextOptions = {
   baseUrl: "https://your-application.frontegg.com",
@@ -108,7 +107,7 @@ ReactDOM.render(
   </FronteggProvider>,
   document.getElementById("root")
 );
-`
+```
 
 The image below shows the result of this code example where the font is monospace:  
   
@@ -121,10 +120,8 @@ Your `themeOptions` object can contain custom styles for all the available level
 
 Here is an object containing all levels and their corresponding styling options.
 
-  
-JavaScript
-
-`const themeOptions = {
+```JavaScript JavaScript
+const themeOptions = {
   // Global styles 
   palette: ThemePalette;
   typographyStyleOptions: CSSProperties;
@@ -174,21 +171,21 @@ JavaScript
      };
    }
 };
-`
+```
 
 You do not need this entire master object in your code. Instead, just include styles for properties where you want to override the default.
 
   
-> ### 📘
-> 
-> Types of Custom Styles
-> 
-> If you are using typescript, the interface for the style options is exposed and you can easily import it to see what options are available.
-> 
-> `import { FronteggAppOptions } from '@frontegg/types';`
-> 
-> If you are not using typescript, look in the frontegg package for the `frontegg/types` folder to see the style options.
+<Note>
 
+**Types of Custom Styles**
+
+If you are using typescript, the interface for the style options is exposed and you can easily import it to see what options are available.
+
+`import { FronteggAppOptions } from '@frontegg/types';`
+
+If you are not using typescript, look in the frontegg package for the `frontegg/types` folder to see the style options.
+</Note>
   
 ### Customization and Styling Through Code
 

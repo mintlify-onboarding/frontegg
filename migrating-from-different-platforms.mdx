@@ -138,7 +138,7 @@ For migrating users with Scrypt passwords, send the below:
 }
 ```
 
-//metadata will be used as the user metadata on Frontegg, you can send an empty stringified object.  
+`//metadata` will be used as the user metadata on Frontegg, you can send an empty stringified object.  
 For migrating users with Firebase passwords, send the below:
 
 ```JavaScript JavaScript
@@ -196,43 +196,4 @@ The payload of the users' data can contain any of the attributes mentioned in si
 
 1. In the response, you will get a `migration_id`. Use this `id` to monitor the status of the migration, via sending a GET request to the following endpoint:
 
-[https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/{{migration\_id}}](https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/%7B%7Bmigration%5Fid%7D%7D)
-
-Migrate Accounts in Bulks
-
-Recreate the Tenants / Accounts you had in your previous provider under the environment where you'd like to migrate the users. There are three options to create tenants:
-
-* Recreate tenants using the Backoffice UI with the same Tenant ID that you have with another vendor as `ID` when creating an account.
-
-Screen\_Shot\_2022-12-19\_at\_21.26.38.png
-
-* Recreate Tenants via API and set your previous tenant IDs as the `tenantId` property.
-* Migrate tenants in batches of 1000 / batch:
-
-Send a POST request with your vendor token for authorization, to the following endpoint:
-
-[https://api.frontegg.com/tenants/resources/migrations/v1/tenants](https://api.frontegg.com/tenants/resources/migrations/v1/tenants)
-
-The payload should be as below:
-
-You will receive `migrationId` in the response and you can use it to monitor the status of your migration via a GET request to the following endpoint:
-
-[https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/{{migrationId}}](https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/%7B%7BmigrationId%7D%7D)
-
-
-```JavaScript JavaScript
-{  
-  "tenants": [{  
-   "tenantId": "your-tenant-id",  
-   "name": "Test_Tenant_1"  
-},  
-{  
-   "tenantId": "your-tenant-id",  
-   "name": "Test_Tenant_2"  
-},  
-{  
-  "tenantId": "your-tenant-id",  
-  "name": "Test_Tenant_3"  
-}]  
-}
-```
+[https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/\{\{migration\_id}}](https://api.frontegg.com/identity/resources/migrations/v1/local/bulk/status/%7B%7Bmigration%5Fid%7D%7D)
