@@ -1,10 +1,17 @@
 ---
 title: "Migration"
+description: Frontegg offers seamless support for importing passwords hashed with Bcrypt, Scrypt, and Firebase methods, simplifying the process of transitioning users from your previous authentication vendor. If your previous vendor utilized any of these hashing techniques, migrating users with their passwords becomes a straightforward task. In cases where your previous vendor used a different hashing method, Frontegg ensures a smooth transition, prompting users to reset their passwords, a recommended security practice. 
 ---
 
-Frontegg offers seamless support for importing passwords hashed with Bcrypt, Scrypt, and Firebase methods, simplifying the process of transitioning users from your previous authentication vendor. If your previous vendor utilized any of these hashing techniques, migrating users with their passwords becomes a straightforward task. In cases where your previous vendor used a different hashing method, Frontegg ensures a smooth transition, prompting users to reset their passwords, a recommended security practice. 
 
-For those looking to minimize friction and enhance user experience, Frontegg offers an alternative in the form of [Passwordless Authentication](/reference/passwordless). This method eliminates the need for traditional passwords, offering a convenient and secure approach to user access. The migration process is facilitated through Frontegg's APIs, requiring the acquisition of a vendor JWT (JSON Web Token). Detailed steps on how to authenticate your environment and obtain a vendor JWT, can be found here. [Refresh JWT token](/reference/authenticatioauthenticationcontrollerv1%5Frefreshtoken). 
+1. Send a POST request to the [Migrate from Auth0](/reference/userscontrollerv1%5Fmigrateuserfromauth0) route with the following sample payload:
+
+```JavaScript JavaScript
+{  
+     "isTenantIdOnUserMetadata": false,  
+     "domain": "https\://[your-auth0-subdomain]",  
+     "clientId": "your-auth0-clFor those looking to minimize friction and enhance user experience, Frontegg offers an alternative in the form of [Passwordless Authentication](/reference/passwordless). This method eliminates the need for traditional passwords, offering a convenient and secure approach to user access. The migration process is facilitated through Frontegg's APIs, requiring the acquisition of a vendor JWT (JSON Web Token). Detailed steps on how to authenticate your environment and obtain a vendor JWT, can be found here. [Refresh JWT token](/reference/authenticatioauthenticationcontrollerv1%5Frefreshtoken). 
+```
 
 ### Migrating Users from Auth0
 
@@ -20,24 +27,21 @@ To migrate users from Auth0, please follow the steps below:
 1. Make sure that your management API has your application under Machine to Machine Applications:
 2. Your application on Auth0 will need to posses the following permissions: `read:users`, `read:user_idp_tokens`, `read:roles`.
 3. You can check the existing permissions via /api/v2/client-grants endpoint on Auth0\.
-4. If any of these permissions are missing, make sure to update the grant via /api/v2/client-grants/{id} and use the id you've got from the previous GET request with the below payload:
+4. If any of these permissions are missing, make sure to update the grant via `/api/v2/client-grants/{id}` and use the id you've got from the previous GET request with the below payload:
 
-JavaScript
-
-`{"scope":[  
+```JavaScript JavaScript
+{"scope":[  
       "read:users",  
       "read:user_idp_tokens",  
       "read:roles"  
     ]}
-`
+```
 
 1. Frontegg searches for the field that refers to the user's tenant on `app_metadata` or 'user\_metadata\`.
 2. Obtain your vendor JWT on Frontegg, per the instructions here.
 3. For the below raw user object:
 
-JavaScript
-
-`
+```JavaScript JavaScript
 
 {  
     "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
@@ -60,27 +64,17 @@ JavaScript
         "tenant_id": "Frontegg_Test"  
     }  
 }
-`
-
-1. Send a POST request to the [Migrate from Auth0](/reference/userscontrollerv1%5Fmigrateuserfromauth0) route with the following sample payload:
-
-JavaScript
-
-`{  
-     "isTenantIdOnUserMetadata": false,  
-     "domain": "https\://[your-auth0-subdomain]",  
-     "clientId": "your-auth0-client-ID",  
+ client-ID",  
      "secret": "your-auth0-secret",  
      "tenantIdFieldName": "tenant_id"  
 }
 
-`
+```
 
 1. Below is the user object that will be created on Frontegg:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "id": "xxxxx",  
 "sub": "xxxxx",  
 "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
@@ -105,7 +99,7 @@ JavaScript
 "managedBy": "frontegg",  
 "activatedForTenant": true  
 }
-`
+```
 
 That's it! Frontegg will create a user and assign the user to the tenant with the same id that appears in tenant\_id.
 
@@ -117,9 +111,8 @@ Migrate Users With Passwords:
 
 For migrating users with Bcrypt passwords, send the below:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "name": "BCrypt Test User"  
 "metadata": "{\"Test\":\"Test\"}",  
 "verifyUser": true,  
@@ -128,13 +121,12 @@ JavaScript
 "passwordHash": "hashed-password",  
 "passwordHashType": "bcrypt"  
 }
-`
+```
 
 For migrating users with Scrypt passwords, send the below:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "name": "SCrypt Test User",  
 "metadata": "{\"Test\":\"Test\"}",  
 "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
@@ -144,14 +136,13 @@ JavaScript
 "passwordHashType": "scrypt",  
 "passwordHashConfig":"{\"saltSeparator\":\";\",\"N\":16384,\"r\":8,\"p\":1,\"keyLen\":64}"  
 }
-`
+```
 
 //metadata will be used as the user metadata on Frontegg, you can send an empty stringified object.  
 For migrating users with Firebase passwords, send the below:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "name": "SCrypt Test User",  
 "metadata": "{\"Test\":\"Test\"}",  
 "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
@@ -161,13 +152,12 @@ JavaScript
 "passwordHashType": "firebase-scrypt",  
 "passwordHashConfig":"{\"saltSeparator\":\";\",\"signerKey\":"",\"memCost\":14,\"rounds\":8}"  
 }
-`
+```
 
 For migrating users with pbkdf2, send the below:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "name": "SCrypt Test User",  
 "metadata": "{\"Test\":\"Test\"}",  
 "email": "[[[email protected]](/cdn-cgi/l/email-protection)](mailto:[[email protected]](/cdn-cgi/l/email-protection))",  
@@ -177,7 +167,7 @@ JavaScript
 "passwordHashType": "firebase-scrypt",  
 "passwordHashConfig":"{\"saltSeparator\":\";\",\"iterations\":1000,\"keyLen\":32,\"digest\":\"sha256\"}"  
 }
-`
+```
 
 > metadata will be used as the user metadata on Frontegg, you can send an empty stringified object.
 
@@ -189,9 +179,8 @@ Migrate Users in Bulks
 [https://api.frontegg.com/identity/resources/migrations/v1/local/bulk](https://api.frontegg.com/identity/resources/migrations/v1/local/bulk)  
 The payload of the users' data can contain any of the attributes mentioned in single-user migration examples from Migrate Users With Passwords section:
 
-JavaScript
-
-`{  
+```JavaScript JavaScript
+{  
 "users": [{  
    "email": "[[email protected]](/cdn-cgi/l/email-protection)",  
    "tenantId": "123456"  
@@ -203,7 +192,7 @@ JavaScript
    "tenantId": "123456"  
 }]  
 }
-`
+```
 
 1. In the response, you will get a `migration_id`. Use this `id` to monitor the status of the migration, via sending a GET request to the following endpoint:
 
@@ -230,9 +219,9 @@ You will receive `migrationId` in the response and you can use it to monitor the
 
 [https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/{{migrationId}}](https://api.frontegg.com/tenants/resources/migrations/v1/tenants/status/%7B%7BmigrationId%7D%7D)
 
-JavaScript
 
-`{  
+```JavaScript JavaScript
+{  
   "tenants": [{  
    "tenantId": "your-tenant-id",  
    "name": "Test_Tenant_1"  
@@ -246,4 +235,4 @@ JavaScript
   "name": "Test_Tenant_3"  
 }]  
 }
-`
+```

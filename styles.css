@@ -4,17 +4,18 @@
   }
   
   .blue-button {
-    background-color: blue;
+    background-color: #7a99ee;
     color: white;
     border: none;
-    padding: 5px 10px;
-    cursor: not-allowed;
+    padding: 2px 5px;
+    border-radius: 20px; 
   }
   
   .gray-button {
-    background-color: gray;
+    background-color: rgb(151, 151, 151);
     color: white;
     border: none;
-    padding: 5px 10px;
-    cursor: not-allowed;
+    padding: 2px 5px;
+    border-radius: 20px; 
   }
+  

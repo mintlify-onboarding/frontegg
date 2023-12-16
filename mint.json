@@ -76,6 +76,11 @@
             ]
           }         
     ],
+    "feedback": {
+      "thumbsRating": true,
+      "suggestEdit": true,
+      "raiseIssue": true
+    },
     "footerSocials":
       {
           "facebook": "https://www.facebook.com/frontegg",
