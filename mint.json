@@ -1,4 +1,5 @@
 {
+  "$schema": "https://mintlify.com/schema.json",
   "name": "Frontegg",
   "logo": {
     "light": "/logo/light.png",
@@ -12,13 +13,19 @@
     "dark": "#003AE4"
   },
   "topbarCtaButton": {
-    "name": "Sign Up for Frontegg",
+    "name": "Sign up for Frontegg",
     "url": "https://portal.frontegg.com/signup"
   },
+  "topbarLinks": [
+    {
+      "name": "Log in",
+      "url": "https://docs.frontegg.com/login?redirect_uri=/docs"
+    }
+  ],
   "anchors": [
     {
       "name": "Help Center",
-      "icon": "block-question",
+      "icon": "messages-question",
       "url": "https://support.frontegg.com/hc/en-us/categories/5057250979229-FAQ"
     },
     {
